@@ -1,2 +1,4 @@
 ﻿import * as application from 'tns-core-modules/application';
-application.start({ moduleName: "main-page" });
+import { WebRTC } from 'nativescript-webrtc';
+WebRTC.init();
+application.start({ moduleName: 'main-page' });

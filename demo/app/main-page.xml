@@ -1,6 +1,7 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
   xmlns:ui="nativescript-webrtc">
-  <StackLayout class="p-20">
-    <Label text="{{ message }}" class="t-20 text-center c-black" textWrap="true"/>
-  </StackLayout>
+  <GridLayout>
+  <ui:WebRTCRemoteView id="remoteVideoView" backgroundColor="blue" />
+  <ui:WebRTCLocalView id="localVideoView" backgroundColor="red" height="300"/>
+  </GridLayout>
 </Page>

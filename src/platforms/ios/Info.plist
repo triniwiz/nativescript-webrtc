@@ -2,6 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!--Describe the permissions, features or other configurations required by your plugin for iOS.-->
+		<key>NSCameraUsageDescription</key>
+		<string>Requires access to camera.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Requires access to microphone.</string>
 </dict>
 </plist>
