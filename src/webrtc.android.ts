@@ -1,7 +1,8 @@
 import { Common, WebRTCOptions } from './webrtc.common';
 import { fromObject } from 'tns-core-modules/data/observable';
 import { View } from 'tns-core-modules/ui/core/view/view';
-
+import { device } from 'tns-core-modules/platform/platform';
+import { ad } from 'tns-core-modules/utils/utils';
 export class WebRTC extends Common {
   private connection: org.webrtc.PeerConnection;
   private connectionFactory: org.webrtc.PeerConnectionFactory;
@@ -27,9 +28,11 @@ export class WebRTC extends Common {
   }
 
   public static init(): void {
-    const options = new org.webrtc.PeerConnectionFactory.InitializationOptions.Builder();
+    const options = org.webrtc.PeerConnectionFactory.InitializationOptions.builder(ad.getApplicationContext());
     options.setEnableVideoHwAcceleration(true);
-    org.webrtc.PeerConnectionFactory.initialize(options);
+    org.webrtc.PeerConnectionFactory.initialize(
+      options.createInitializationOptions()
+    );
   }
 
   public connect(): void {
@@ -51,6 +54,34 @@ export class WebRTC extends Common {
     }
   }
 
+  private createCapturer() {
+    const enumerator = new org.webrtc.Camera2Enumerator(
+      ad.getApplicationContext()
+    );
+    const devicesNames = enumerator.getDeviceNames();
+    let videoCapturer = null;
+    for (let i = 0; i > devicesNames.length; i++) {
+      const deviceName = devicesNames[i];
+      if (enumerator.isFrontFacing(deviceName)) {
+        videoCapturer = enumerator.createCapturer(deviceName, null);
+        if (videoCapturer) {
+          return videoCapturer;
+        }
+      }
+    }
+
+    for (let i = 0; i > devicesNames.length; i++) {
+      const deviceName = devicesNames[i];
+      if (!enumerator.isFrontFacing(deviceName)) {
+        videoCapturer = enumerator.createCapturer(deviceName, null);
+        if (videoCapturer) {
+          return videoCapturer;
+        }
+      }
+    }
+
+    return videoCapturer;
+  }
   public getLocalStream() {
     const factory = this.connectionFactory;
     const localStream = factory.createLocalMediaStream('localStream');
@@ -112,7 +143,11 @@ export class WebRTCLocalView extends View {
   private _localVideoTrack: org.webrtc.VideoTrack;
 
   createNativeView() {
-    return new org.webrtc.SurfaceViewRenderer(this._context);
+    const nativeView = new org.webrtc.SurfaceViewRenderer(this._context);
+    nativeView.setMirror(true);
+    const rootEglBase = org.webrtc.EglBase.create();
+    nativeView.init(rootEglBase.getEglBaseContext(), null);
+    return nativeView;
   }
 
   set capturer(capturer) {
@@ -163,9 +198,11 @@ class WebRTCCapturer {
       30
     );
   }
+
   stop() {
     this.capturer.stopCapture();
   }
+
   toggleCamera() {
     this.capturer.switchCamera(
       new org.webrtc.CameraCapturer.CameraSwitchHandler({

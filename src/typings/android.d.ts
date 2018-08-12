@@ -1,5 +1,3 @@
-/// <reference path="android-declarations.d.ts"/>
-
 declare module org {
 	export module webrtc {
 		export class AudioProcessingFactory {
