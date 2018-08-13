@@ -1,6 +1,13 @@
-import { Common, WebRTCOptions, WebRTCState } from './webrtc.common';
+import {
+  Common,
+  WebRTCOptions,
+  WebRTCState,
+  WebRTCSdpType
+} from './webrtc.common';
 import { View } from 'tns-core-modules/ui/core/view';
 import { fromObject } from 'tns-core-modules/data/observable/observable';
+
+/// <reference path="./typings/objc!WebRTC.d.ts" />
 
 enum ErrorDomain {
   videoPermissionDenied = 'Video permission denied',
@@ -8,21 +15,31 @@ enum ErrorDomain {
 }
 
 export class WebRTC extends Common {
-  private connection: any;
+  private connection: RTCPeerConnection;
   private connectionFactory: RTCPeerConnectionFactory;
   private configuration: RTCConfiguration;
   private constraints: any;
   private _state: WebRTCState;
   private _delegate: WebRTCClientDelegate;
+  private defaultConnectionConstraints: RTCMediaConstraints;
+  private remoteIceCandidates: any;
   constructor(
     options: WebRTCOptions = { enableAudio: true, enableVideo: true }
   ) {
     super();
+    this.remoteIceCandidates = [];
+    this.defaultConnectionConstraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
+      null,
+      <any>{
+        DtlsSrtpKeyAgreement: 'true'
+      }
+    );
+
     this._delegate = WebRTCClientDelegate.initWithOwner(new WeakRef(this));
     this.configuration = RTCConfiguration.alloc().init();
     this.connectionFactory = RTCPeerConnectionFactory.alloc().init();
     if (!options.iceServers) {
-      this.configuration.iceServers = this.defaultServers.map(server => {
+      this.configuration.iceServers = <any>this.defaultServers.map(server => {
         return RTCIceServer.alloc().initWithURLStrings(<any>(
           this.defaultServers
         ));
@@ -39,7 +56,7 @@ export class WebRTC extends Common {
     );
     this.connection = this.connectionFactory.peerConnectionWithConfigurationConstraintsDelegate(
       this.configuration,
-      this.constraints,
+      this.defaultConnectionConstraints,
       RTCPeerConnectionDelegateImpl.initWithOwner(new WeakRef(this))
     );
   }
@@ -50,6 +67,109 @@ export class WebRTC extends Common {
 
   get delegate(): any {
     return this._delegate;
+  }
+
+  public makeOffer() {
+    if (!this.connection) return;
+    this.connection.offerForConstraintsCompletionHandler(
+      this.constraints,
+      (sdp: RTCSessionDescription, error: NSError) => {
+        if (error) {
+          this._delegate.webRTCClientDidReceiveError(this, error);
+        } else {
+          this.handleSdpGenerated(sdp);
+        }
+      }
+    );
+  }
+
+  handleAnswerReceived(remoteSdp: string) {
+    if (!remoteSdp) return;
+    const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
+      RTCSdpType.Answer,
+      remoteSdp
+    );
+    this.connection.setRemoteDescriptionCompletionHandler(
+      sessionDescription,
+      (error: NSError) => {
+        if (error) {
+          this._delegate.webRTCClientDidReceiveError(this, error);
+        } else {
+          this.handleRemoteDescriptionSet();
+          this._state = WebRTCState.Connected;
+        }
+      }
+    );
+  }
+
+  addIceCandidate(iceCandidate: RTCIceCandidate) {
+    if (this.connection.remoteDescription) {
+      this.connection.addIceCandidate(iceCandidate);
+    } else {
+      this.remoteIceCandidates.push(iceCandidate);
+    }
+  }
+
+  createAnswerForOfferReceived(remoteSdp: string) {
+    if (!this.connection || !remoteSdp) return;
+    const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
+      RTCSdpType.Offer,
+      remoteSdp
+    );
+    this.connection.setRemoteDescriptionCompletionHandler(
+      sessionDescription,
+      (error: NSError) => {
+        if (error) {
+          this._delegate.webRTCClientDidReceiveError(this, error);
+        } else {
+          this.handleRemoteDescriptionSet();
+          this.connection.answerForConstraintsCompletionHandler(
+            this.constraints,
+            (sdp: RTCSessionDescription, error: NSError) => {
+              if (error) {
+                this._delegate.webRTCClientDidReceiveError(this, error);
+              } else {
+                this.handleSdpGenerated(sdp);
+                this._state = WebRTCState.Connected;
+              }
+            }
+          );
+        }
+      }
+    );
+  }
+
+  private handleRemoteDescriptionSet() {
+    this.remoteIceCandidates.forEach(iceCandidate => {
+      this.connection.addIceCandidate(iceCandidate);
+    });
+    this.remoteIceCandidates = [];
+  }
+
+  private handleSdpGenerated(sdp: RTCSessionDescription) {
+    if (!sdp) return;
+    this.connection.setLocalDescriptionCompletionHandler(
+      sdp,
+      (error: NSError) => {
+        if (error) {
+          this._delegate.webRTCClientDidReceiveError(this, error);
+        } else {
+          let type;
+          switch ((sdp as any).type) {
+            case 0:
+              type = WebRTCSdpType.Offer;
+              break;
+            case 1:
+              type = WebRTCSdpType.PrAnswer;
+              break;
+            case 2:
+              type = WebRTCSdpType.Answer;
+              break;
+          }
+          this._delegate.webRTCClientStartCallWithSdpType(this, sdp.sdp, type);
+        }
+      }
+    );
   }
 
   public static init(): void {
@@ -78,6 +198,7 @@ export class WebRTC extends Common {
       this.connection.removeStream(localStream);
       this.delegate.webRTCClientDidChangeState(this, WebRTCState.Disconnected);
     }
+    WebRTC.init();
   }
 
   public getLocalStream(): any {
@@ -158,6 +279,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
   ): void {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
+      console.log('peerConnectionDidAddStream');
       if (stream.videoTracks.count > 0) {
         owner.delegate.webRTCClientDidReceiveRemoteVideoTrack(
           owner,
@@ -172,6 +294,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
   ): void {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
+      console.log('peerConnectionDidChangeIceConnectionState', newState);
       owner.delegate.webRTCClientDidChangeConnectionState(owner, newState);
     }
   }
@@ -256,7 +379,23 @@ class WebRTCClientDelegate extends NSObject {
     delegate._owner = owner;
     return delegate;
   }
-  webRTCClientStartCallWithSdp(client: WebRTC, sdp: string) {}
+  webRTCClientStartCallWithSdpType(
+    client: WebRTC,
+    sdp: string,
+    type: WebRTCSdpType
+  ) {
+    const owner = this._owner ? this._owner.get() : null;
+    if (owner) {
+      owner.notify({
+        eventName: 'webRTCClientStartCallWithSdpType',
+        object: fromObject({
+          client: client,
+          sdp: sdp,
+          type: type
+        })
+      });
+    }
+  }
   webRTCClientDidReceiveLocalVideoTrack(
     client: WebRTC,
     localVideoTrack: RTCVideoTrack
@@ -293,10 +432,22 @@ class WebRTCClientDelegate extends NSObject {
     connectionState: RTCIceConnectionState
   ) {}
   webRTCClientDidChangeState(client: WebRTC, state: WebRTCState) {}
+
   webRTCClientDidGenerateIceCandidate(
     client: WebRTC,
     iceCandidate: RTCIceCandidate
-  ) {}
+  ) {
+    const owner = this._owner ? this._owner.get() : null;
+    if (owner) {
+      owner.notify({
+        eventName: 'webRTCClientDidGenerateIceCandidate',
+        object: fromObject({
+          client: client,
+          iceCandidate: iceCandidate
+        })
+      });
+    }
+  }
   webRTCClientDidCreateLocalCapturer(
     client: WebRTC,
     capturer: RTCCameraVideoCapturer
@@ -328,7 +479,6 @@ export class WebRTCLocalView extends View {
 
   set videoTrack(track) {
     this._localVideoTrack = track;
-    console.log(track);
     track.addRenderer(this.nativeView);
   }
 
@@ -440,8 +590,14 @@ class RTCVideoCapturerDelegateImpl extends NSObject
 }
 
 export class WebRTCRemoteView extends View {
+  private _remoteVideoTrack: any;
   constructor() {
     super();
     this.nativeView = RTCEAGLVideoView.alloc().init();
+  }
+
+  set videoTrack(track) {
+    this._remoteVideoTrack = track;
+    track.addRenderer(this.nativeView);
   }
 }

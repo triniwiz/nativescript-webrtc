@@ -1,7 +1,12 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
   xmlns:ui="nativescript-webrtc">
   <GridLayout>
-  <ui:WebRTCRemoteView id="remoteVideoView" backgroundColor="blue" />
-  <ui:WebRTCLocalView id="localVideoView" backgroundColor="red" height="300"/>
+    <ListView items="{{items}}" itemTap="{{callUser}}">
+      <ListView.itemTemplate>
+        <GridLayout columns="*,auto,10,auto" padding="0 10" height="44">
+          <Label text="{{username}}"/>
+        </GridLayout>
+      </ListView.itemTemplate>
+    </ListView>
   </GridLayout>
 </Page>

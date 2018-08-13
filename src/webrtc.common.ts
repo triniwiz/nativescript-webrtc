@@ -20,3 +20,9 @@ export enum WebRTCState {
   Disconnected,
   Connected
 }
+
+export enum WebRTCSdpType {
+  Offer = 'offer',
+  PrAnswer = 'prAnswer',
+  Answer = 'answer'
+}

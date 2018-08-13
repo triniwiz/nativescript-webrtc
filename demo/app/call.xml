@@ -1,0 +1,7 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" navigatingTo="navigatingTo" class="page"
+  xmlns:ui="nativescript-webrtc">
+  <AbsoluteLayout>
+    <ui:WebRTCRemoteView  id="remoteVideoView" backgroundColor="blue"/>
+    <ui:WebRTCLocalView  id="localVideoView" backgroundColor="red" height="200"/>
+  </AbsoluteLayout>
+</Page>

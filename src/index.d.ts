@@ -7,17 +7,32 @@ export declare class WebRTC extends Common {
     private constraints;
     private _state;
     private _delegate;
-    private defaultServers;
+    private defaultConnectionConstraints;
+    private remoteIceCandidates;
     constructor(options?: WebRTCOptions);
     readonly state: WebRTCState;
     readonly delegate: any;
+    makeOffer(): void;
+    handleAnswerReceived(remoteSdp);
+    addIceCandidate(iceCandidate: RTCIceCandidate): void;
+    createAnswerForOfferReceived(remoteSdp);
+    private handleRemoteDescriptionSet();
+    private handleSdpGenerated(sdp);
     static init(): void;
     connect(): void;
     disconnect(): void;
     getLocalStream(): any;
 }
 export declare class WebRTCLocalView extends View {
+    private _capturer;
+    private _localVideoTrack;
+    cameraPosition: string;
     constructor();
+    capturer: any;
+    videoTrack: any;
+    start(): void;
+    stop(): void;
+    toggleCamera(): void;
 }
 export declare class WebRTCRemoteView extends View {
     constructor();

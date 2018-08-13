@@ -1,0 +1,13 @@
+TextField {
+    border-color: red;
+    border-width: 1;
+    border-radius: 8;
+    height: 44;
+}
+
+Button {
+    border-color: greenyellow;
+    border-width: 1;
+    border-radius: 8;
+    height: 40;
+}
