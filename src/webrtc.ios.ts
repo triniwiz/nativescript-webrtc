@@ -621,8 +621,6 @@ export class WebRTCRemoteView extends View {
   set videoTrack(track) {
     this._remoteVideoTrack = track;
     track.addRenderer(this.nativeView);
-    console.log(this.nativeView.frame.size.width);
-    console.log(this.nativeView.frame.size.height);
   }
 }
 

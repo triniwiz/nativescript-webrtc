@@ -11,7 +11,7 @@ export class WebRTC extends Common {
     options: WebRTCOptions = { enableAudio: true, enableVideo: true }
   ) {
     super();
-    const iceServers = new java.util.List();
+    const iceServers = new java.util.ArrayList();
     if (!options.iceServers) {
       this.defaultServers.forEach(server => {
         const iceServer = new org.webrtc.PeerConnection.IceServer(server);
@@ -28,7 +28,9 @@ export class WebRTC extends Common {
   }
 
   public static init(): void {
-    const options = org.webrtc.PeerConnectionFactory.InitializationOptions.builder(ad.getApplicationContext());
+    const options = org.webrtc.PeerConnectionFactory.InitializationOptions.builder(
+      ad.getApplicationContext()
+    );
     options.setEnableVideoHwAcceleration(true);
     org.webrtc.PeerConnectionFactory.initialize(
       options.createInitializationOptions()
@@ -82,12 +84,14 @@ export class WebRTC extends Common {
 
     return videoCapturer;
   }
+
   public getLocalStream() {
     const factory = this.connectionFactory;
     const localStream = factory.createLocalMediaStream('localStream');
 
     const videoSource = factory.createVideoSource(true);
-    let capturer = new org.webrtc.CameraVideoCapturer();
+
+    let capturer = this.createCapturer();
 
     this.notify({
       eventName: 'webRTCClientDidCreateLocalCapturer',
@@ -96,6 +100,7 @@ export class WebRTC extends Common {
         capturer: capturer
       })
     });
+
     const videoTrack = factory.createVideoTrack(
       'localVideoTrackId',
       videoSource
