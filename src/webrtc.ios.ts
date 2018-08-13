@@ -23,29 +23,35 @@ export class WebRTC extends Common {
   private _delegate: WebRTCClientDelegate;
   private defaultConnectionConstraints: RTCMediaConstraints;
   private remoteIceCandidates: any;
+  remoteStream;
+  remoteTracks: any[];
   constructor(
     options: WebRTCOptions = { enableAudio: true, enableVideo: true }
   ) {
     super();
+    this.remoteTracks = [];
     this.remoteIceCandidates = [];
     this.defaultConnectionConstraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
       null,
       <any>{
-        DtlsSrtpKeyAgreement: 'true'
+        DtlsSrtpKeyAgreement: 'true',
+        internalSctpDataChannels: 'true'
       }
     );
 
     this._delegate = WebRTCClientDelegate.initWithOwner(new WeakRef(this));
     this.configuration = RTCConfiguration.alloc().init();
+    (this.configuration as any).bundlePolicy = 1; // RTCBundlePolicy.MaxCompat;
+    this.configuration.continualGatheringPolicy = RTCContinualGatheringPolicy.GatherContinually;
     this.connectionFactory = RTCPeerConnectionFactory.alloc().init();
     if (!options.iceServers) {
       this.configuration.iceServers = <any>this.defaultServers.map(server => {
-        return RTCIceServer.alloc().initWithURLStrings(<any>(
-          this.defaultServers
-        ));
+        return RTCIceServer.alloc().initWithURLStrings(<any>[server]);
       });
     } else {
-      // TODO
+      this.configuration.iceServers = <any>options.iceServers.map(server => {
+        return RTCIceServer.alloc().initWithURLStrings(<any>[server]);
+      });
     }
     this.constraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
       <any>{
@@ -212,7 +218,7 @@ export class WebRTC extends Common {
       this.delegate.webRTCClientDidCreateLocalCapturer(this, capturer);
       const videoTrack = factory.videoTrackWithSourceTrackId(
         videoSource,
-        'localVideoTrackId'
+        'localVideoId'
       );
       videoTrack.isEnabled = true;
       localStream.addVideoTrack(videoTrack);
@@ -226,7 +232,8 @@ export class WebRTC extends Common {
     }
 
     if (!AVCaptureState.isAudioDisabled) {
-      const audioTrack = factory.audioTrackWithTrackId('localAudioTrackId');
+      const audioTrack = factory.audioTrackWithTrackId('localAudioId');
+      audioTrack.isEnabled = true;
       localStream.addAudioTrack(audioTrack);
     } else {
       const error = NSError.alloc().initWithDomainCodeUserInfo(
@@ -279,13 +286,17 @@ class RTCPeerConnectionDelegateImpl extends NSObject
   ): void {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
-      console.log('peerConnectionDidAddStream');
-      if (stream.videoTracks.count > 0) {
-        owner.delegate.webRTCClientDidReceiveRemoteVideoTrack(
-          owner,
-          stream.videoTracks[0]
-        );
-      }
+      owner.remoteStream = stream;
+      dispatch_async(dispatch_get_current_queue(), () => {
+        if (stream.videoTracks.count > 0) {
+          owner.remoteTracks.push(stream.videoTracks[0]);
+          owner.delegate.webRTCClientDidReceiveRemoteVideoTrackStream(
+            owner,
+            stream.videoTracks[0],
+            stream
+          );
+        }
+      });
     }
   }
   peerConnectionDidChangeIceConnectionState(
@@ -294,7 +305,6 @@ class RTCPeerConnectionDelegateImpl extends NSObject
   ): void {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
-      console.log('peerConnectionDidChangeIceConnectionState', newState);
       owner.delegate.webRTCClientDidChangeConnectionState(owner, newState);
     }
   }
@@ -304,6 +314,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
   ): void {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
+      console.log('peerConnectionDidChangeIceGatheringState', newState);
     }
   }
   peerConnectionDidChangeSignalingState(
@@ -396,6 +407,7 @@ class WebRTCClientDelegate extends NSObject {
       });
     }
   }
+
   webRTCClientDidReceiveLocalVideoTrack(
     client: WebRTC,
     localVideoTrack: RTCVideoTrack
@@ -411,26 +423,31 @@ class WebRTCClientDelegate extends NSObject {
       });
     }
   }
-  webRTCClientDidReceiveRemoteVideoTrack(
+
+  webRTCClientDidReceiveRemoteVideoTrackStream(
     client: WebRTC,
-    remoteVideoTrack: RTCVideoTrack
+    remoteVideoTrack: RTCVideoTrack,
+    stream: RTCMediaStream
   ) {
     const owner = this._owner ? this._owner.get() : null;
     if (owner) {
       owner.notify({
-        eventName: 'webRTCClientDidReceiveRemoteVideoTrack',
+        eventName: 'webRTCClientDidReceiveRemoteVideoTrackStream',
         object: fromObject({
           client: client,
-          remoteVideoTrack: remoteVideoTrack
+          remoteVideoTrack: remoteVideoTrack,
+          stream: stream
         })
       });
     }
   }
   webRTCClientDidReceiveError(client: WebRTC, error: NSError) {}
+
   webRTCClientDidChangeConnectionState(
     client: WebRTC,
     connectionState: RTCIceConnectionState
   ) {}
+
   webRTCClientDidChangeState(client: WebRTC, state: WebRTCState) {}
 
   webRTCClientDidGenerateIceCandidate(
@@ -468,9 +485,11 @@ export class WebRTCLocalView extends View {
   private _capturer: WebRTCCapturer;
   private _localVideoTrack: any;
   cameraPosition = 'front';
+
   constructor() {
     super();
     this.nativeView = RTCEAGLVideoView.alloc().init();
+    this.nativeView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
   }
 
   set capturer(capturer) {
@@ -594,10 +613,32 @@ export class WebRTCRemoteView extends View {
   constructor() {
     super();
     this.nativeView = RTCEAGLVideoView.alloc().init();
+    this.nativeView.delegate = RTCVideoViewDelegateImpl.initWithOwner(
+      new WeakRef(this)
+    );
   }
 
   set videoTrack(track) {
     this._remoteVideoTrack = track;
     track.addRenderer(this.nativeView);
+    console.log(this.nativeView.frame.size.width);
+    console.log(this.nativeView.frame.size.height);
+  }
+}
+
+class RTCVideoViewDelegateImpl extends NSObject
+  implements RTCVideoViewDelegate {
+  private _owner: WeakRef<WebRTCRemoteView>;
+  public static initWithOwner(owner: WeakRef<WebRTCRemoteView>) {
+    const delegate = new RTCVideoViewDelegateImpl();
+    delegate._owner = owner;
+    return delegate;
+  }
+  videoViewDidChangeVideoSize(videoView: RTCVideoRenderer, size: CGSize): void {
+    console.log(
+      'videoViewDidChangeVideoSize',
+      `width : ${size.width}`,
+      `height: ${size.height}`
+    );
   }
 }

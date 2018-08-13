@@ -13,9 +13,9 @@ export declare class WebRTC extends Common {
     readonly state: WebRTCState;
     readonly delegate: any;
     makeOffer(): void;
-    handleAnswerReceived(remoteSdp);
+    handleAnswerReceived(remoteSdp: string): void;
     addIceCandidate(iceCandidate: RTCIceCandidate): void;
-    createAnswerForOfferReceived(remoteSdp);
+    createAnswerForOfferReceived(remoteSdp: string): void;
     private handleRemoteDescriptionSet();
     private handleSdpGenerated(sdp);
     static init(): void;
@@ -35,5 +35,7 @@ export declare class WebRTCLocalView extends View {
     toggleCamera(): void;
 }
 export declare class WebRTCRemoteView extends View {
+    private _remoteVideoTrack;
     constructor();
+    videoTrack: any;
 }

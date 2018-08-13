@@ -4,14 +4,17 @@ import { SocketIO } from 'nativescript-socketio';
 import { ObservableArray } from 'tns-core-modules/data/observable-array';
 import { ItemEventData } from 'tns-core-modules/ui/list-view';
 import { SocketService } from '~/socket-server';
+import * as settings from 'tns-core-modules/application-settings';
 export class HelloWorldModel extends Observable {
   socketIO: SocketIO;
   items: ObservableArray<any>;
   constructor() {
     super();
     this.items = new ObservableArray([]);
+
     this.socketIO = SocketService.getInstance();
     this.socketIO.on('call:incoming', data => {
+      console.log('typeof', typeof data);
       frame.topmost().navigate({
         moduleName: 'call',
         context: {
@@ -29,6 +32,7 @@ export class HelloWorldModel extends Observable {
     this.socketIO.on('getUsers', data => {
       this.items.push(data);
     });
+
     this.socketIO.emit('getUsers', {});
   }
 
@@ -37,7 +41,8 @@ export class HelloWorldModel extends Observable {
     frame.topmost().navigate({
       moduleName: 'call',
       context: {
-        to: user.username
+        to: user.username,
+        from: settings.getString('me')
       }
     });
   }

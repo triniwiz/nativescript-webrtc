@@ -2,7 +2,7 @@ import { Observable } from 'tns-core-modules/data/observable';
 import { SocketIO } from 'nativescript-socketio';
 import { SocketService } from '~/socket-server';
 import { topmost } from 'tns-core-modules/ui/frame/frame';
-
+import * as settings from 'tns-core-modules/application-settings';
 export class LoginViewModel extends Observable {
   socket: SocketIO;
   username: string;
@@ -19,6 +19,6 @@ export class LoginViewModel extends Observable {
     this.socket.emit('add user', {
       username: this.username
     });
-    SocketService.me = this.username;
+    settings.setString('me', this.username);
   }
 }

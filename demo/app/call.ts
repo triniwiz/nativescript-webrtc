@@ -2,8 +2,7 @@ import * as observable from 'tns-core-modules/data/observable';
 import * as pages from 'tns-core-modules/ui/page';
 import { CallViewModel } from './call-view-model';
 import { NavigatedData } from 'tns-core-modules/ui/page';
-import { SocketService } from '~/socket-server';
-
+import * as settings from 'tns-core-modules/application-settings';
 let page;
 let model: CallViewModel;
 let context;
@@ -14,11 +13,13 @@ export function navigatingTo(args: NavigatedData) {
 }
 
 export function pageLoaded(args: observable.EventData) {
-  model = new CallViewModel();
   page.bindingContext = model;
-  if (context.to.indexOf(SocketService.me) > -1) {
-    model.answer(context.from, context.to, context.sdp);
-  } else {
+
+  if (context.from.indexOf(settings.getString('me')) > -1) {
+    model = new CallViewModel(context.from, context.to);
     model.call(context.to);
+  } else {
+    model = new CallViewModel(context.to, context.from);
+    model.answer(context.from, context.to, context.sdp);
   }
 }
