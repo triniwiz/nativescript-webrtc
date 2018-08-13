@@ -7,10 +7,16 @@ export class WebRTC extends Common {
   private connection: org.webrtc.PeerConnection;
   private connectionFactory: org.webrtc.PeerConnectionFactory;
   private configuration: any;
+  private options: org.webrtc.PeerConnectionFactory.Options;
+  private constraints: org.webrtc.MediaConstraints;
   constructor(
     options: WebRTCOptions = { enableAudio: true, enableVideo: true }
   ) {
     super();
+    this.options = new org.webrtc.PeerConnectionFactory.Options();
+    const builder = org.webrtc.PeerConnectionFactory.builder();
+    builder.setOptions(this.options);
+    this.connectionFactory = builder.createPeerConnectionFactory();
     const iceServers = new java.util.ArrayList();
     if (!options.iceServers) {
       this.defaultServers.forEach(server => {
@@ -21,9 +27,46 @@ export class WebRTC extends Common {
     this.configuration = new org.webrtc.PeerConnection.RTCConfiguration(
       iceServers
     );
+
+    this.constraints = new org.webrtc.MediaConstraints();
+    this.constraints.mandatory.add(
+      new org.webrtc.MediaConstraints.KeyValuePair(
+        'OfferToReceiveAudio',
+        'true'
+      )
+    );
+    this.constraints.mandatory.add(
+      new org.webrtc.MediaConstraints.KeyValuePair(
+        'OfferToReceiveVideo',
+        'true'
+      )
+    );
+
     this.connection = this.connectionFactory.createPeerConnection(
       this.configuration,
-      new ObserverImp(new WeakRef(this))
+      new org.webrtc.PeerConnection.Observer({
+        onAddStream(stream: org.webrtc.MediaStream) {},
+        onRemoveStream(stream: org.webrtc.MediaStream) {},
+        onDataChannel(channel: org.webrtc.DataChannel) {},
+        onIceCandidate(candidate: org.webrtc.IceCandidate) {},
+        onIceCandidatesRemoved(
+          param0: native.Array<org.webrtc.IceCandidate>
+        ) {},
+        onIceConnectionChange(
+          param0: org.webrtc.PeerConnection.IceConnectionState
+        ) {},
+        onIceConnectionReceivingChange(param0: boolean) {},
+        onIceGatheringChange(
+          state: org.webrtc.PeerConnection.IceGatheringState
+        ) {},
+        onAddTrack(
+          param0: org.webrtc.RtpReceiver,
+          param1: native.Array<org.webrtc.MediaStream>
+        ) {},
+        onTrack(param0: org.webrtc.RtpTransceiver) {},
+        onSignalingChange(state: org.webrtc.PeerConnection.SignalingState) {},
+        onRenegotiationNeeded() {}
+      })
     );
   }
 
@@ -38,9 +81,19 @@ export class WebRTC extends Common {
   }
 
   public connect(): void {
+    console.log('connection',this.connection);
     if (!this.connection) return;
+    console.log('before local');
     const localStream = this.getLocalStream();
-    this.connection.addStream(localStream);
+    console.log('after local');
+    console.log('before add');
+    const added = this.connection.addStream(localStream);
+    console.log('stream added', added);
+    console.log('after add');
+    console.log('localstream connect');
+    console.log(localStream &&
+      localStream.videoTracks &&
+      localStream.videoTracks.get(0));
     if (
       localStream &&
       localStream.videoTracks &&
@@ -62,7 +115,7 @@ export class WebRTC extends Common {
     );
     const devicesNames = enumerator.getDeviceNames();
     let videoCapturer = null;
-    for (let i = 0; i > devicesNames.length; i++) {
+    for (let i = 0; i < devicesNames.length; i++) {
       const deviceName = devicesNames[i];
       if (enumerator.isFrontFacing(deviceName)) {
         videoCapturer = enumerator.createCapturer(deviceName, null);
@@ -72,7 +125,7 @@ export class WebRTC extends Common {
       }
     }
 
-    for (let i = 0; i > devicesNames.length; i++) {
+    for (let i = 0; i < devicesNames.length; i++) {
       const deviceName = devicesNames[i];
       if (!enumerator.isFrontFacing(deviceName)) {
         videoCapturer = enumerator.createCapturer(deviceName, null);
@@ -83,6 +136,39 @@ export class WebRTC extends Common {
     }
 
     return videoCapturer;
+  }
+
+  public makeOffer() {
+    this.connection.createOffer(
+      new org.webrtc.SdpObserver({
+        onCreateSuccess(param0: org.webrtc.SessionDescription) {
+          console.log('makeOffer:onCreateSuccess');
+        },
+        onCreateFailure(param0: string) {},
+        onSetFailure(param0: string) {},
+        onSetSuccess() {
+          console.log('makeOffer:onSetSuccess');
+        }
+      }),
+      this.constraints
+    );
+  }
+
+  private handleSdpGenerated(sdp: org.webrtc.SessionDescription) {
+    const owner = new WeakRef(this);
+    this.connection.setLocalDescription(
+      new org.webrtc.SdpObserver({
+        onCreateSuccess(param0: org.webrtc.SessionDescription) {
+          console.log('handleSdpGenerated:onCreateSuccess');
+        },
+        onCreateFailure(param0: string) {},
+        onSetFailure(param0: string) {},
+        onSetSuccess() {
+          console.log('handleSdpGenerated:onSetSuccess');
+        }
+      }),
+      sdp
+    );
   }
 
   public getLocalStream() {
@@ -105,6 +191,8 @@ export class WebRTC extends Common {
       'localVideoTrackId',
       videoSource
     );
+
+    videoTrack.setEnabled(true);
     localStream.addTrack(videoTrack);
 
     const audioConstraints = new org.webrtc.MediaConstraints();
@@ -113,44 +201,24 @@ export class WebRTC extends Common {
       'localAudioTrackId',
       audioSource
     );
-
+    audioTrack.setEnabled(true);
     localStream.addTrack(audioTrack);
 
+    console.log(localStream);
     return localStream;
   }
 }
 
-class ObserverImp extends org.webrtc.PeerConnection.Observer {
-  private _owner: WeakRef<WebRTC>;
-  constructor(owner: WeakRef<WebRTC>) {
-    super();
-    this._owner = owner;
-  }
-  onAddStream(stream: org.webrtc.MediaStream) {}
-  onRemoveStream(stream: org.webrtc.MediaStream) {}
-  onDataChannel(channel: org.webrtc.DataChannel) {}
-  onIceCandidate(candidate: org.webrtc.IceCandidate) {}
-  onIceCandidatesRemoved(param0: native.Array<org.webrtc.IceCandidate>) {}
-  onIceConnectionChange(param0: org.webrtc.PeerConnection.IceConnectionState) {}
-  onIceConnectionReceivingChange(param0: boolean) {}
-  onIceGatheringChange(state: org.webrtc.PeerConnection.IceGatheringState) {}
-  onAddTrack(
-    param0: org.webrtc.RtpReceiver,
-    param1: native.Array<org.webrtc.MediaStream>
-  ) {}
-  onTrack(param0: org.webrtc.RtpTransceiver) {}
-  onSignalingChange(state: org.webrtc.PeerConnection.SignalingState) {}
-  onRenegotiationNeeded() {}
-}
-
 export class WebRTCLocalView extends View {
   private _capturer: WebRTCCapturer;
+
   private _localVideoTrack: org.webrtc.VideoTrack;
 
   createNativeView() {
     const nativeView = new org.webrtc.SurfaceViewRenderer(this._context);
     nativeView.setMirror(true);
-    const rootEglBase = org.webrtc.EglBase.create();
+    const c = (org as any).webrtc.EglBase.extend({});
+    const rootEglBase = c.create();
     nativeView.init(rootEglBase.getEglBaseContext(), null);
     return nativeView;
   }
@@ -169,9 +237,11 @@ export class WebRTCLocalView extends View {
   }
 
   start() {
+    console.log(this._capturer);
     if (!this._capturer) return;
     this._capturer.start();
   }
+
   stop() {
     if (!this._capturer) return;
     this._capturer.stop();
@@ -183,14 +253,27 @@ export class WebRTCLocalView extends View {
 }
 
 export class WebRTCRemoteView extends View {
+  private _remoteVideoTrack: org.webrtc.VideoTrack;
+
   createNativeView() {
-    return new org.webrtc.SurfaceViewRenderer(this._context);
+    const nativeView = new org.webrtc.SurfaceViewRenderer(this._context);
+    nativeView.setMirror(true);
+    const c = (org as any).webrtc.EglBase.extend({});
+    const rootEglBase = c.create();
+    nativeView.init(rootEglBase.getEglBaseContext(), null);
+    return nativeView;
+  }
+
+  set videoTrack(track) {
+    this._remoteVideoTrack = track;
+    track.addSink(this.nativeView);
   }
 }
 
 class WebRTCCapturer {
   private capturer: org.webrtc.CameraVideoCapturer;
   private cameraPosition = 'front';
+
   constructor(capturer) {
     this.capturer = capturer;
   }
