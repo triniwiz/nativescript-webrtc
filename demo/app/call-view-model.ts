@@ -1,18 +1,26 @@
-import { Observable } from 'tns-core-modules/data/observable';
-import { WebRTC, WebRTCRemoteView } from 'nativescript-webrtc';
+import { Observable, fromObject } from 'tns-core-modules/data/observable';
+import {
+  WebRTC,
+  WebRTCView,
+  WebRTCSdpType,
+  WebRTCIceCandidate,
+  WebRTCSdp,
+  Quality
+} from 'nativescript-webrtc-plugin';
 import * as frame from 'tns-core-modules/ui/frame';
 import { SocketIO } from 'nativescript-socketio';
 import { SocketService } from '~/socket-server';
 import { ios } from 'tns-core-modules/utils/utils';
 import { isIOS } from 'tns-core-modules/platform';
 import * as settings from 'tns-core-modules/application-settings';
+import { topmost } from 'tns-core-modules/ui/frame';
 export class CallViewModel extends Observable {
   webrtc: WebRTC;
   socketIO: SocketIO;
   me: string;
   other: string;
-  localStream:any;
-  remoteStream:any;
+  localStream: any;
+  remoteStream: any;
   constructor(me: string, other: string) {
     super();
     this.me = me;
@@ -20,49 +28,54 @@ export class CallViewModel extends Observable {
     this.socketIO = SocketService.getInstance();
 
     this.socketIO.on('call:answer', data => {
-      this.answerCall(data.sdp);
+      this.answerCall({
+        sdp: data.sdp,
+        type: data.type
+      });
     });
 
     this.socketIO.on('call:answered', data => {
-      this.webrtc.handleAnswerReceived(data.sdp);
+      this.webrtc.handleAnswerReceived({ sdp: data.sdp, type: data.type });
     });
 
     this.socketIO.on('call:iceCandidate', data => {
-      this.webrtc.addIceCandidate(data.iceCandidate);
+      const sdpMid = data.sdpMid;
+      const sdpMLineIndex = data.sdpMLineIndex;
+      const sdp = data.sdp;
+      if (this.webrtc) {
+        this.webrtc.addIceCandidate({
+          sdp: sdp,
+          sdpMid: sdpMid,
+          sdpMLineIndex: sdpMLineIndex
+        });
+      }
     });
   }
 
-  call(username) {
+  async call(username) {
     console.log('calling', username);
-    this.webrtc = new WebRTC({});
-    this.webrtc.on('webRTCClientDidCreateLocalCapturer', args => {
-      const object = args.object;
-      const video = frame.topmost().getViewById('localVideoView') as any;
-      if (object && object.get('capturer')) {
-        video.capturer = object.get('capturer');
-      }
+    this.webrtc = new WebRTC({
+      enableAudio: true,
+      enableVideo: true
     });
-
-
-
-    this.webrtc.on('webRTCClientDidReceiveLocalVideoTrack', args => {
-      console.log('localVideoTrack');
-      const object = args.object;
-      const localVideoTrack = object.get('localVideoTrack');
-      if (isIOS) {
-        const device = ios.getter(UIDevice, UIDevice.currentDevice);
-        if(device.name.toLocaleLowerCase().indexOf('pro') > -1) return;
-        if (device.name.toLocaleLowerCase().indexOf('simulator') === -1) {
-          const video = frame.topmost().getViewById('localVideoView') as any;
-          video.videoTrack = localVideoTrack;
-          video.start();
+    if (WebRTC.hasPermissions()) {
+      this.localStream = await this.webrtc.getUserMedia(Quality.HIGHEST);
+      this.notify({
+        eventName: 'localStream',
+        object: fromObject({})
+      });
+    } else {
+      try {
+        await WebRTC.requestPermissions();
+        if (WebRTC.hasPermissions()) {
+          this.localStream = await this.webrtc.getUserMedia(Quality.HIGHEST);
+          this.notify({
+            eventName: 'localStream',
+            object: fromObject({})
+          });
         }
-      } else {
-        const video = frame.topmost().getViewById('localVideoView') as any;
-        video.videoTrack = localVideoTrack;
-        video.start();
-      }
-    });
+      } catch (e) {}
+    }
 
     this.webrtc.on('webRTCClientDidReceiveRemoteVideoTrackStream', args => {
       console.log('remoteVideoTrack');
@@ -72,65 +85,80 @@ export class CallViewModel extends Observable {
       video.videoTrack = remoteVideoTrack;
     });
 
-    this.webrtc.on('webRTCClientStartCallWithSdpType', args => {
-      console.log(
-        'call',
-        'webRTCClientStartCallWithSdpType',
-        args.object.get('type')
-      );
+    this.webrtc.on('webRTCClientStartCallWithSdp', args => {
       const sdp = args.object.get('sdp');
-      if (args.object.get('type') === 'answer') {
-        this.webrtc.handleAnswerReceived(sdp);
+      const type = args.object.get('type') as WebRTCSdpType;
+      console.log('call', 'webRTCClientStartCallWithSdp', type);
+      if (type === 'answer') {
+        this.webrtc.handleAnswerReceived({
+          sdp: sdp,
+          type: type
+        });
       } else {
         this.socketIO.emit('call', {
           from: settings.getString('me'),
           to: username,
-          sdp: sdp
+          sdp: sdp,
+          type: type
         });
       }
     });
 
     this.webrtc.on('webRTCClientDidGenerateIceCandidate', args => {
       const iceCandidate = args.object.get('iceCandidate');
-      this.socketIO.emit('iceCandidate', {
-        to: username,
-        from: settings.getString('me'),
-        iceCandidate: iceCandidate
-      });
+      console.log('webRTCClientDidGenerateIceCandidate: ', iceCandidate);
+      this.socketIO.emit(
+        'iceCandidate',
+        Object.assign(
+          {
+            to: username,
+            from: settings.getString('me')
+          },
+          iceCandidate
+        )
+      );
     });
-
-    setTimeout(() => {
-      this.webrtc.connect();
-      this.webrtc.makeOffer();
-    }, 2000);
+    this.webrtc.connect();
+    this.webrtc.addLocalStream(this.localStream);
+    this.webrtc.makeOffer();
   }
 
-  answer(from, to, sdp) {
-    this.socketIO.emit('answer', {
-      from: from,
-      to: to,
-      sdp: sdp
+  answer(from, to, sdp, type) {
+    // this.socketIO.emit('answer', {
+    //   from: from,
+    //   to: to,
+    //   sdp: sdp,
+    //   type: type
+    // });
+    this.answerCall({
+      sdp: sdp,
+      type: type
     });
   }
 
-  answerCall(sdp, options = { enableVideo: true, enableAudio: true }) {
+  async answerCall(
+    sdp: WebRTCSdp,
+    options = { enableVideo: true, enableAudio: true }
+  ) {
     this.webrtc = new WebRTC(options);
-    this.webrtc.on('webRTCClientDidCreateLocalCapturer', args => {
-      const object = args.object;
-      const video = frame.topmost().getViewById('localVideoView') as any;
-      if (object && object.get('capturer')) {
-        video.capturer = object.get('capturer');
-      }
-    });
-
-    this.webrtc.on('webRTCClientDidReceiveLocalVideoTrack', args => {
-      console.log('answer', 'localVideoTrack');
-      const object = args.object;
-      const localVideoTrack = object.get('localVideoTrack');
-      const video = frame.topmost().getViewById('localVideoView') as any;
-      video.videoTrack = localVideoTrack;
-      video.start();
-    });
+    if (WebRTC.hasPermissions()) {
+      this.localStream = await this.webrtc.getUserMedia(Quality.HIGHEST);
+      this.notify({
+        eventName: 'localStream',
+        object: fromObject({})
+      });
+    } else {
+      try {
+        await WebRTC.requestPermissions();
+        if (WebRTC.hasPermissions()) {
+          this.localStream = await this.webrtc.getUserMedia(Quality.HIGHEST);
+          this.notify({
+            eventName: 'localStream',
+            object: fromObject({})
+          });
+        }
+      } catch (e) {}
+    }
 
     this.webrtc.on('webRTCClientDidReceiveRemoteVideoTrackStream', args => {
       console.log('answer', 'remoteVideoTrack');
@@ -139,36 +167,45 @@ export class CallViewModel extends Observable {
       this.remoteStream = object.get('stream');
       const video = frame
         .topmost()
-        .getViewById('remoteVideoView') as WebRTCRemoteView;
-        video.videoTrack = remoteVideoTrack;
+        .getViewById('remoteVideoView') as WebRTCView;
+      video.videoTrack = remoteVideoTrack;
     });
 
-    this.webrtc.on('webRTCClientStartCallWithSdpType', args => {
-      if (args.object.get('type') === 'answer') {
-        console.log('from', this.me, 'to', this.other);
+    this.webrtc.on('webRTCClientStartCallWithSdp', args => {
+      const sdp = args.object.get('sdp');
+      const type = args.object.get('type') as WebRTCSdpType;
+      console.log('answer', 'webRTCClientStartCallWithSdp', type);
+      if (type === WebRTCSdpType.ANSWER) {
         this.socketIO.emit('answered', {
           from: this.me,
           to: this.other,
-          sdp: sdp
+          sdp: sdp,
+          type: type
         });
       }
     });
 
     this.webrtc.on('webRTCClientDidGenerateIceCandidate', args => {
       console.log('answer', 'webRTCClientDidGenerateIceCandidate');
-      const iceCandidate = args.object.get('iceCandidate');
-      this.socketIO.emit('iceCandidate', {
-        to: this.other,
-        from: this.me,
-        iceCandidate: iceCandidate
-      });
+      const iceCandidate = args.object.get(
+        'iceCandidate'
+      ) as WebRTCIceCandidate;
+      this.socketIO.emit(
+        'iceCandidate',
+        Object.assign(
+          {
+            to: this.other,
+            from: this.me
+          },
+          iceCandidate
+        )
+      );
     });
-
-    setTimeout(() => {
-      this.webrtc.connect();
-      setTimeout(() => {
-        this.webrtc.createAnswerForOfferReceived(sdp);
-      }, 3000);
-    }, 2000);
+    this.webrtc.connect();
+    this.webrtc.addLocalStream(this.localStream);
+    this.webrtc.createAnswerForOfferReceived({
+      type: sdp.type,
+      sdp: sdp.sdp
+    });
   }
 }

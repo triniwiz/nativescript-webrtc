@@ -13,13 +13,20 @@ export function navigatingTo(args: NavigatedData) {
 }
 
 export function pageLoaded(args: observable.EventData) {
-  page.bindingContext = model;
-
   if (context.from.indexOf(settings.getString('me')) > -1) {
     model = new CallViewModel(context.from, context.to);
     model.call(context.to);
   } else {
     model = new CallViewModel(context.to, context.from);
-    model.answer(context.from, context.to, context.sdp);
+    model.answer(context.from, context.to, context.sdp, context.type);
   }
+
+  const localVideo = page.getViewById('localVideoView') as any;
+  localVideo.mirror = true;
+  page.bindingContext = model;
+
+  model.on('localStream', args => {
+    const localStream = model.localStream;
+    localVideo.stream = localStream;
+  });
 }

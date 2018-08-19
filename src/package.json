@@ -1,7 +1,7 @@
 {
-    "name": "nativescript-webrtc",
-    "version": "1.0.0",
-    "description": "Your awesome NativeScript plugin.",
+    "name": "nativescript-webrtc-plugin",
+    "version": "0.0.2",
+    "description": "WebRTC for NativeScript",
     "main": "webrtc",
     "typings": "index.d.ts",
     "nativescript": {
@@ -31,11 +31,12 @@
         "NativeScript",
         "JavaScript",
         "Android",
-        "iOS"
+        "iOS",
+        "webrtc"
     ],
     "author": {
-        "name": "Your Name",
-        "email": "youremail@yourdomain.com"
+        "name": "Osei Fortune",
+        "email": "fortune.osei@yahoo.com"
     },
     "bugs": {
         "url": "https://github.com/triniwiz/nativescript-webrtc/issues"
@@ -52,6 +53,8 @@
         "tslint": "^5.11.0",
         "semver": "^5.5.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "nativescript-permissions": "^1.2.3"
+    },
     "bootstrapper": "nativescript-plugin-seed"
 }

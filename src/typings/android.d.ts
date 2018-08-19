@@ -1061,9 +1061,14 @@ declare module org {
 	export module webrtc {
 		export class HardwareVideoDecoder implements org.webrtc.VideoDecoder, org.webrtc.VideoSink {
 			public static class: java.lang.Class<org.webrtc.HardwareVideoDecoder>;
+			public createSurfaceTextureHelper(): org.webrtc.SurfaceTextureHelper;
+			public deliverDecodedFrame(): void;
+			public copyPlane(param0: java.nio.ByteBuffer, param1: number, param2: java.nio.ByteBuffer, param3: number, param4: number, param5: number): void;
 			public initDecode(param0: org.webrtc.VideoDecoder.Settings, param1: org.webrtc.VideoDecoder.Callback): org.webrtc.VideoCodecStatus;
 			public getImplementationName(): string;
 			public createNativeVideoDecoder(): number;
+			public releaseSurface(): void;
+			public allocateI420Buffer(param0: number, param1: number): org.webrtc.VideoFrame.I420Buffer;
 			public getPrefersLateDecoding(): boolean;
 			public decode(param0: org.webrtc.EncodedImage, param1: org.webrtc.VideoDecoder.DecodeInfo): org.webrtc.VideoCodecStatus;
 			public onFrame(param0: org.webrtc.VideoFrame): void;
@@ -1098,13 +1103,15 @@ declare module org {
 		export class HardwareVideoEncoder extends org.webrtc.VideoEncoder {
 			public static class: java.lang.Class<org.webrtc.HardwareVideoEncoder>;
 			public encode(param0: org.webrtc.VideoFrame, param1: org.webrtc.VideoEncoder.EncodeInfo): org.webrtc.VideoCodecStatus;
+			public constructor(param0: org.webrtc.MediaCodecWrapperFactory, param1: string, param2: org.webrtc.VideoCodecType, param3: java.lang.Integer, param4: java.lang.Integer, param5: java.util.Map<string,string>, param6: number, param7: number, param8: org.webrtc.BitrateAdjuster, param9: org.webrtc.EglBase14.Context);
 			public getScalingSettings(): org.webrtc.VideoEncoder.ScalingSettings;
 			public getImplementationName(): string;
-			public constructor(param0: string, param1: org.webrtc.VideoCodecType, param2: java.lang.Integer, param3: java.lang.Integer, param4: java.util.Map<string,string>, param5: number, param6: number, param7: org.webrtc.BitrateAdjuster, param8: org.webrtc.EglBase14.Context);
+			public deliverEncodedImage(): void;
 			public createNativeVideoEncoder(): number;
 			public isHardwareEncoder(): boolean;
 			public setChannelParameters(param0: number, param1: number): org.webrtc.VideoCodecStatus;
 			public initEncode(param0: org.webrtc.VideoEncoder.Settings, param1: org.webrtc.VideoEncoder.Callback): org.webrtc.VideoCodecStatus;
+			public fillInputBuffer(param0: java.nio.ByteBuffer, param1: org.webrtc.VideoFrame.Buffer): void;
 			public release(): org.webrtc.VideoCodecStatus;
 			public setRateAllocation(param0: org.webrtc.VideoEncoder.BitrateAllocation, param1: number): org.webrtc.VideoCodecStatus;
 		}
@@ -1451,6 +1458,93 @@ declare module org {
 				public static VIDEO_CODEC_H264: org.webrtc.MediaCodecVideoEncoder.VideoCodecType;
 				public static valueOf(param0: string): org.webrtc.MediaCodecVideoEncoder.VideoCodecType;
 				public static values(): native.Array<org.webrtc.MediaCodecVideoEncoder.VideoCodecType>;
+			}
+		}
+	}
+}
+
+declare module org {
+	export module webrtc {
+		export class MediaCodecWrapper {
+			public static class: java.lang.Class<org.webrtc.MediaCodecWrapper>;
+			/**
+			 * Constructs a new instance of the org.webrtc.MediaCodecWrapper interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+			 */
+			public constructor(implementation: {
+				configure(param0: globalAndroid.media.MediaFormat, param1: globalAndroid.view.Surface, param2: globalAndroid.media.MediaCrypto, param3: number): void;
+				start(): void;
+				flush(): void;
+				stop(): void;
+				release(): void;
+				dequeueInputBuffer(param0: number): number;
+				queueInputBuffer(param0: number, param1: number, param2: number, param3: number, param4: number): void;
+				dequeueOutputBuffer(param0: globalAndroid.media.MediaCodec.BufferInfo, param1: number): number;
+				releaseOutputBuffer(param0: number, param1: boolean): void;
+				getOutputFormat(): globalAndroid.media.MediaFormat;
+				getInputBuffers(): native.Array<java.nio.ByteBuffer>;
+				getOutputBuffers(): native.Array<java.nio.ByteBuffer>;
+				createInputSurface(): globalAndroid.view.Surface;
+				setParameters(param0: globalAndroid.os.Bundle): void;
+			});
+			public constructor();
+			public flush(): void;
+			public getInputBuffers(): native.Array<java.nio.ByteBuffer>;
+			public dequeueOutputBuffer(param0: globalAndroid.media.MediaCodec.BufferInfo, param1: number): number;
+			public configure(param0: globalAndroid.media.MediaFormat, param1: globalAndroid.view.Surface, param2: globalAndroid.media.MediaCrypto, param3: number): void;
+			public dequeueInputBuffer(param0: number): number;
+			public getOutputBuffers(): native.Array<java.nio.ByteBuffer>;
+			public stop(): void;
+			public releaseOutputBuffer(param0: number, param1: boolean): void;
+			public setParameters(param0: globalAndroid.os.Bundle): void;
+			public queueInputBuffer(param0: number, param1: number, param2: number, param3: number, param4: number): void;
+			public createInputSurface(): globalAndroid.view.Surface;
+			public start(): void;
+			public release(): void;
+			public getOutputFormat(): globalAndroid.media.MediaFormat;
+		}
+	}
+}
+
+declare module org {
+	export module webrtc {
+		export class MediaCodecWrapperFactory {
+			public static class: java.lang.Class<org.webrtc.MediaCodecWrapperFactory>;
+			/**
+			 * Constructs a new instance of the org.webrtc.MediaCodecWrapperFactory interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+			 */
+			public constructor(implementation: {
+				createByCodecName(param0: string): org.webrtc.MediaCodecWrapper;
+			});
+			public constructor();
+			public createByCodecName(param0: string): org.webrtc.MediaCodecWrapper;
+		}
+	}
+}
+
+declare module org {
+	export module webrtc {
+		export class MediaCodecWrapperFactoryImpl extends org.webrtc.MediaCodecWrapperFactory {
+			public static class: java.lang.Class<org.webrtc.MediaCodecWrapperFactoryImpl>;
+			public createByCodecName(param0: string): org.webrtc.MediaCodecWrapper;
+		}
+		export module MediaCodecWrapperFactoryImpl {
+			export class MediaCodecWrapperImpl extends org.webrtc.MediaCodecWrapper {
+				public static class: java.lang.Class<org.webrtc.MediaCodecWrapperFactoryImpl.MediaCodecWrapperImpl>;
+				public releaseOutputBuffer(param0: number, param1: boolean): void;
+				public release(): void;
+				public getOutputBuffers(): native.Array<java.nio.ByteBuffer>;
+				public createInputSurface(): globalAndroid.view.Surface;
+				public setParameters(param0: globalAndroid.os.Bundle): void;
+				public constructor(param0: globalAndroid.media.MediaCodec);
+				public queueInputBuffer(param0: number, param1: number, param2: number, param3: number, param4: number): void;
+				public flush(): void;
+				public configure(param0: globalAndroid.media.MediaFormat, param1: globalAndroid.view.Surface, param2: globalAndroid.media.MediaCrypto, param3: number): void;
+				public stop(): void;
+				public dequeueInputBuffer(param0: number): number;
+				public getOutputFormat(): globalAndroid.media.MediaFormat;
+				public start(): void;
+				public dequeueOutputBuffer(param0: globalAndroid.media.MediaCodec.BufferInfo, param1: number): number;
+				public getInputBuffers(): native.Array<java.nio.ByteBuffer>;
 			}
 		}
 	}
@@ -2220,16 +2314,11 @@ declare module org {
 	export module webrtc {
 		export class RendererCommon {
 			public static class: java.lang.Class<org.webrtc.RendererCommon>;
-			public static multiplyMatrices(param0: native.Array<number>, param1: native.Array<number>): native.Array<number>;
 			public static convertMatrixFromAndroidGraphicsMatrix(param0: globalAndroid.graphics.Matrix): native.Array<number>;
 			public static getDisplaySize(param0: org.webrtc.RendererCommon.ScalingType, param1: number, param2: number, param3: number): globalAndroid.graphics.Point;
-			public static rotateTextureMatrix(param0: native.Array<number>, param1: number): native.Array<number>;
-			public static horizontalFlipMatrix(): native.Array<number>;
 			public static getLayoutMatrix(param0: boolean, param1: number, param2: number): native.Array<number>;
 			public static convertMatrixToAndroidGraphicsMatrix(param0: native.Array<number>): globalAndroid.graphics.Matrix;
-			public static verticalFlipMatrix(): native.Array<number>;
 			public constructor();
-			public static identityMatrix(): native.Array<number>;
 		}
 		export module RendererCommon {
 			export class GlDrawer {

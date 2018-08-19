@@ -1,302 +1,523 @@
-import { Common, WebRTCOptions } from './webrtc.common';
+import {
+  Common,
+  IceConnectionState,
+  IceGatheringState,
+  Quality,
+  SignalingState,
+  WebRTCDataChannelMessageType,
+  WebRTCDataChannelState,
+  WebRTCOptions,
+  WebRTCSdpType,
+  WebRTCSdp,
+  WebRTCIceCandidate
+} from './webrtc.common';
+export * from './webrtc.common';
 import { fromObject } from 'tns-core-modules/data/observable';
 import { View } from 'tns-core-modules/ui/core/view/view';
-import { device } from 'tns-core-modules/platform/platform';
 import { ad } from 'tns-core-modules/utils/utils';
+import './async-await';
+import * as permissions from 'nativescript-permissions';
+import * as types from 'tns-core-modules/utils/types';
 export class WebRTC extends Common {
   private connection: org.webrtc.PeerConnection;
   private connectionFactory: org.webrtc.PeerConnectionFactory;
   private configuration: any;
   private options: org.webrtc.PeerConnectionFactory.Options;
   private constraints: org.webrtc.MediaConstraints;
+
+  private webrtc: co.fitcom.fancywebrtc.FancyWebRTC;
+
   constructor(
     options: WebRTCOptions = { enableAudio: true, enableVideo: true }
   ) {
     super();
-    this.options = new org.webrtc.PeerConnectionFactory.Options();
-    const builder = org.webrtc.PeerConnectionFactory.builder();
-    builder.setOptions(this.options);
-    this.connectionFactory = builder.createPeerConnectionFactory();
-    const iceServers = new java.util.ArrayList();
-    if (!options.iceServers) {
-      this.defaultServers.forEach(server => {
-        const iceServer = new org.webrtc.PeerConnection.IceServer(server);
-        iceServers.add(iceServer);
+    /* video , audio */
+    let nativeIceServers: java.util.ArrayList<any>;
+    if (options.iceServers) {
+      nativeIceServers = new java.util.ArrayList();
+      options.iceServers.forEach(iceServer => {
+        const server = org.webrtc.PeerConnection.IceServer.builder(
+          iceServer.url
+        );
+        if (iceServer.username) {
+          server.setUsername(iceServer.username);
+        }
+
+        if (iceServer.password) {
+          server.setPassword(iceServer.password);
+        }
+        nativeIceServers.add(server.createIceServer());
       });
     }
-    this.configuration = new org.webrtc.PeerConnection.RTCConfiguration(
-      iceServers
-    );
 
-    this.constraints = new org.webrtc.MediaConstraints();
-    this.constraints.mandatory.add(
-      new org.webrtc.MediaConstraints.KeyValuePair(
-        'OfferToReceiveAudio',
-        'true'
-      )
-    );
-    this.constraints.mandatory.add(
-      new org.webrtc.MediaConstraints.KeyValuePair(
-        'OfferToReceiveVideo',
-        'true'
-      )
-    );
+    if (nativeIceServers) {
+      this.webrtc = new co.fitcom.fancywebrtc.FancyWebRTC(
+        ad.getApplicationContext(),
+        !!options.enableVideo,
+        !!options.enableAudio,
+        nativeIceServers
+      );
+    } else {
+      this.webrtc = new co.fitcom.fancywebrtc.FancyWebRTC(
+        ad.getApplicationContext(),
+        !!options.enableVideo,
+        !!options.enableAudio
+      );
+    }
 
-    this.connection = this.connectionFactory.createPeerConnection(
-      this.configuration,
-      new org.webrtc.PeerConnection.Observer({
-        onAddStream(stream: org.webrtc.MediaStream) {},
-        onRemoveStream(stream: org.webrtc.MediaStream) {},
-        onDataChannel(channel: org.webrtc.DataChannel) {},
-        onIceCandidate(candidate: org.webrtc.IceCandidate) {},
-        onIceCandidatesRemoved(
-          param0: native.Array<org.webrtc.IceCandidate>
-        ) {},
-        onIceConnectionChange(
-          param0: org.webrtc.PeerConnection.IceConnectionState
-        ) {},
-        onIceConnectionReceivingChange(param0: boolean) {},
-        onIceGatheringChange(
-          state: org.webrtc.PeerConnection.IceGatheringState
-        ) {},
-        onAddTrack(
-          param0: org.webrtc.RtpReceiver,
-          param1: native.Array<org.webrtc.MediaStream>
-        ) {},
-        onTrack(param0: org.webrtc.RtpTransceiver) {},
-        onSignalingChange(state: org.webrtc.PeerConnection.SignalingState) {},
-        onRenegotiationNeeded() {}
+    const ref = new WeakRef(this);
+    this.webrtc.setListener(
+      new co.fitcom.fancywebrtc.FancyWebRTCListener({
+        webRTCClientDidReceiveError(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: string
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientDidReceiveError',
+            object: fromObject({
+              client: owner,
+              error: param1
+            })
+          });
+        },
+        webRTCClientStartCallWithSdp(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.SessionDescription
+        ): void {
+          const owner = ref.get();
+          let type;
+          switch (param1.type) {
+            case org.webrtc.SessionDescription.Type.OFFER:
+              type = WebRTCSdpType.OFFER;
+              break;
+            case org.webrtc.SessionDescription.Type.PRANSWER:
+              type = WebRTCSdpType.PRANSWER;
+              break;
+            case org.webrtc.SessionDescription.Type.ANSWER:
+              type = WebRTCSdpType.ANSWER;
+              break;
+          }
+          owner.notify({
+            eventName: 'webRTCClientStartCallWithSdp',
+            object: fromObject({
+              client: owner,
+              sdp: param1.description,
+              type: type
+            })
+          });
+        },
+        webRTCClientDataChannelStateChanged(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: string,
+          param2: org.webrtc.DataChannel.State
+        ): void {
+          const owner = ref.get();
+          let state;
+          switch (param2) {
+            case org.webrtc.DataChannel.State.CONNECTING:
+              state = WebRTCDataChannelState.CONNECTING;
+              break;
+            case org.webrtc.DataChannel.State.CLOSED:
+              state = WebRTCDataChannelState.CLOSED;
+              break;
+            case org.webrtc.DataChannel.State.CLOSING:
+              state = WebRTCDataChannelState.CLOSING;
+              break;
+            case org.webrtc.DataChannel.State.OPEN:
+              state = WebRTCDataChannelState.OPEN;
+              break;
+          }
+          owner.notify({
+            eventName: 'webRTCClientDataChannelStateChanged',
+            object: fromObject({
+              client: owner,
+              name: param1,
+              state: state
+            })
+          });
+        },
+        webRTCClientDataChannelMessageType(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: string,
+          param2: string,
+          param3: co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType
+        ): void {
+          const owner = ref.get();
+          let type;
+          switch (param3) {
+            case co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType.TEXT:
+              type = WebRTCDataChannelMessageType.TEXT;
+              break;
+            case co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType
+              .BINARY:
+              type = WebRTCDataChannelMessageType.BINARY;
+              break;
+          }
+          owner.notify({
+            eventName: 'webRTCClientDataChannelMessageType',
+            object: fromObject({
+              client: owner,
+              name: param1,
+              message: param2,
+              type: type
+            })
+          });
+        },
+        webRTCClientOnRemoveStream(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.MediaStream
+        ): void {},
+        webRTCClientDidReceiveRemoteVideoTrackStream(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.VideoTrack,
+          param2: org.webrtc.MediaStream
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientDidReceiveRemoteVideoTrackStream',
+            object: fromObject({
+              client: owner,
+              remoteVideoTrack: param1,
+              stream: param2
+            })
+          });
+        },
+        webRTCClientDidGenerateIceCandidate(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.IceCandidate
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientDidGenerateIceCandidate',
+            object: fromObject({
+              client: owner,
+              iceCandidate: <WebRTCIceCandidate>{
+                sdp: param1.sdp,
+                sdpMid: param1.sdpMid,
+                sdpMLineIndex: param1.sdpMLineIndex
+              }
+            })
+          });
+        },
+        webRTCClientOnRenegotiationNeeded(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientOnRenegotiationNeeded',
+            object: fromObject({
+              client: owner
+            })
+          });
+        },
+        webRTCClientOnIceCandidatesRemoved(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: native.Array<org.webrtc.IceCandidate>
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientOnRenegotiationNeeded',
+            object: fromObject({
+              client: owner,
+              candidates: param1
+            })
+          });
+        },
+        webRTCClientOnIceConnectionChange(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.PeerConnection.IceConnectionState
+        ): void {
+          const owner = ref.get();
+          let state;
+          switch (param1) {
+            case org.webrtc.PeerConnection.IceConnectionState.NEW:
+              state = IceConnectionState.NEW;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.CHECKING:
+              state = IceConnectionState.CHECKING;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.CONNECTED:
+              state = IceConnectionState.CONNECTED;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.COMPLETED:
+              state = IceConnectionState.COMPLETED;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.FAILED:
+              state = IceConnectionState.FAILED;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.DISCONNECTED:
+              state = IceConnectionState.DISCONNECTED;
+              break;
+            case org.webrtc.PeerConnection.IceConnectionState.CLOSED:
+              state = IceConnectionState.CLOSED;
+              break;
+          }
+          owner.notify({
+            eventName: 'webRTCClientOnIceConnectionChange',
+            object: fromObject({
+              client: owner,
+              state: state
+            })
+          });
+        },
+        webRTCClientOnIceConnectionReceivingChange(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: boolean
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientOnIceConnectionReceivingChange',
+            object: fromObject({
+              client: owner,
+              change: param1
+            })
+          });
+        },
+        webRTCClientOnIceGatheringChange(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.PeerConnection.IceGatheringState
+        ): void {
+          const owner = ref.get();
+          let state;
+          switch (param1) {
+            case org.webrtc.PeerConnection.IceGatheringState.NEW:
+              state = IceGatheringState.NEW;
+              break;
+            case org.webrtc.PeerConnection.IceGatheringState.GATHERING:
+              state = IceGatheringState.GATHERING;
+              break;
+            case org.webrtc.PeerConnection.IceGatheringState.COMPLETE:
+              state = IceGatheringState.COMPLETE;
+              break;
+          }
+          owner.notify({
+            eventName: 'webRTCClientOnIceGatheringChange',
+            object: fromObject({
+              client: owner,
+              state: state
+            })
+          });
+        },
+        webRTCClientOnSignalingChange(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: org.webrtc.PeerConnection.SignalingState
+        ): void {
+          const owner = ref.get();
+          let state;
+          switch (param0) {
+            case org.webrtc.PeerConnection.SignalingState.CLOSED:
+              state = SignalingState.CLOSED;
+              break;
+            case org.webrtc.PeerConnection.SignalingState.HAVE_LOCAL_OFFER:
+              state = SignalingState.HAVE_LOCAL_OFFER;
+              break;
+            case org.webrtc.PeerConnection.SignalingState.HAVE_LOCAL_PRANSWER:
+              state = SignalingState.HAVE_LOCAL_PRANSWER;
+              break;
+            case org.webrtc.PeerConnection.SignalingState.HAVE_REMOTE_OFFER:
+              state = SignalingState.HAVE_REMOTE_OFFER;
+              break;
+            case org.webrtc.PeerConnection.SignalingState.HAVE_REMOTE_PRANSWER:
+              state = SignalingState.HAVE_REMOTE_PRANSWER;
+              break;
+            case org.webrtc.PeerConnection.SignalingState.STABLE:
+              state = SignalingState.STABLE;
+              break;
+          }
+
+          owner.notify({
+            eventName: 'webRTCClientOnIceGatheringChange',
+            object: fromObject({
+              client: owner,
+              state: state
+            })
+          });
+        },
+        webRTCClientOnCameraSwitchDone(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: boolean
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientOnCameraSwitchDone',
+            object: fromObject({
+              client: owner,
+              done: param1
+            })
+          });
+        },
+        webRTCClientOnCameraSwitchError(
+          param0: co.fitcom.fancywebrtc.FancyWebRTC,
+          param1: string
+        ): void {
+          const owner = ref.get();
+          owner.notify({
+            eventName: 'webRTCClientOnCameraSwitchError',
+            object: fromObject({
+              client: owner,
+              message: param1
+            })
+          });
+        }
       })
     );
   }
 
+  public static requestPermissions(explanation?: string): Promise<any> {
+    return permissions.requestPermission(
+      [
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.RECORD_AUDIO
+      ],
+      explanation
+    );
+  }
+
+  public static hasPermissions(): boolean {
+    return (
+      permissions.hasPermission(android.Manifest.permission.CAMERA) &&
+      permissions.hasPermission(android.Manifest.permission.RECORD_AUDIO)
+    );
+  }
   public static init(): void {
-    const options = org.webrtc.PeerConnectionFactory.InitializationOptions.builder(
-      ad.getApplicationContext()
-    );
-    options.setEnableVideoHwAcceleration(true);
-    org.webrtc.PeerConnectionFactory.initialize(
-      options.createInitializationOptions()
-    );
+    co.fitcom.fancywebrtc.FancyWebRTC.init(ad.getApplicationContext());
   }
 
+  public handleAnswerReceived(answer: WebRTCSdp) {
+    let nativeType;
+    switch (answer.type) {
+      case WebRTCSdpType.ANSWER:
+        nativeType = org.webrtc.SessionDescription.Type.ANSWER;
+        break;
+      case WebRTCSdpType.OFFER:
+        nativeType = org.webrtc.SessionDescription.Type.OFFER;
+        break;
+      case WebRTCSdpType.PRANSWER:
+        nativeType = org.webrtc.SessionDescription.Type.PRANSWER;
+        break;
+    }
+    const sdp = new org.webrtc.SessionDescription(nativeType, answer.sdp);
+    this.webrtc.handleAnswerReceived(sdp);
+  }
   public connect(): void {
-    console.log('connection',this.connection);
-    if (!this.connection) return;
-    console.log('before local');
-    const localStream = this.getLocalStream();
-    console.log('after local');
-    console.log('before add');
-    const added = this.connection.addStream(localStream);
-    console.log('stream added', added);
-    console.log('after add');
-    console.log('localstream connect');
-    console.log(localStream &&
-      localStream.videoTracks &&
-      localStream.videoTracks.get(0));
-    if (
-      localStream &&
-      localStream.videoTracks &&
-      localStream.videoTracks.get(0)
-    ) {
-      this.notify({
-        eventName: 'webRTCClientDidReceiveLocalVideoTrack',
-        object: fromObject({
-          client: this,
-          localVideoTrack: localStream.videoTracks.get(0)
-        })
-      });
+    if (!this.webrtc) return;
+    this.webrtc.connect();
+  }
+
+  public disconnect(): void {
+    if (this.webrtc) {
+      this.webrtc.disconnect();
     }
   }
 
-  private createCapturer() {
-    const enumerator = new org.webrtc.Camera2Enumerator(
-      ad.getApplicationContext()
+  public micEnabled(enabled: boolean) {
+    this.webrtc.micEnabled(enabled);
+  }
+
+  public toggleMic(): void {
+    this.webrtc.toggleMic();
+  }
+
+  public speakerEnabled(enabled: boolean) {
+    this.webrtc.speakerEnabled(enabled);
+  }
+
+  public createAnswerForOfferReceived(sdp: WebRTCSdp) {
+    const nativeSdp = new org.webrtc.SessionDescription(
+      org.webrtc.SessionDescription.Type.OFFER,
+      sdp.sdp
     );
-    const devicesNames = enumerator.getDeviceNames();
-    let videoCapturer = null;
-    for (let i = 0; i < devicesNames.length; i++) {
-      const deviceName = devicesNames[i];
-      if (enumerator.isFrontFacing(deviceName)) {
-        videoCapturer = enumerator.createCapturer(deviceName, null);
-        if (videoCapturer) {
-          return videoCapturer;
-        }
-      }
-    }
-
-    for (let i = 0; i < devicesNames.length; i++) {
-      const deviceName = devicesNames[i];
-      if (!enumerator.isFrontFacing(deviceName)) {
-        videoCapturer = enumerator.createCapturer(deviceName, null);
-        if (videoCapturer) {
-          return videoCapturer;
-        }
-      }
-    }
-
-    return videoCapturer;
+    this.webrtc.createAnswerForOfferReceived(
+      nativeSdp,
+      new org.webrtc.MediaConstraints()
+    );
   }
 
   public makeOffer() {
-    this.connection.createOffer(
-      new org.webrtc.SdpObserver({
-        onCreateSuccess(param0: org.webrtc.SessionDescription) {
-          console.log('makeOffer:onCreateSuccess');
-        },
-        onCreateFailure(param0: string) {},
-        onSetFailure(param0: string) {},
-        onSetSuccess() {
-          console.log('makeOffer:onSetSuccess');
-        }
-      }),
-      this.constraints
-    );
+    if (this.webrtc != null) {
+      this.webrtc.makeOffer(new org.webrtc.MediaConstraints());
+    }
   }
 
-  private handleSdpGenerated(sdp: org.webrtc.SessionDescription) {
-    const owner = new WeakRef(this);
-    this.connection.setLocalDescription(
-      new org.webrtc.SdpObserver({
-        onCreateSuccess(param0: org.webrtc.SessionDescription) {
-          console.log('handleSdpGenerated:onCreateSuccess');
-        },
-        onCreateFailure(param0: string) {},
-        onSetFailure(param0: string) {},
-        onSetSuccess() {
-          console.log('handleSdpGenerated:onSetSuccess');
-        }
-      }),
-      sdp
+  public addLocalStream(stream: any) {
+    this.webrtc.addLocalStream(stream);
+  }
+  public addIceCandidate(iceCandidate: WebRTCIceCandidate) {
+    const candidate = new org.webrtc.IceCandidate(
+      iceCandidate.sdpMid,
+      iceCandidate.sdpMLineIndex,
+      iceCandidate.sdp
     );
+    this.webrtc.addIceCandidate(candidate);
+  }
+  public enableTrack(trackId: string, enable: boolean) {
+    this.webrtc.enableTrack(trackId, enable);
   }
 
-  public getLocalStream() {
-    const factory = this.connectionFactory;
-    const localStream = factory.createLocalMediaStream('localStream');
+  public getUserMedia(quality?: Quality): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.LOWEST;
+      switch (quality) {
+        case Quality.HIGHEST:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.HIGHEST;
+          break;
+        case Quality.MAX_480P:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.MAX_480P;
+          break;
+        case Quality.MAX_720P:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.MAX_720P;
+          break;
+        case Quality.MAX_1080P:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.MAX_1080P;
+          break;
+        case Quality.MAX_2160P:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.MAX_2160P;
+          break;
+        default:
+          nativeQuality = co.fitcom.fancywebrtc.FancyWebRTC.Quality.LOWEST;
+          break;
+      }
 
-    const videoSource = factory.createVideoSource(true);
-
-    let capturer = this.createCapturer();
-
-    this.notify({
-      eventName: 'webRTCClientDidCreateLocalCapturer',
-      object: fromObject({
-        client: this,
-        capturer: capturer
-      })
+      this.webrtc.getUserMedia(
+        nativeQuality,
+        new co.fitcom.fancywebrtc.FancyWebRTCListener.GetUserMediaListener({
+          webRTCClientOnGetUserMedia(
+            param0: co.fitcom.fancywebrtc.FancyWebRTC,
+            param1: org.webrtc.MediaStream
+          ): void {
+            resolve(param1);
+          },
+          webRTCClientOnGetUserMediaDidReceiveError(
+            param0: co.fitcom.fancywebrtc.FancyWebRTC,
+            param1: string
+          ): void {
+            reject(param1);
+          }
+        })
+      );
     });
-
-    const videoTrack = factory.createVideoTrack(
-      'localVideoTrackId',
-      videoSource
-    );
-
-    videoTrack.setEnabled(true);
-    localStream.addTrack(videoTrack);
-
-    const audioConstraints = new org.webrtc.MediaConstraints();
-    const audioSource = factory.createAudioSource(audioConstraints);
-    const audioTrack = factory.createAudioTrack(
-      'localAudioTrackId',
-      audioSource
-    );
-    audioTrack.setEnabled(true);
-    localStream.addTrack(audioTrack);
-
-    console.log(localStream);
-    return localStream;
   }
 }
 
-export class WebRTCLocalView extends View {
-  private _capturer: WebRTCCapturer;
-
-  private _localVideoTrack: org.webrtc.VideoTrack;
-
+export class WebRTCView extends View {
+  private _stream: any;
   createNativeView() {
-    const nativeView = new org.webrtc.SurfaceViewRenderer(this._context);
-    nativeView.setMirror(true);
-    const c = (org as any).webrtc.EglBase.extend({});
-    const rootEglBase = c.create();
-    nativeView.init(rootEglBase.getEglBaseContext(), null);
-    return nativeView;
+    return new co.fitcom.fancywebrtc.FancyWebRTCView(this._context, null);
   }
 
-  set capturer(capturer) {
-    this._capturer = capturer;
+  set mirror(mirror: boolean) {
+    this.nativeView.setMirror(mirror);
   }
 
-  set videoTrack(track) {
-    this._localVideoTrack = track;
-    track.addSink(this.nativeView);
+  set videoTrack(track: any) {
+    this.nativeView.setVideoTrack(track);
   }
 
-  get capturer(): any {
-    return this._capturer;
-  }
-
-  start() {
-    console.log(this._capturer);
-    if (!this._capturer) return;
-    this._capturer.start();
-  }
-
-  stop() {
-    if (!this._capturer) return;
-    this._capturer.stop();
-  }
-  toggleCamera() {
-    if (!this._capturer) return;
-    this._capturer.toggleCamera();
-  }
-}
-
-export class WebRTCRemoteView extends View {
-  private _remoteVideoTrack: org.webrtc.VideoTrack;
-
-  createNativeView() {
-    const nativeView = new org.webrtc.SurfaceViewRenderer(this._context);
-    nativeView.setMirror(true);
-    const c = (org as any).webrtc.EglBase.extend({});
-    const rootEglBase = c.create();
-    nativeView.init(rootEglBase.getEglBaseContext(), null);
-    return nativeView;
-  }
-
-  set videoTrack(track) {
-    this._remoteVideoTrack = track;
-    track.addSink(this.nativeView);
-  }
-}
-
-class WebRTCCapturer {
-  private capturer: org.webrtc.CameraVideoCapturer;
-  private cameraPosition = 'front';
-
-  constructor(capturer) {
-    this.capturer = capturer;
-  }
-  start() {
-    let targetHeight = '640';
-    let targetWidth = '480';
-    this.capturer.startCapture(
-      parseInt(targetWidth),
-      parseInt(targetHeight),
-      30
-    );
-  }
-
-  stop() {
-    this.capturer.stopCapture();
-  }
-
-  toggleCamera() {
-    this.capturer.switchCamera(
-      new org.webrtc.CameraCapturer.CameraSwitchHandler({
-        onCameraSwitchDone(done: boolean): void {},
-        onCameraSwitchError(error: string): void {}
-      })
-    );
+  set stream(stream: any) {
+    this._stream = stream;
+    if (stream.videoTracks && stream.videoTracks.size() > 0) {
+      this.videoTrack = stream.videoTracks.get(0);
+    }
   }
 }

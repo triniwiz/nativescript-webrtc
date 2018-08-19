@@ -20,7 +20,8 @@ export class HelloWorldModel extends Observable {
         context: {
           to: data.to,
           from: data.from,
-          sdp: data.sdp
+          sdp: data.sdp,
+          type: data.type
         }
       });
     });
