@@ -4,6 +4,9 @@
 [![npm](https://img.shields.io/npm/dt/nativescript-webrtc-plugin.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-webrtc-plugin)
 [![Build Status](https://travis-ci.org/triniwiz/nativescript-webrtc-plugin.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-webrtc-plugin)
 
+### Android Lib
+https://github.com/triniwiz/fancywebrtc
+
 ## Installation
 
 - `tns plugin add nativescript-webrtc-plugin`
