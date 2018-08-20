@@ -1,18 +1,17 @@
-import { Common, Quality, WebRTCOptions, WebRTCSdp, WebRTCIceCandidate } from './webrtc.common';
-export * from './webrtc.common';
-import { View } from 'tns-core-modules/ui/core/view/view';
+import { Common, Quality, WebRTCDataChannelMessageType, WebRTCIceCandidate, WebRTCOptions, WebRTCSdp } from './webrtc.common';
 import './async-await';
+import { View } from 'tns-core-modules/ui/core/view';
+export * from './webrtc.common';
 export declare class WebRTC extends Common {
-    private connection;
-    private connectionFactory;
-    private configuration;
-    private options;
-    private constraints;
     private webrtc;
     constructor(options?: WebRTCOptions);
     static requestPermissions(explanation?: string): Promise<any>;
     static hasPermissions(): boolean;
     static init(): void;
+    dataChannelSend(name: string, data: string, type: WebRTCDataChannelMessageType): void;
+    dataChannelClose(name: string): void;
+    dataChannelCreate(name: string): void;
+    switchCamera(trackId: string): void;
     handleAnswerReceived(answer: WebRTCSdp): void;
     connect(): void;
     disconnect(): void;
@@ -28,7 +27,6 @@ export declare class WebRTC extends Common {
 }
 export declare class WebRTCView extends View {
     private _stream;
-    createNativeView(): any;
     mirror: boolean;
     videoTrack: any;
     stream: any;

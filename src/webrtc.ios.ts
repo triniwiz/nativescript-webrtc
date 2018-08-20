@@ -1,601 +1,1215 @@
 import {
-  Common,
-  WebRTCOptions,
-  WebRTCSdpType,
-  WebRTCState
+    Common,
+    IceConnectionState,
+    IceGatheringState,
+    Quality,
+    SignalingState,
+    WebRTCDataChannelMessageType,
+    WebRTCDataChannelState,
+    WebRTCIceCandidate,
+    WebRTCOptions,
+    WebRTCSdp,
+    WebRTCSdpType
 } from './webrtc.common';
 import { View } from 'tns-core-modules/ui/core/view';
-import { fromObject } from 'tns-core-modules/data/observable/observable';
+import { fromObject } from 'tns-core-modules/data/observable';
 import './async-await';
 
+import { ios } from 'tns-core-modules/utils/utils';
+
+export * from './webrtc.common';
+
 declare var RTCSdpType: any, RTCSessionDescription;
+
 enum ErrorDomain {
-  videoPermissionDenied = 'Video permission denied',
-  audioPermissionDenied = 'Audio permission denied'
+    videoPermissionDenied = 'Video permission denied',
+    audioPermissionDenied = 'Audio permission denied'
 }
 
 export class WebRTC extends Common {
-  private connection: any;
-  private connectionFactory: any;
-  private configuration: RTCConfiguration;
-  private constraints: any;
-  private _state: WebRTCState;
-  private _delegate: WebRTCClientDelegate;
-  private defaultConnectionConstraints: RTCMediaConstraints;
-  private remoteIceCandidates: any;
-  remoteStream;
-  remoteTracks: any[];
+    private connection: any;
+    private connectionFactory: any;
+    private configuration: RTCConfiguration;
+    private constraints: any;
+    private _delegate: WebRTCClientDelegate;
+    private defaultConnectionConstraints: RTCMediaConstraints;
+    private remoteIceCandidates: any;
+    remoteStream;
+    remoteTracks: any[];
+    private tracks: Map<String, MediaData> = new Map();
+    private localStreams: Map<String, any> = new Map();
+    private remoteStreams: Map<String, any> = new Map();
+    private _dataChannels: Map<String, any> = new Map();
 
-  constructor(
-    options: WebRTCOptions = { enableAudio: true, enableVideo: true }
-  ) {
-    super();
-    this.remoteTracks = [];
-    this.remoteIceCandidates = [];
-    this.defaultConnectionConstraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
-      null,
-      <any>{
-        DtlsSrtpKeyAgreement: 'true',
-        internalSctpDataChannels: 'true'
-      }
-    );
+    constructor(
+        options: WebRTCOptions = {enableAudio: true, enableVideo: true}
+    ) {
+        super();
+        this.remoteTracks = [];
+        this.remoteIceCandidates = [];
+        this.defaultConnectionConstraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
+            null,
+            <any>{
+                DtlsSrtpKeyAgreement: 'true',
+                internalSctpDataChannels: 'true'
+            }
+        );
 
-    this._delegate = WebRTCClientDelegate.initWithOwner(new WeakRef(this));
-    this.configuration = RTCConfiguration.alloc().init();
-    (this.configuration as any).bundlePolicy = 1; // RTCBundlePolicy.MaxCompat;
-    this.configuration.continualGatheringPolicy =
-      RTCContinualGatheringPolicy.GatherContinually;
-    this.connectionFactory = RTCPeerConnectionFactory.alloc().init();
-    if (!options.iceServers) {
-      this.configuration.iceServers = <any>this.defaultServers.map(server => {
-        return RTCIceServer.alloc().initWithURLStrings(<any>[server]);
-      });
-    } else {
-      this.configuration.iceServers = <any>options.iceServers.map(server => {
-        return RTCIceServer.alloc().initWithURLStrings(<any>[server]);
-      });
-    }
-    this.constraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
-      <any>{
-        OfferToReceiveAudio: String(options.enableAudio),
-        OfferToReceiveVideo: String(options.enableVideo)
-      },
-      null
-    );
-  }
+        this._delegate = WebRTCClientDelegate.initWithOwner(new WeakRef(this));
+        this.configuration = RTCConfiguration.alloc().init();
+        (this.configuration as any).bundlePolicy = 1; // RTCBundlePolicy.MaxCompat;
+        this.configuration.continualGatheringPolicy =
+            RTCContinualGatheringPolicy.GatherContinually;
+        this.configuration.tcpCandidatePolicy = RTCTcpCandidatePolicy.Disabled;
+        this.configuration.rtcpMuxPolicy = RTCRtcpMuxPolicy.Require;
+        this.configuration.keyType = RTCEncryptionKeyType.ECDSA;
+        const decoder = RTCDefaultVideoDecoderFactory.alloc().init();
+        const encoder = RTCDefaultVideoEncoderFactory.alloc().init();
+        this.connectionFactory = RTCPeerConnectionFactory.alloc().initWithEncoderFactoryDecoderFactory(
+            encoder,
+            decoder
+        );
 
-  get state() {
-    return this._state;
-  }
+        const nativeIceServers = NSArray.alloc().init() as any;
+        if (!options.iceServers) {
+            this.defaultServers.forEach((server, index) => {
+                nativeIceServers[index] = RTCIceServer.alloc().initWithURLStrings(<any>[server]);
+            });
 
-  get delegate(): any {
-    return this._delegate;
-  }
-
-  public makeOffer() {
-    if (!this.connection) return;
-    this.connection.offerForConstraintsCompletionHandler(
-      this.constraints,
-      (sdp: RTCSessionDescription, error: NSError) => {
-        if (error) {
-          this._delegate.webRTCClientDidReceiveError(this, error);
         } else {
-          this.handleSdpGenerated(sdp);
+            options.iceServers.forEach((config, index) => {
+                nativeIceServers[index] = RTCIceServer.alloc().initWithURLStringsUsernameCredential(
+                    <any>[config.url],
+                    config.username,
+                    config.password
+                );
+            });
         }
-      }
-    );
-  }
 
-  handleAnswerReceived(remoteSdp: string) {
-    if (!remoteSdp) return;
-    const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
-      RTCSdpType.Answer,
-      remoteSdp
-    );
-    this.connection.setRemoteDescriptionCompletionHandler(
-      sessionDescription,
-      (error: NSError) => {
-        if (error) {
-          this._delegate.webRTCClientDidReceiveError(this, error);
-        } else {
-          this.handleRemoteDescriptionSet();
-          this._state = WebRTCState.CONNECTED;
-        }
-      }
-    );
-  }
+        this.configuration.iceServers = nativeIceServers;
 
-  addIceCandidate(iceCandidate: RTCIceCandidate) {
-    if (this.connection.remoteDescription) {
-      this.connection.addIceCandidate(iceCandidate);
-    } else {
-      this.remoteIceCandidates.push(iceCandidate);
+        this.constraints = RTCMediaConstraints.alloc().initWithMandatoryConstraintsOptionalConstraints(
+            <any>{
+                OfferToReceiveAudio: String(!!options.enableAudio),
+                OfferToReceiveVideo: String(!!options.enableVideo)
+            },
+            null
+        );
     }
-  }
 
-  createAnswerForOfferReceived(remoteSdp: string) {
-    if (!this.connection || !remoteSdp) return;
-    const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
-      RTCSdpType.Offer,
-      remoteSdp
-    );
-    this.connection.setRemoteDescriptionCompletionHandler(
-      sessionDescription,
-      (error: NSError) => {
-        if (error) {
-          this._delegate.webRTCClientDidReceiveError(this, error);
-        } else {
-          this.handleRemoteDescriptionSet();
-          this.connection.answerForConstraintsCompletionHandler(
+    get delegate(): any {
+        return this._delegate;
+    }
+
+    get dataChannels() {
+        return this._dataChannels;
+    }
+
+    private static requestCameraPermission() {
+        return new Promise((resolve, reject) => {
+            AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
+                AVMediaTypeVideo,
+                granted => {
+                    if (granted) {
+                        resolve();
+                    } else {
+                        reject(ErrorDomain.videoPermissionDenied);
+                    }
+                }
+            );
+        });
+    }
+
+    private static requestAudioPermission() {
+        return new Promise((resolve, reject) => {
+            AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
+                AVMediaTypeAudio,
+                granted => {
+                    if (granted) {
+                        resolve();
+                    } else {
+                        reject(ErrorDomain.audioPermissionDenied);
+                    }
+                }
+            );
+        });
+    }
+
+    public static requestPermissions(explanation?: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await WebRTC.requestCameraPermission();
+                await WebRTC.requestAudioPermission();
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    private static hasCameraPermission(): boolean {
+        const status = AVCaptureDevice.authorizationStatusForMediaType(
+            AVMediaTypeVideo
+        );
+        switch (status) {
+            case AVAuthorizationStatus.Authorized:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static hasAudioPermission(): boolean {
+        const status = AVCaptureDevice.authorizationStatusForMediaType(
+            AVMediaTypeAudio
+        );
+        switch (status) {
+            case AVAuthorizationStatus.Authorized:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static hasPermissions(): boolean {
+        return this.hasCameraPermission() && this.hasAudioPermission();
+    }
+
+    public makeOffer() {
+        if (!this.connection) return;
+        this.connection.offerForConstraintsCompletionHandler(
             this.constraints,
             (sdp: RTCSessionDescription, error: NSError) => {
-              if (error) {
-                this._delegate.webRTCClientDidReceiveError(this, error);
-              } else {
-                this.handleSdpGenerated(sdp);
-                this._state = WebRTCState.CONNECTED;
-              }
+                if (error) {
+                    this._delegate.webRTCClientDidReceiveError(this, error);
+                } else {
+                    this.handleSdpGenerated(sdp);
+                }
             }
-          );
-        }
-      }
-    );
-  }
+        );
+    }
 
-  private handleRemoteDescriptionSet() {
-    this.remoteIceCandidates.forEach(iceCandidate => {
-      this.connection.addIceCandidate(iceCandidate);
-    });
-    this.remoteIceCandidates = [];
-  }
+    public handleAnswerReceived(answer: WebRTCSdp) {
+        if (!this.connection || !answer) return;
+        const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
+            RTCSdpType.Answer,
+            answer.sdp
+        );
+        this.connection.setRemoteDescriptionCompletionHandler(
+            sessionDescription,
+            (error: NSError) => {
+                if (error) {
+                    this._delegate.webRTCClientDidReceiveError(this, error);
+                } else {
+                    this.handleRemoteDescriptionSet();
+                }
+            }
+        );
+    }
 
-  private handleSdpGenerated(sdp: RTCSessionDescription) {
-    if (!sdp) return;
-    this.connection.setLocalDescriptionCompletionHandler(
-      sdp,
-      (error: NSError) => {
-        if (error) {
-          this._delegate.webRTCClientDidReceiveError(this, error);
+    public addIceCandidate(iceCandidate: WebRTCIceCandidate) {
+        const nativeIceCandidate = RTCIceCandidate.alloc().initWithSdpSdpMLineIndexSdpMid(
+            iceCandidate.sdp,
+            iceCandidate.sdpMLineIndex,
+            iceCandidate.sdpMid
+        );
+
+        if (this.connection && this.connection.remoteDescription) {
+            this.connection.addIceCandidate(nativeIceCandidate);
         } else {
-          this._delegate.webRTCClientStartCallWithSdp(this, sdp);
+            this.remoteIceCandidates.push(nativeIceCandidate);
         }
-      }
-    );
-  }
-
-  public static init(): void {
-    RTCPeerConnectionFactory.initialize();
-  }
-
-  public connect(): void {
-    if (!this.connection) return;
-    this.connection = this.connectionFactory.peerConnectionWithConfigurationConstraintsDelegate(
-      this.configuration,
-      this.defaultConnectionConstraints,
-      RTCPeerConnectionDelegateImpl.initWithOwner(new WeakRef(this))
-    );
-    this._state = WebRTCState.CONNECTING;
-    const localStream = this.getLocalStream();
-    this.connection.addStream(localStream);
-    if (localStream.videoTracks && localStream.videoTracks.firstObject) {
-      this.delegate.webRTCClientDidReceiveLocalVideoTrack(
-        this,
-        localStream.videoTracks.firstObject
-      );
-    }
-  }
-
-  public disconnect(): void {
-    if (!this.connection) return;
-    this.connection.close();
-    this._state = WebRTCState.DISCONNECTED;
-    const localStream = this.getLocalStream();
-    if (localStream.videoTracks && localStream.videoTracks.firstObject) {
-      this.connection.removeStream(localStream);
-      this.delegate.webRTCClientDidChangeState(this, WebRTCState.DISCONNECTED);
-    }
-    WebRTC.init();
-  }
-
-  public getLocalStream(): any {
-    const factory = this.connectionFactory;
-    const localStream = factory.mediaStreamWithStreamId('localStream');
-    if (!AVCaptureState.isVideoDisabled) {
-      const videoSource: RTCVideoSource = factory.videoSource();
-      let capturer = RTCCameraVideoCapturer.alloc().initWithDelegate(
-        videoSource
-      );
-      this.delegate.webRTCClientDidCreateLocalCapturer(this, capturer);
-      const videoTrack = factory.videoTrackWithSourceTrackId(
-        videoSource,
-        'localVideoId'
-      );
-      videoTrack.isEnabled = true;
-      localStream.addVideoTrack(videoTrack);
-    } else {
-      const error = NSError.alloc().initWithDomainCodeUserInfo(
-        ErrorDomain.videoPermissionDenied,
-        0,
-        null
-      );
-      this.delegate.webRTCClientDidReceiveError(this, error);
     }
 
-    if (!AVCaptureState.isAudioDisabled) {
-      const audioTrack = factory.audioTrackWithTrackId('localAudioId');
-      audioTrack.isEnabled = true;
-      localStream.addAudioTrack(audioTrack);
-    } else {
-      const error = NSError.alloc().initWithDomainCodeUserInfo(
-        ErrorDomain.audioPermissionDenied,
-        0,
-        null
-      );
-      this.delegate.webRTCClientDidReceiveError(this, error);
+    public createAnswerForOfferReceived(sdp: WebRTCSdp) {
+        if (!this.connection || !sdp) return;
+        const sessionDescription = RTCSessionDescription.alloc().initWithTypeSdp(
+            RTCSdpType.Offer,
+            sdp.sdp
+        );
+        this.connection.setRemoteDescriptionCompletionHandler(
+            sessionDescription,
+            (error: NSError) => {
+                if (error) {
+                    this._delegate.webRTCClientDidReceiveError(this, error);
+                } else {
+                    this.handleRemoteDescriptionSet();
+                    this.connection.answerForConstraintsCompletionHandler(
+                        this.constraints,
+                        (generatedSdp: RTCSessionDescription, error: NSError) => {
+                            if (error) {
+                                this._delegate.webRTCClientDidReceiveError(this, error);
+                            } else {
+                                this.handleSdpGenerated(generatedSdp);
+                                this._delegate.webRTCClientStartCallWithSdp(this, generatedSdp);
+                            }
+                        }
+                    );
+                }
+            }
+        );
     }
-    return localStream;
-  }
+
+    private handleRemoteDescriptionSet() {
+        this.remoteIceCandidates.forEach(iceCandidate => {
+            this.connection.addIceCandidate(iceCandidate);
+        });
+        this.remoteIceCandidates = [];
+    }
+
+    private handleSdpGenerated(sdp: RTCSessionDescription) {
+        if (!sdp) return;
+        this.connection.setLocalDescriptionCompletionHandler(
+            sdp,
+            (error: NSError) => {
+                if (error) {
+                    this._delegate.webRTCClientDidReceiveError(this, error);
+                } else {
+                    this._delegate.webRTCClientStartCallWithSdp(this, sdp);
+                }
+            }
+        );
+    }
+
+    public static init(): void {
+    }
+
+    public connect(): void {
+        if (this.connection) return;
+        this.connection = this.connectionFactory.peerConnectionWithConfigurationConstraintsDelegate(
+            this.configuration,
+            this.defaultConnectionConstraints,
+            RTCPeerConnectionDelegateImpl.initWithOwner(new WeakRef(this))
+        );
+    }
+
+    public disconnect(): void {
+        if (!this.connection) return;
+        this.connection.close();
+    }
+
+    public addLocalStream(stream: any) {
+        if (!this.connection) return;
+        this.connection.addStream(stream);
+        this.localStreams.set(stream.streamId, stream);
+    }
+
+    public addRemoteStream(stream: any) {
+        this.remoteStreams.set(stream.streamId, stream);
+    }
+
+
+    public dataChannelSend(name: string, data: string, type: WebRTCDataChannelMessageType) {
+        const channel = this.dataChannels.get(name);
+        if (channel) {
+            let isBinary;
+            let nativeData;
+            switch (type) {
+                case WebRTCDataChannelMessageType.TEXT:
+                    isBinary = false;
+                    nativeData = NSString.stringWithString(data).dataUsingEncoding(NSUTF8StringEncoding);
+                    break;
+                case WebRTCDataChannelMessageType.BINARY:
+                    isBinary = true;
+                    nativeData = NSData.alloc().initWithBase64EncodedStringOptions(data, 0);
+                    break;
+            }
+            const buffer = RTCDataBuffer.alloc().initWithDataIsBinary(nativeData, isBinary);
+            channel.sendData(buffer);
+        }
+    }
+
+    public dataChannelClose(name: string) {
+        const channel = this.dataChannels.get(name);
+        if (channel) {
+            channel.close();
+        }
+    }
+
+    public dataChannelCreate(name: string) {
+        const config = RTCDataChannelConfiguration.alloc();
+        const channel = this.connection.dataChannelForLabelConfiguration(name, config);
+        this.dataChannels.set(name, channel);
+        this.registerDataChannelDelegate(name);
+    }
+
+
+    public switchCamera(trackId: string) {
+        const mediaData = this.tracks.get(trackId);
+        if (mediaData != null) {
+            if (mediaData.capturer != null) {
+                mediaData.capturer.toggleCamera();
+            }
+        }
+    }
+
+    private registerDataChannelDelegate(name: string) {
+        const channel = this.dataChannels.get(name);
+        if (channel) {
+            channel.delegate = RTCDataChannelDelegateImpl.initWithOwner(new WeakRef<WebRTC>(this));
+        }
+    }
+
+    private getRandomId(): string {
+        return NSUUID.UUID().UUIDString;
+    }
+
+    public getUserMedia(quality?: Quality): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const factory = this.connectionFactory;
+            const streamId = this.getRandomId();
+            const localStream = factory.mediaStreamWithStreamId(streamId);
+            if (!AVCaptureState.isVideoDisabled) {
+                const videoSource: RTCVideoSource = factory.videoSource();
+                let capturer = RTCCameraVideoCapturer.alloc().initWithDelegate(
+                    videoSource
+                );
+                const customCapturer = new WebRTCCapturer(new WeakRef<WebRTC>(this), capturer, quality ? quality : Quality.LOWEST);
+                const videoTrackId = this.getRandomId();
+                const videoTrack = factory.videoTrackWithSourceTrackId(
+                    videoSource,
+                    videoTrackId
+                );
+                videoTrack.isEnabled = true;
+                customCapturer.start();
+                this.tracks.set(
+                    videoTrackId,
+                    new MediaData(videoSource, videoTrack, customCapturer)
+                );
+                localStream.addVideoTrack(videoTrack);
+            } else {
+                reject(ErrorDomain.videoPermissionDenied);
+            }
+
+            if (!AVCaptureState.isAudioDisabled) {
+                const audioTrackId = this.getRandomId();
+                const audioSource = factory.audioSourceWithConstraints(
+                    RTCMediaConstraints.alloc().init()
+                );
+                const audioTrack = factory.audioTrackWithSourceTrackId(
+                    audioSource,
+                    audioTrackId
+                );
+                audioTrack.isEnabled = true;
+                localStream.addAudioTrack(audioTrack);
+                this.tracks.set(
+                    audioTrackId,
+                    new MediaData(audioSource, audioTrack, null)
+                );
+            } else {
+                reject(ErrorDomain.audioPermissionDenied);
+            }
+            resolve(localStream);
+        });
+    }
+
+    public micEnabled(enabled: boolean) {
+    }
+
+    public toggleMic(): void {
+    }
+
+    public speakerEnabled(enabled: boolean) {
+        const audioSession = ios.getter(
+            RTCAudioSession,
+            RTCAudioSession.sharedInstance
+        );
+        try {
+            if (enabled) {
+                audioSession.overrideOutputAudioPortError(
+                    AVAudioSessionPortOverride.Speaker
+                );
+                audioSession.setActiveError(true);
+            } else {
+                audioSession.overrideOutputAudioPortError(
+                    AVAudioSessionPortOverride.None
+                );
+                audioSession.setActiveError(true);
+            }
+        } catch (e) {
+        }
+    }
+
+
+    public enableTrack(trackId: string, enabled: boolean) {
+        const mediaData = this.tracks.get(trackId);
+        if (mediaData != null) {
+            if (mediaData.capturer != null) {
+                if (enabled) {
+                    mediaData.track.isEnabled = true;
+                    mediaData.capturer.start();
+                } else {
+                    mediaData.track.isEnabled = false;
+                    mediaData.capturer.stop();
+                }
+            } else {
+                mediaData.track.isEnabled = enabled;
+            }
+        }
+    }
+}
+
+class MediaData {
+    public mediaSource;
+    public track;
+    public capturer;
+
+    constructor(mediaSource, track, capturer) {
+        this.mediaSource = mediaSource;
+        this.track = track;
+        this.capturer = capturer;
+    }
 }
 
 class AVCaptureState {
-  public static get isVideoDisabled(): boolean {
-    const status = AVCaptureDevice.authorizationStatusForMediaType(
-      AVMediaTypeVideo
-    );
-    return (
-      status === AVAuthorizationStatus.Denied ||
-      status === AVAuthorizationStatus.Restricted
-    );
-  }
+    public static get isVideoDisabled(): boolean {
+        const status = AVCaptureDevice.authorizationStatusForMediaType(
+            AVMediaTypeVideo
+        );
+        return (
+            status === AVAuthorizationStatus.Denied ||
+            status === AVAuthorizationStatus.Restricted
+        );
+    }
 
-  public static get isAudioDisabled(): boolean {
-    const status = AVCaptureDevice.authorizationStatusForMediaType(
-      AVMediaTypeVideo
-    );
-    return (
-      status === AVAuthorizationStatus.Denied ||
-      status === AVAuthorizationStatus.Restricted
-    );
-  }
+    public static get isAudioDisabled(): boolean {
+        const status = AVCaptureDevice.authorizationStatusForMediaType(
+            AVMediaTypeVideo
+        );
+        return (
+            status === AVAuthorizationStatus.Denied ||
+            status === AVAuthorizationStatus.Restricted
+        );
+    }
+}
+
+class RTCDataChannelDelegateImpl extends NSObject implements RTCDataChannelDelegate {
+    public static ObjCProtocols = [RTCDataChannelDelegate];
+    private _owner: WeakRef<WebRTC>;
+
+    public static initWithOwner(
+        owner: WeakRef<WebRTC>
+    ): RTCDataChannelDelegateImpl {
+        const delegate = new RTCDataChannelDelegateImpl();
+        delegate._owner = owner;
+        return delegate;
+    }
+
+    dataChannelDidChangeBufferedAmount(dataChannel: RTCDataChannel, amount: number): void {
+    }
+
+    dataChannelDidChangeState(dataChannel: RTCDataChannel): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientDataChannelStateChanged(owner, dataChannel.label, dataChannel.readyState);
+        }
+    }
+
+    dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            let type;
+            let data;
+            if (buffer.isBinary) {
+                type = WebRTCDataChannelMessageType.BINARY;
+                data = buffer.data.base64EncodedStringWithOptions(0);
+            } else {
+                type = WebRTCDataChannelMessageType.TEXT;
+                data = NSString.alloc().initWithDataEncoding(buffer.data, NSUTF8StringEncoding);
+            }
+            owner.delegate.webRTCClientDataChannelMessageType(owner, dataChannel.label, data, type);
+        }
+    }
 }
 
 class RTCPeerConnectionDelegateImpl extends NSObject
-  implements RTCPeerConnectionDelegate {
-  peerConnectionDidAddReceiverStreams?(
-    peerConnection: RTCPeerConnection,
-    rtpReceiver: RTCRtpReceiver,
-    mediaStreams: NSArray<RTCMediaStream>
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-    }
-  }
-
-  peerConnectionDidAddStream(
-    peerConnection: RTCPeerConnection,
-    stream: RTCMediaStream
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.remoteStream = stream;
-      dispatch_async(dispatch_get_current_queue(), () => {
-        if (stream.videoTracks.count > 0) {
-          owner.remoteTracks.push(stream.videoTracks[0]);
-          owner.delegate.webRTCClientDidReceiveRemoteVideoTrackStream(
-            owner,
-            stream.videoTracks[0],
-            stream
-          );
+    implements RTCPeerConnectionDelegate {
+    peerConnectionDidAddReceiverStreams?(
+        peerConnection: RTCPeerConnection,
+        rtpReceiver: RTCRtpReceiver,
+        mediaStreams: NSArray<RTCMediaStream>
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
         }
-      });
     }
-  }
 
-  peerConnectionDidChangeIceConnectionState(
-    peerConnection: RTCPeerConnection,
-    newState: RTCIceConnectionState
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.delegate.webRTCClientDidChangeConnectionState(owner, newState);
+    peerConnectionDidAddStream(
+        peerConnection: RTCPeerConnection,
+        stream: RTCMediaStream
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.remoteStream = stream;
+            dispatch_async(dispatch_get_current_queue(), () => {
+                if (stream.videoTracks.count > 0) {
+                    owner.remoteTracks.push(stream.videoTracks.firstObject);
+                    owner.delegate.webRTCClientDidReceiveRemoteVideoTrackStream(
+                        owner,
+                        stream.videoTracks.firstObject,
+                        stream
+                    );
+                }
+            });
+        }
     }
-  }
 
-  peerConnectionDidChangeIceGatheringState(
-    peerConnection: RTCPeerConnection,
-    newState: RTCIceGatheringState
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      console.log('peerConnectionDidChangeIceGatheringState', newState);
+    peerConnectionDidChangeIceConnectionState(
+        peerConnection: RTCPeerConnection,
+        newState: RTCIceConnectionState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnIceConnectionChange(owner, newState);
+        }
     }
-  }
 
-  peerConnectionDidChangeSignalingState(
-    peerConnection: RTCPeerConnection,
-    stateChanged: RTCSignalingState
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidChangeIceGatheringState(
+        peerConnection: RTCPeerConnection,
+        newState: RTCIceGatheringState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnIceGatheringChange(owner, newState);
+        }
     }
-  }
 
-  peerConnectionDidGenerateIceCandidate(
-    peerConnection: RTCPeerConnection,
-    candidate: RTCIceCandidate
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.delegate.webRTCClientDidGenerateIceCandidate(owner, candidate);
+    peerConnectionDidChangeSignalingState(
+        peerConnection: RTCPeerConnection,
+        stateChanged: RTCSignalingState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnSignalingChange(owner, stateChanged);
+        }
     }
-  }
 
-  peerConnectionDidOpenDataChannel(
-    peerConnection: RTCPeerConnection,
-    dataChannel: RTCDataChannel
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidGenerateIceCandidate(
+        peerConnection: RTCPeerConnection,
+        candidate: RTCIceCandidate
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientDidGenerateIceCandidate(owner, candidate);
+        }
     }
-  }
 
-  peerConnectionDidRemoveIceCandidates(
-    peerConnection: RTCPeerConnection,
-    candidates: NSArray<RTCIceCandidate>
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidOpenDataChannel(
+        peerConnection: RTCPeerConnection,
+        dataChannel: RTCDataChannel
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.dataChannels.set(dataChannel.label, dataChannel);
+            dataChannel.delegate = RTCDataChannelDelegateImpl.initWithOwner(this._owner);
+        }
     }
-  }
 
-  peerConnectionDidRemoveStream(
-    peerConnection: RTCPeerConnection,
-    stream: RTCMediaStream
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidRemoveIceCandidates(
+        peerConnection: RTCPeerConnection,
+        candidates: NSArray<RTCIceCandidate>
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnIceCandidatesRemoved(owner, candidates);
+        }
     }
-  }
 
-  peerConnectionDidStartReceivingOnTransceiver?(
-    peerConnection: RTCPeerConnection,
-    transceiver: RTCRtpTransceiver
-  ): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidRemoveStream(
+        peerConnection: RTCPeerConnection,
+        stream: RTCMediaStream
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnRemoveStream(owner, stream);
+        }
     }
-  }
 
-  peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
+    peerConnectionDidStartReceivingOnTransceiver?(
+        peerConnection: RTCPeerConnection,
+        transceiver: RTCRtpTransceiver
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+        }
     }
-  }
 
-  public static ObjCProtocols = [RTCPeerConnectionDelegate];
-  private _owner: WeakRef<WebRTC>;
+    peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.delegate.webRTCClientOnRenegotiationNeeded(owner);
+        }
+    }
 
-  public static initWithOwner(
-    owner: WeakRef<WebRTC>
-  ): RTCPeerConnectionDelegateImpl {
-    const delegate = new RTCPeerConnectionDelegateImpl();
-    delegate._owner = owner;
-    return delegate;
-  }
+    public static ObjCProtocols = [RTCPeerConnectionDelegate];
+    private _owner: WeakRef<WebRTC>;
+
+    public static initWithOwner(
+        owner: WeakRef<WebRTC>
+    ): RTCPeerConnectionDelegateImpl {
+        const delegate = new RTCPeerConnectionDelegateImpl();
+        delegate._owner = owner;
+        return delegate;
+    }
 }
 
 class WebRTCClientDelegate extends NSObject {
-  private _owner: WeakRef<WebRTC>;
+    private _owner: WeakRef<WebRTC>;
 
-  public static initWithOwner(owner: WeakRef<WebRTC>) {
-    const delegate = new WebRTCClientDelegate();
-    delegate._owner = owner;
-    return delegate;
-  }
-
-  webRTCClientStartCallWithSdp(client: WebRTC, sdp: RTCSessionDescription) {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.notify({
-        eventName: 'webRTCClientStartCallWithSdp',
-        object: fromObject({
-          client: client,
-          sdp: sdp
-        })
-      });
+    public static initWithOwner(owner: WeakRef<WebRTC>) {
+        const delegate = new WebRTCClientDelegate();
+        delegate._owner = owner;
+        return delegate;
     }
-  }
 
-  webRTCClientDidReceiveLocalVideoTrack(
-    client: WebRTC,
-    localVideoTrack: RTCVideoTrack
-  ) {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.notify({
-        eventName: 'webRTCClientDidReceiveLocalVideoTrack',
-        object: fromObject({
-          client: client,
-          localVideoTrack: localVideoTrack
-        })
-      });
+    webRTCClientOnRemoveStream(
+        client: WebRTC, stream: RTCMediaStream
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnRemoveStream',
+                object: fromObject({
+                    client: owner,
+                    stream: stream
+                })
+            });
+        }
     }
-  }
 
-  webRTCClientDidReceiveRemoteVideoTrackStream(
-    client: WebRTC,
-    remoteVideoTrack: RTCVideoTrack,
-    stream: RTCMediaStream
-  ) {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.notify({
-        eventName: 'webRTCClientDidReceiveRemoteVideoTrackStream',
-        object: fromObject({
-          client: client,
-          remoteVideoTrack: remoteVideoTrack,
-          stream: stream
-        })
-      });
+    webRTCClientDataChannelStateChanged(
+        client,
+        name: string,
+        type: RTCDataChannelState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        let state;
+        switch (type) {
+            case RTCDataChannelState.Connecting:
+                state = WebRTCDataChannelState.CONNECTING;
+                break;
+            case RTCDataChannelState.Closed:
+                state = WebRTCDataChannelState.CLOSED;
+                break;
+            case RTCDataChannelState.Closing:
+                state = WebRTCDataChannelState.CLOSING;
+                break;
+            case RTCDataChannelState.Open:
+                state = WebRTCDataChannelState.OPEN;
+                break;
+        }
+
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientDataChannelStateChanged',
+                object: fromObject({
+                    client: owner,
+                    name: name,
+                    state: state
+                })
+            });
+        }
     }
-  }
 
-  webRTCClientDidReceiveError(client: WebRTC, error: NSError) {}
-
-  webRTCClientDidChangeConnectionState(
-    client: WebRTC,
-    connectionState: RTCIceConnectionState
-  ) {}
-
-  webRTCClientDidChangeState(client: WebRTC, state: WebRTCState) {}
-
-  webRTCClientDidGenerateIceCandidate(
-    client: WebRTC,
-    iceCandidate: RTCIceCandidate
-  ) {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.notify({
-        eventName: 'webRTCClientDidGenerateIceCandidate',
-        object: fromObject({
-          client: client,
-          iceCandidate: iceCandidate
-        })
-      });
+    webRTCClientDataChannelMessageType(
+        client,
+        name: string,
+        data: string,
+        type: WebRTCDataChannelMessageType
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientDataChannelMessageType',
+                object: fromObject({
+                    client: owner,
+                    name: name,
+                    message: data,
+                    type: type
+                })
+            });
+        }
     }
-  }
 
-  webRTCClientDidCreateLocalCapturer(
-    client: WebRTC,
-    capturer: RTCCameraVideoCapturer
-  ) {
-    const owner = this._owner ? this._owner.get() : null;
-    if (owner) {
-      owner.notify({
-        eventName: 'webRTCClientDidCreateLocalCapturer',
-        object: fromObject({
-          client: client,
-          capturer: capturer
-        })
-      });
+    webRTCClientStartCallWithSdp(client: WebRTC, sdp: RTCSessionDescription) {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            let type;
+            switch (sdp.type) {
+                case RTCSdpType.Offer:
+                    type = WebRTCSdpType.OFFER;
+                    break;
+                case RTCSdpType.PrAnswer:
+                    type = WebRTCSdpType.PRANSWER;
+                    break;
+                case RTCSdpType.Answer:
+                    type = WebRTCSdpType.ANSWER;
+                    break;
+            }
+            owner.notify({
+                eventName: 'webRTCClientStartCallWithSdp',
+                object: fromObject({
+                    client: client,
+                    sdp: sdp.sdp,
+                    type: type
+                })
+            });
+        }
     }
-  }
+
+    webRTCClientDidReceiveRemoteVideoTrackStream(
+        client: WebRTC,
+        remoteVideoTrack: RTCVideoTrack,
+        stream: RTCMediaStream
+    ) {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientDidReceiveRemoteVideoTrackStream',
+                object: fromObject({
+                    client: client,
+                    remoteVideoTrack: remoteVideoTrack,
+                    stream: stream
+                })
+            });
+        }
+    }
+
+    webRTCClientDidReceiveError(client: WebRTC, error: NSError) {
+        const owner = this._owner ? this._owner.get() : null;
+        owner.notify({
+            eventName: 'webRTCClientDidReceiveRemoteVideoTrackStream',
+            object: fromObject({
+                client: client,
+                error: error.localizedDescription
+            })
+        });
+    }
+
+
+    webRTCClientOnRenegotiationNeeded(
+        client
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnRenegotiationNeeded',
+                object: fromObject({
+                    client: owner
+                })
+            });
+        }
+    }
+
+
+    webRTCClientDidGenerateIceCandidate(
+        client: WebRTC,
+        iceCandidate: RTCIceCandidate
+    ) {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientDidGenerateIceCandidate',
+                object: fromObject({
+                    client: client,
+                    iceCandidate: <WebRTCIceCandidate>{
+                        sdp: iceCandidate.sdp,
+                        sdpMid: iceCandidate.sdpMid,
+                        sdpMLineIndex: iceCandidate.sdpMLineIndex,
+                        serverUrl: iceCandidate.serverUrl
+                    }
+                })
+            });
+        }
+    }
+
+
+    webRTCClientOnIceCandidatesRemoved(
+        client,
+        candidates: NSArray<RTCIceCandidate>
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnRenegotiationNeeded',
+                object: fromObject({
+                    client: owner,
+                    candidates: candidates
+                })
+            });
+        }
+    }
+
+    webRTCClientOnIceConnectionChange(
+        client,
+        connectionState: RTCIceConnectionState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        let state;
+        switch (connectionState) {
+            case RTCIceConnectionState.New:
+                state = IceConnectionState.NEW;
+                break;
+            case RTCIceConnectionState.Checking:
+                state = IceConnectionState.CHECKING;
+                break;
+            case RTCIceConnectionState.Connected:
+                state = IceConnectionState.CONNECTED;
+                break;
+            case RTCIceConnectionState.Completed:
+                state = IceConnectionState.COMPLETED;
+                break;
+            case RTCIceConnectionState.Failed:
+                state = IceConnectionState.FAILED;
+                break;
+            case RTCIceConnectionState.Disconnected:
+                state = IceConnectionState.DISCONNECTED;
+                break;
+            case RTCIceConnectionState.Closed:
+                state = IceConnectionState.CLOSED;
+                break;
+        }
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnIceConnectionChange',
+                object: fromObject({
+                    client: owner,
+                    state: state
+                })
+            });
+        }
+    }
+
+    webRTCClientOnIceConnectionReceivingChange(
+        client,
+        change: boolean
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnIceConnectionReceivingChange',
+                object: fromObject({
+                    client: owner,
+                    change: change
+                })
+            });
+        }
+    }
+
+    webRTCClientOnIceGatheringChange(
+        client,
+        gatheringState: RTCIceGatheringState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        let state;
+        switch (gatheringState) {
+            case RTCIceGatheringState.New:
+                state = IceGatheringState.NEW;
+                break;
+            case RTCIceGatheringState.Gathering:
+                state = IceGatheringState.GATHERING;
+                break;
+            case RTCIceGatheringState.Complete:
+                state = IceGatheringState.COMPLETE;
+                break;
+        }
+
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnIceGatheringChange',
+                object: fromObject({
+                    client: owner,
+                    state: state
+                })
+            });
+        }
+    }
+
+    webRTCClientOnSignalingChange(
+        client,
+        signalingState: RTCSignalingState
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        let state;
+        switch (signalingState) {
+            case RTCSignalingState.Closed:
+                state = SignalingState.CLOSED;
+                break;
+            case RTCSignalingState.HaveLocalOffer:
+                state = SignalingState.HAVE_LOCAL_OFFER;
+                break;
+            case RTCSignalingState.HaveLocalPrAnswer:
+                state = SignalingState.HAVE_LOCAL_PRANSWER;
+                break;
+            case RTCSignalingState.HaveRemoteOffer:
+                state = SignalingState.HAVE_REMOTE_OFFER;
+                break;
+            case RTCSignalingState.HaveRemotePrAnswer:
+                state = SignalingState.HAVE_REMOTE_PRANSWER;
+                break;
+            case RTCSignalingState.Stable:
+                state = SignalingState.STABLE;
+                break;
+        }
+
+        owner.notify({
+            eventName: 'webRTCClientOnIceGatheringChange',
+            object: fromObject({
+                client: owner,
+                state: state
+            })
+        });
+    }
+
+    webRTCClientOnCameraSwitchDone(
+        client,
+        done: boolean
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnCameraSwitchDone',
+                object: fromObject({
+                    client: owner,
+                    done: done
+                })
+            });
+        }
+    }
+
+    webRTCClientOnCameraSwitchError(
+        client,
+        error: string
+    ): void {
+        const owner = this._owner ? this._owner.get() : null;
+        if (owner) {
+            owner.notify({
+                eventName: 'webRTCClientOnCameraSwitchError',
+                object: fromObject({
+                    client: owner,
+                    message: error
+                })
+            });
+        }
+    }
 }
 
-export class WebRTCLocalView extends View {
-  private _capturer: WebRTCCapturer;
-  private _localVideoTrack: any;
-  private _mirror: boolean;
+export class WebRTCView extends View {
+    private _stream: any;
+    private _localVideoTrack: any;
+    private _mirror: boolean;
 
-  constructor() {
-    super();
-    this.nativeView = RTCEAGLVideoView.alloc().init();
-  }
-
-  set mirror(mirror: boolean) {
-    if (mirror) {
-      this._mirror = true;
-    } else {
-      this.nativeView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+    constructor() {
+        super();
+        this.nativeView = RTCEAGLVideoView.alloc().init();
     }
-  }
 
-  set videoTrack(track) {
-    this._localVideoTrack = track;
-    track.addRenderer(this.nativeView);
-  }
+    set mirror(mirror: boolean) {
+        if (mirror) {
+            this._mirror = true;
+            this.nativeView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+        } else {
+            this.nativeView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+            this._mirror = false;
+        }
+    }
+
+    set videoTrack(track) {
+        this._localVideoTrack = track;
+        if (track) {
+            track.addRenderer(this.nativeView);
+        }
+    }
+
+    set stream(stream: any) {
+        this._stream = stream;
+        if (stream.videoTracks && stream.videoTracks.firstObject) {
+            this.videoTrack = stream.videoTracks.firstObject;
+        }
+    }
 }
 
 class WebRTCCapturer {
-  private capturer: RTCCameraVideoCapturer;
-  private cameraPosition = 'front';
+    private capturer: RTCCameraVideoCapturer;
+    private cameraPosition = 'front';
+    private quality: Quality;
+    private client: WeakRef<WebRTC>;
 
-  constructor(capturer) {
-    this.capturer = capturer;
-  }
-
-  getCapturer(): any {
-    return this.capturer;
-  }
-
-  start() {
-    let devices = RTCCameraVideoCapturer.captureDevices();
-    let device: AVCaptureDevice;
-    let pos =
-      this.cameraPosition === 'front'
-        ? AVCaptureDevicePosition.Front
-        : AVCaptureDevicePosition.Back;
-    for (let i = 0; i < devices.count; i++) {
-      if (devices[i].position === pos) {
-        device = devices[i];
-        break;
-      }
+    constructor(client: WeakRef<WebRTC>, capturer: any, quality?: Quality) {
+        this.client = client;
+        this.capturer = capturer;
+        this.quality = quality ? quality : Quality.LOWEST;
     }
-    const format = this.selectFormatForDevice(device);
-    const fps = this.selectFpsForFormat(format);
-    this.capturer.startCaptureWithDeviceFormatFps(device, format, fps);
-  }
 
-  private selectFpsForFormat(format: AVCaptureDeviceFormat): number {
-    let maxFramerate = 0;
-    for (let i = 0; i < format.videoSupportedFrameRateRanges.count; i++) {
-      const fpsRange = format.videoSupportedFrameRateRanges.objectAtIndex(i);
-      maxFramerate = fmax(maxFramerate, fpsRange.maxFrameRate);
+    getCapturer(): any {
+        return this.capturer;
     }
-    return maxFramerate;
-  }
 
-  private selectFormatForDevice(
-    device: AVCaptureDevice
-  ): AVCaptureDeviceFormat {
-    let supportedFormats = RTCCameraVideoCapturer.supportedFormatsForDevice(
-      device
-    );
-    let targetHeight = '640';
-    let targetWidth = '480';
-    let selectedFormat: AVCaptureDeviceFormat = null;
-    let currentDiff = Number.MAX_VALUE;
-
-    for (let i = 0; i < supportedFormats.count; i++) {
-      const format = supportedFormats.objectAtIndex(i);
-      let dimension: CMVideoDimensions = CMVideoFormatDescriptionGetDimensions(
-        format
-      );
-      let diff =
-        abs(parseInt(targetWidth) - dimension.width) +
-        abs(parseInt(targetHeight) - dimension.height);
-      if (diff < currentDiff) {
-        selectedFormat = format;
-        currentDiff = diff;
-      }
+    public start() {
+        this.startWithError(false);
     }
-    return selectedFormat;
-  }
 
-  stop() {
-    this.capturer.stopCapture();
-  }
+    private startWithError(show?: boolean) {
+        let devices = RTCCameraVideoCapturer.captureDevices();
+        let device: AVCaptureDevice;
+        let pos =
+            this.cameraPosition === 'front'
+                ? AVCaptureDevicePosition.Front
+                : AVCaptureDevicePosition.Back;
+        for (let i = 0; i < devices.count; i++) {
+            if (devices[i].position === pos) {
+                device = devices[i];
+                break;
+            }
+        }
+        const format = this.selectFormatForDevice(device);
+        const fps = this.selectFpsForFormat(format);
+        this.capturer.startCaptureWithDeviceFormatFps(device, format, fps);
+        this.capturer.startCaptureWithDeviceFormatFpsCompletionHandler(device, format, fps, (error: NSError) => {
+            const client = this.client ? this.client.get() : null;
+            if (show && client) {
+                if (error) {
+                    client.delegate.webRTCClientOnCameraSwitchError(client, error.localizedDescription);
+                } else {
+                    client.delegate.webRTCClientOnCameraSwitchDone(client, true);
+                }
+            }
+        });
+    }
 
-  toggleCamera() {
-    this.cameraPosition = 'back';
-    this.start();
-  }
-}
+    private selectFpsForFormat(format: AVCaptureDeviceFormat): number {
+        let maxFrameRate = 0;
+        for (let i = 0; i < format.videoSupportedFrameRateRanges.count; i++) {
+            const fpsRange = format.videoSupportedFrameRateRanges.objectAtIndex(i);
+            maxFrameRate = fmax(maxFrameRate, fpsRange.maxFrameRate);
+        }
+        return maxFrameRate;
+    }
 
-class RTCVideoCapturerDelegateImpl extends NSObject
-  implements RTCVideoCapturerDelegate {
-  capturerDidCaptureVideoFrame(
-    capturer: RTCVideoCapturer,
-    frame: RTCVideoFrame
-  ): void {}
+    private getFormatOrHighestFormat(
+        supportedFormats: NSArray<AVCaptureDeviceFormat>,
+        device: AVCaptureDevice
+    ): { width: number; height: number } {
+        let targetHeight = 144;
+        let targetWidth = 192;
+        let highest = () => {
+            const count = supportedFormats.count;
+            let last: CMVideoDimensions = CMVideoFormatDescriptionGetDimensions(
+                supportedFormats.firstObject
+            );
+            for (let i = 0; i < count; i++) {
+                const format = supportedFormats.objectAtIndex(i);
+                const dimensions = CMVideoFormatDescriptionGetDimensions(
+                    format.description
+                );
+                if (last.width < dimensions.width) {
+                    last = dimensions;
+                }
+            }
+            return last;
+        };
 
-  private _owner: WeakRef<WebRTCLocalView>;
+        const best = highest();
 
-  public static initWithOwner(owner: WeakRef<WebRTCLocalView>) {
-    const delegate = new RTCVideoCapturerDelegateImpl();
-    delegate._owner = owner;
-    return delegate;
-  }
+        switch (this.quality) {
+            case Quality.HIGHEST:
+                targetHeight = best.height;
+                targetWidth = best.width;
+                break;
+            case Quality.MAX_480P:
+                if (
+                    device.supportsAVCaptureSessionPreset(AVCaptureSessionPreset640x480)
+                ) {
+                    targetHeight = 480;
+                    targetWidth = 640;
+                } else {
+                    targetHeight = best.height;
+                    targetWidth = best.width;
+                }
+                break;
+            case Quality.MAX_720P:
+                if (
+                    device.supportsAVCaptureSessionPreset(AVCaptureSessionPreset1280x720)
+                ) {
+                    targetHeight = 720;
+                    targetWidth = 1280;
+                } else {
+                    targetHeight = best.height;
+                    targetWidth = best.width;
+                }
+                break;
+            case Quality.MAX_1080P:
+                if (
+                    device.supportsAVCaptureSessionPreset(AVCaptureSessionPreset1920x1080)
+                ) {
+                    targetHeight = 1080;
+                    targetWidth = 1920;
+                } else {
+                    targetHeight = best.height;
+                    targetWidth = best.width;
+                }
+                break;
+            case Quality.MAX_2160P:
+                if (
+                    device.supportsAVCaptureSessionPreset(AVCaptureSessionPreset3840x2160)
+                ) {
+                    targetHeight = 2160;
+                    targetWidth = 3840;
+                } else {
+                    targetHeight = best.height;
+                    targetWidth = best.width;
+                }
+                break;
+            default:
+                targetHeight = 144;
+                targetWidth = 192;
+                break;
+        }
 
-  public static ObjCProtocols = [RTCVideoCapturerDelegate];
+        return {width: targetWidth, height: targetHeight};
+    }
+
+    private selectFormatForDevice(
+        device: AVCaptureDevice
+    ): AVCaptureDeviceFormat {
+        let supportedFormats = RTCCameraVideoCapturer.supportedFormatsForDevice(
+            device
+        );
+        const resolution = this.getFormatOrHighestFormat(supportedFormats, device);
+
+        let targetHeight = resolution.height;
+        let targetWidth = resolution.width;
+
+        let selectedFormat: AVCaptureDeviceFormat = null;
+        let currentDiff = Number.MAX_VALUE;
+
+        for (let i = 0; i < supportedFormats.count; i++) {
+            const format = supportedFormats.objectAtIndex(i);
+            let dimension: CMVideoDimensions = CMVideoFormatDescriptionGetDimensions(
+                format
+            );
+            let diff =
+                abs(targetWidth - dimension.width) +
+                abs(targetHeight - dimension.height);
+            if (diff < currentDiff) {
+                selectedFormat = format;
+                currentDiff = diff;
+            }
+        }
+        return selectedFormat;
+    }
+
+    stop() {
+        this.capturer.stopCapture();
+    }
+
+    toggleCamera() {
+        if (this.cameraPosition === 'front') {
+            this.cameraPosition = 'back';
+        } else {
+            this.cameraPosition = 'front';
+        }
+        this.stop();
+        this.startWithError(true);
+    }
 }

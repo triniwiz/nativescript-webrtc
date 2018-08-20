@@ -566,6 +566,7 @@ interface RTCDataChannelDelegate extends NSObjectProtocol {
 
 	dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
 }
+
 declare var RTCDataChannelDelegate: {
 
 	prototype: RTCDataChannelDelegate;

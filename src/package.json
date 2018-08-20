@@ -1,6 +1,6 @@
 {
     "name": "nativescript-webrtc-plugin",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "WebRTC for NativeScript",
     "main": "webrtc",
     "typings": "index.d.ts",
@@ -17,14 +17,15 @@
         "postclone": "npm i && node scripts/postclone.js && cd ../demo && npm i",
         "test.android": "npm i && npm run tsc && npm run tslint && cd ../demo && tns build android && tns test android --justlaunch",
         "test.ios": "npm i && npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch",
-        "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
+        "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/+(node_modules|typings)/**\"",
         "plugin.tscwatch": "npm run tsc -- -w",
         "demo.ios": "npm i && npm run tsc && cd ../demo && tns run ios --syncAllFiles",
         "demo.android": "npm i && npm run tsc && cd ../demo && tns run android --syncAllFiles",
+        "demo": "npm i && npm run tsc && cd ../demo && tns run --syncAllFiles",
         "demo.reset": "cd ../demo && rimraf platforms",
         "plugin.prepare": "npm run build && cd ../demo && tns plugin remove nativescript-webrtc && tns plugin add ../src",
         "clean": "cd ../demo && rimraf hooks node_modules platforms && cd ../src && rimraf node_modules",
-        "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'",
+        "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/+(node_modules|typings)/**'",
         "prepack": "npm run build.native"
     },
     "keywords": [
