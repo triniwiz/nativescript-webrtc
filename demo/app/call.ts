@@ -20,12 +20,11 @@ export function pageLoaded(args: observable.EventData) {
     model = new CallViewModel(context.to, context.from);
     model.answer(context.from, context.to, context.sdp, context.type);
   }
-
-  const localVideo = page.getViewById('localVideoView') as any;
-  localVideo.mirror = true;
   page.bindingContext = model;
 
   model.on('localStream', args => {
+    const localVideo = page.getViewById('localVideoView') as any;
+    localVideo.mirror = true;
     const localStream = model.localStream;
     localVideo.stream = localStream;
   });

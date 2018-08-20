@@ -14,7 +14,6 @@ export class HelloWorldModel extends Observable {
 
     this.socketIO = SocketService.getInstance();
     this.socketIO.on('call:incoming', data => {
-      console.log('typeof', typeof data);
       frame.topmost().navigate({
         moduleName: 'call',
         context: {
