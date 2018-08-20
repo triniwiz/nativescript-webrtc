@@ -2,10 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/nativescript-webrtc-plugin.svg)](https://www.npmjs.com/package/nativescript-webrtc-plugin)
 [![npm](https://img.shields.io/npm/dt/nativescript-webrtc-plugin.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-webrtc-plugin)
-[![Build Status](https://travis-ci.org/triniwiz/nativescript-webrtc-plugin.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-webrtc-plugin)
-
-### Android Lib
-https://github.com/triniwiz/fancywebrtc
+[![Build Status](https://travis-ci.org/triniwiz/nativescript-webrtc.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-webrtc)
 
 ## Installation
 
