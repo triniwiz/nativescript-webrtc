@@ -19,7 +19,17 @@ import { ios } from 'tns-core-modules/utils/utils';
 
 export * from './webrtc.common';
 
-declare var RTCSdpType: any, RTCSessionDescription;
+interface RTCDataChannelDelegate {
+}
+
+interface RTCPeerConnectionDelegate {
+}
+
+declare var RTCSdpType, RTCSessionDescription, RTCIceCandidate, RTCIceConnectionState, RTCMediaConstraints,
+    RTCConfiguration, RTCContinualGatheringPolicy, RTCTcpCandidatePolicy, RTCRtcpMuxPolicy, RTCEncryptionKeyType,
+    RTCDefaultVideoDecoderFactory, RTCDefaultVideoEncoderFactory, RTCPeerConnectionFactory, RTCIceServer, RTCDataBuffer,
+    RTCDataChannelConfiguration, RTCCameraVideoCapturer, RTCAudioSession, RTCDataChannelDelegate,
+    RTCPeerConnectionDelegate, RTCDataChannelState, RTCIceGatheringState, RTCSignalingState, RTCEAGLVideoView;
 
 enum ErrorDomain {
     videoPermissionDenied = 'Video permission denied',
@@ -29,10 +39,10 @@ enum ErrorDomain {
 export class WebRTC extends Common {
     private connection: any;
     private connectionFactory: any;
-    private configuration: RTCConfiguration;
+    private configuration: any;
     private constraints: any;
     private _delegate: WebRTCClientDelegate;
-    private defaultConnectionConstraints: RTCMediaConstraints;
+    private defaultConnectionConstraints: any;
     private remoteIceCandidates: any;
     remoteStream;
     remoteTracks: any[];
@@ -360,7 +370,7 @@ export class WebRTC extends Common {
             const streamId = this.getRandomId();
             const localStream = factory.mediaStreamWithStreamId(streamId);
             if (!AVCaptureState.isVideoDisabled) {
-                const videoSource: RTCVideoSource = factory.videoSource();
+                const videoSource = factory.videoSource();
                 let capturer = RTCCameraVideoCapturer.alloc().initWithDelegate(
                     videoSource
                 );
@@ -495,17 +505,17 @@ class RTCDataChannelDelegateImpl extends NSObject implements RTCDataChannelDeleg
         return delegate;
     }
 
-    dataChannelDidChangeBufferedAmount(dataChannel: RTCDataChannel, amount: number): void {
+    dataChannelDidChangeBufferedAmount(dataChannel: any, amount: number): void {
     }
 
-    dataChannelDidChangeState(dataChannel: RTCDataChannel): void {
+    dataChannelDidChangeState(dataChannel: any): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
             owner.delegate.webRTCClientDataChannelStateChanged(owner, dataChannel.label, dataChannel.readyState);
         }
     }
 
-    dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void {
+    dataChannelDidReceiveMessageWithBuffer(dataChannel: any, buffer: any): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
             let type;
@@ -527,7 +537,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     peerConnectionDidAddReceiverStreams?(
         peerConnection: RTCPeerConnection,
         rtpReceiver: RTCRtpReceiver,
-        mediaStreams: NSArray<RTCMediaStream>
+        mediaStreams: NSArray<any>
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -536,7 +546,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
 
     peerConnectionDidAddStream(
         peerConnection: RTCPeerConnection,
-        stream: RTCMediaStream
+        stream: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -596,7 +606,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
 
     peerConnectionDidOpenDataChannel(
         peerConnection: RTCPeerConnection,
-        dataChannel: RTCDataChannel
+        dataChannel: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -617,7 +627,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
 
     peerConnectionDidRemoveStream(
         peerConnection: RTCPeerConnection,
-        stream: RTCMediaStream
+        stream: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -627,7 +637,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
 
     peerConnectionDidStartReceivingOnTransceiver?(
         peerConnection: RTCPeerConnection,
-        transceiver: RTCRtpTransceiver
+        transceiver: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -663,7 +673,7 @@ class WebRTCClientDelegate extends NSObject {
     }
 
     webRTCClientOnRemoveStream(
-        client: WebRTC, stream: RTCMediaStream
+        client: WebRTC, stream: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -680,7 +690,7 @@ class WebRTCClientDelegate extends NSObject {
     webRTCClientDataChannelStateChanged(
         client,
         name: string,
-        type: RTCDataChannelState
+        type: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         let state;
@@ -759,8 +769,8 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientDidReceiveRemoteVideoTrackStream(
         client: WebRTC,
-        remoteVideoTrack: RTCVideoTrack,
-        stream: RTCMediaStream
+        remoteVideoTrack: any,
+        stream: any
     ) {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -804,7 +814,7 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientDidGenerateIceCandidate(
         client: WebRTC,
-        iceCandidate: RTCIceCandidate
+        iceCandidate: any
     ) {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -898,7 +908,7 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientOnIceGatheringChange(
         client,
-        gatheringState: RTCIceGatheringState
+        gatheringState: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         let state;
@@ -927,7 +937,7 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientOnSignalingChange(
         client,
-        signalingState: RTCSignalingState
+        signalingState: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         let state;
@@ -1030,7 +1040,7 @@ export class WebRTCView extends View {
 }
 
 class WebRTCCapturer {
-    private capturer: RTCCameraVideoCapturer;
+    private capturer: any;
     private cameraPosition = 'front';
     private quality: Quality;
     private client: WeakRef<WebRTC>;
