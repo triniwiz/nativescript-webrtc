@@ -45,11 +45,11 @@ export class WebRTC extends Common {
     private defaultConnectionConstraints: any;
     private remoteIceCandidates: any;
     remoteStream;
-    remoteTracks: any[];
-    private tracks: Map<String, MediaData> = new Map();
-    private localStreams: Map<String, any> = new Map();
-    private remoteStreams: Map<String, any> = new Map();
-    private _dataChannels: Map<String, any> = new Map();
+    remoteTracks: Array<any>;
+    private tracks: Map<string, MediaData> = new Map();
+    private localStreams: Map<string, any> = new Map();
+    private remoteStreams: Map<string, any> = new Map();
+    private _dataChannels: Map<string, any> = new Map();
 
     constructor(
         options: WebRTCOptions = {enableAudio: true, enableVideo: true}
@@ -80,7 +80,7 @@ export class WebRTC extends Common {
             decoder
         );
 
-        const nativeIceServers = NSArray.alloc().init() as any;
+        const nativeIceServers = NSArray.alloc().initWithArray(<any>[]) as any;
         if (!options.iceServers) {
             this.defaultServers.forEach((server, index) => {
                 nativeIceServers[index] = RTCIceServer.alloc().initWithURLStrings(<any>[server]);
@@ -189,7 +189,7 @@ export class WebRTC extends Common {
         if (!this.connection) return;
         this.connection.offerForConstraintsCompletionHandler(
             this.constraints,
-            (sdp: RTCSessionDescription, error: NSError) => {
+            (sdp: any /*RTCSessionDescription */, error: NSError) => {
                 if (error) {
                     this._delegate.webRTCClientDidReceiveError(this, error);
                 } else {
@@ -246,7 +246,7 @@ export class WebRTC extends Common {
                     this.handleRemoteDescriptionSet();
                     this.connection.answerForConstraintsCompletionHandler(
                         this.constraints,
-                        (generatedSdp: RTCSessionDescription, error: NSError) => {
+                        (generatedSdp: any, error: NSError) => {
                             if (error) {
                                 this._delegate.webRTCClientDidReceiveError(this, error);
                             } else {
@@ -267,7 +267,7 @@ export class WebRTC extends Common {
         this.remoteIceCandidates = [];
     }
 
-    private handleSdpGenerated(sdp: RTCSessionDescription) {
+    private handleSdpGenerated(sdp: any) {
         if (!sdp) return;
         this.connection.setLocalDescriptionCompletionHandler(
             sdp,
@@ -535,8 +535,8 @@ class RTCDataChannelDelegateImpl extends NSObject implements RTCDataChannelDeleg
 class RTCPeerConnectionDelegateImpl extends NSObject
     implements RTCPeerConnectionDelegate {
     peerConnectionDidAddReceiverStreams?(
-        peerConnection: RTCPeerConnection,
-        rtpReceiver: RTCRtpReceiver,
+        peerConnection: any,
+        rtpReceiver: any,
         mediaStreams: NSArray<any>
     ): void {
         const owner = this._owner ? this._owner.get() : null;
@@ -545,7 +545,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidAddStream(
-        peerConnection: RTCPeerConnection,
+        peerConnection: any,
         stream: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
@@ -565,8 +565,8 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidChangeIceConnectionState(
-        peerConnection: RTCPeerConnection,
-        newState: RTCIceConnectionState
+        peerConnection: any,
+        newState: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -575,8 +575,8 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidChangeIceGatheringState(
-        peerConnection: RTCPeerConnection,
-        newState: RTCIceGatheringState
+        peerConnection: any,
+        newState: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -585,8 +585,8 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidChangeSignalingState(
-        peerConnection: RTCPeerConnection,
-        stateChanged: RTCSignalingState
+        peerConnection: any,
+        stateChanged: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -595,8 +595,8 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidGenerateIceCandidate(
-        peerConnection: RTCPeerConnection,
-        candidate: RTCIceCandidate
+        peerConnection: any,
+        candidate: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -605,7 +605,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidOpenDataChannel(
-        peerConnection: RTCPeerConnection,
+        peerConnection: any,
         dataChannel: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
@@ -616,8 +616,8 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidRemoveIceCandidates(
-        peerConnection: RTCPeerConnection,
-        candidates: NSArray<RTCIceCandidate>
+        peerConnection: any,
+        candidates: NSArray<any>
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -626,7 +626,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidRemoveStream(
-        peerConnection: RTCPeerConnection,
+        peerConnection: any,
         stream: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
@@ -636,7 +636,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
     }
 
     peerConnectionDidStartReceivingOnTransceiver?(
-        peerConnection: RTCPeerConnection,
+        peerConnection: any,
         transceiver: any
     ): void {
         const owner = this._owner ? this._owner.get() : null;
@@ -644,7 +644,7 @@ class RTCPeerConnectionDelegateImpl extends NSObject
         }
     }
 
-    peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void {
+    peerConnectionShouldNegotiate(peerConnection: any /* RTCPeerConnection */): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
             owner.delegate.webRTCClientOnRenegotiationNeeded(owner);
@@ -741,7 +741,7 @@ class WebRTCClientDelegate extends NSObject {
         }
     }
 
-    webRTCClientStartCallWithSdp(client: WebRTC, sdp: RTCSessionDescription) {
+    webRTCClientStartCallWithSdp(client: WebRTC, sdp: any) {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
             let type;
@@ -836,7 +836,7 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientOnIceCandidatesRemoved(
         client,
-        candidates: NSArray<RTCIceCandidate>
+        candidates: NSArray<any>
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         if (owner) {
@@ -852,7 +852,7 @@ class WebRTCClientDelegate extends NSObject {
 
     webRTCClientOnIceConnectionChange(
         client,
-        connectionState: RTCIceConnectionState
+        connectionState: any /* RTCIceConnectionState */
     ): void {
         const owner = this._owner ? this._owner.get() : null;
         let state;

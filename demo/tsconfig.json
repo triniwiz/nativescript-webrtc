@@ -5,11 +5,11 @@
         "declaration": false,
         "removeComments": true,
         "noLib": false,
+        "skipLibCheck": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "lib": [
-            "es6",
-            "dom"
+            "es6"
         ],
         "pretty": true,
         "allowUnreachableCode": false,
@@ -37,8 +37,7 @@
     "exclude": [
         "../src/node_modules",
         "node_modules",
-        "platforms",
-        "typings"
+        "platforms"
     ],
     "compileOnSave": false
 }

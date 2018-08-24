@@ -46,13 +46,13 @@
     "homepage": "https://github.com/triniwiz/nativescript-webrtc",
     "readmeFilename": "README.md",
     "devDependencies": {
-        "tns-core-modules": "^4.2.0",
-        "tns-platform-declarations": "^4.2.0",
-        "typescript": "~2.8.2",
         "prompt": "^1.0.0",
         "rimraf": "^2.6.2",
+        "semver": "^5.5.0",
+        "tns-core-modules": "^4.2.0",
+        "tns-platform-declarations": "^4.2.0",
         "tslint": "^5.11.0",
-        "semver": "^5.5.0"
+        "typescript": "^3.0.1"
     },
     "dependencies": {
         "nativescript-permissions": "^1.2.3"
