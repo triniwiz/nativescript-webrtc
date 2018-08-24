@@ -25,3 +25,4 @@ publish/package
 demo/report/report.html
 demo/report/stats.json
 !demo-server/app.js
+package-lock.json
