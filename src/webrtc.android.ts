@@ -18,7 +18,7 @@ import { ad } from 'tns-core-modules/utils/utils';
 import * as permissions from 'nativescript-permissions';
 
 export * from './webrtc.common';
-declare const co;
+declare var co, org;
 export class WebRTC extends Common {
 
     private webrtc: any /* co.fitcom.fancywebrtc.FancyWebRTC */;
@@ -64,7 +64,7 @@ export class WebRTC extends Common {
         this.webrtc.setListener(
             new co.fitcom.fancywebrtc.FancyWebRTCListener({
                 webRTCClientDidReceiveError(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: string
                 ): void {
                     const owner = ref.get();
@@ -77,8 +77,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientStartCallWithSdp(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.SessionDescription
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     let type;
@@ -103,9 +103,9 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientDataChannelStateChanged(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: string,
-                    param2: org.webrtc.DataChannel.State
+                    param2: any
                 ): void {
                     const owner = ref.get();
                     let state;
@@ -133,10 +133,10 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientDataChannelMessageType(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: string,
                     param2: string,
-                    param3: co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType
+                    param3: any
                 ): void {
                     const owner = ref.get();
                     let type;
@@ -160,8 +160,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnRemoveStream(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.MediaStream
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     owner.notify({
@@ -173,9 +173,9 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientDidReceiveRemoteVideoTrackStream(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.VideoTrack,
-                    param2: org.webrtc.MediaStream
+                    param0: any,
+                    param1: any,
+                    param2: any
                 ): void {
                     const owner = ref.get();
                     owner.notify({
@@ -188,8 +188,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientDidGenerateIceCandidate(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.IceCandidate
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     owner.notify({
@@ -206,7 +206,7 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnRenegotiationNeeded(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC
+                    param0: any
                 ): void {
                     const owner = ref.get();
                     owner.notify({
@@ -217,8 +217,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnIceCandidatesRemoved(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: native.Array<org.webrtc.IceCandidate>
+                    param0: any,
+                    param1: native.Array<any>
                 ): void {
                     const owner = ref.get();
                     owner.notify({
@@ -230,8 +230,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnIceConnectionChange(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.PeerConnection.IceConnectionState
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     let state;
@@ -267,7 +267,7 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnIceConnectionReceivingChange(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: boolean
                 ): void {
                     const owner = ref.get();
@@ -280,8 +280,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnIceGatheringChange(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.PeerConnection.IceGatheringState
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     let state;
@@ -305,8 +305,8 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnSignalingChange(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                    param1: org.webrtc.PeerConnection.SignalingState
+                    param0: any,
+                    param1: any
                 ): void {
                     const owner = ref.get();
                     let state;
@@ -340,7 +340,7 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnCameraSwitchDone(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: boolean
                 ): void {
                     const owner = ref.get();
@@ -353,7 +353,7 @@ export class WebRTC extends Common {
                     });
                 },
                 webRTCClientOnCameraSwitchError(
-                    param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                    param0: any,
                     param1: string
                 ): void {
                     const owner = ref.get();
@@ -517,13 +517,13 @@ export class WebRTC extends Common {
                 nativeQuality,
                 new co.fitcom.fancywebrtc.FancyWebRTCListener.GetUserMediaListener({
                     webRTCClientOnGetUserMedia(
-                        param0: co.fitcom.fancywebrtc.FancyWebRTC,
-                        param1: org.webrtc.MediaStream
+                        param0: any,
+                        param1: any
                     ): void {
                         resolve(param1);
                     },
                     webRTCClientOnGetUserMediaDidReceiveError(
-                        param0: co.fitcom.fancywebrtc.FancyWebRTC,
+                        param0: any,
                         param1: string
                     ): void {
                         reject(param1);
