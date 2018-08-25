@@ -1,4 +1,4 @@
-# NativeScript WebRTC WIP
+# NativeScript WebRTC
 
 [![npm](https://img.shields.io/npm/v/nativescript-webrtc-plugin.svg)](https://www.npmjs.com/package/nativescript-webrtc-plugin)
 [![npm](https://img.shields.io/npm/dt/nativescript-webrtc-plugin.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-webrtc-plugin)
