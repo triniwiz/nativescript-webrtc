@@ -1,7 +1,0 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
-    xmlns:ui="nativescript-webrtc">
-    <GridLayout rows="*,auto,auto,*">
-        <TextField margin="0 20 10 20" row="1" hint="UserName" text="{{username}}"/>
-        <Button margin="0 20" row="2" text="Enter" tap="{{login}}"/>
-    </GridLayout>
-</Page>

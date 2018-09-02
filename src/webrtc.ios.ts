@@ -17,7 +17,20 @@ import './async-await';
 
 import { ios } from 'tns-core-modules/utils/utils';
 
-export * from './webrtc.common';
+export {
+    IceConnectionState,
+    IceServer,
+    IceGatheringState,
+    Quality,
+    SignalingState,
+    WebRTCDataChannelMessageType,
+    WebRTCDataChannelState,
+    WebRTCIceCandidate,
+    WebRTCOptions,
+    WebRTCSdp,
+    WebRTCSdpType,
+    WebRTCState
+} from './webrtc.common';
 
 interface RTCDataChannelDelegate {
 }

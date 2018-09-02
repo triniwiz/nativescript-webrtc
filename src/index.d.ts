@@ -1,7 +1,6 @@
 import { Common, Quality, WebRTCDataChannelMessageType, WebRTCIceCandidate, WebRTCOptions, WebRTCSdp } from './webrtc.common';
-import './async-await';
 import { View } from 'tns-core-modules/ui/core/view';
-export * from './webrtc.common';
+export { IceConnectionState, IceServer, IceGatheringState, Quality, SignalingState, WebRTCDataChannelMessageType, WebRTCDataChannelState, WebRTCIceCandidate, WebRTCOptions, WebRTCSdp, WebRTCSdpType, WebRTCState } from './webrtc.common';
 export declare class WebRTC extends Common {
     private webrtc;
     constructor(options?: WebRTCOptions);
@@ -27,6 +26,7 @@ export declare class WebRTC extends Common {
 }
 export declare class WebRTCView extends View {
     private _stream;
+    createNativeView(): any;
     mirror: boolean;
     videoTrack: any;
     stream: any;

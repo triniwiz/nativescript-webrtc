@@ -11,16 +11,30 @@ import {
     WebRTCSdp,
     WebRTCSdpType
 } from './webrtc.common';
-import './async-await';
+
 import { fromObject } from 'tns-core-modules/data/observable';
 import { View } from 'tns-core-modules/ui/core/view';
 import { ad } from 'tns-core-modules/utils/utils';
 import * as permissions from 'nativescript-permissions';
 
-export * from './webrtc.common';
-declare var co, org;
-export class WebRTC extends Common {
+export {
+    IceConnectionState,
+    IceServer,
+    IceGatheringState,
+    Quality,
+    SignalingState,
+    WebRTCDataChannelMessageType,
+    WebRTCDataChannelState,
+    WebRTCIceCandidate,
+    WebRTCOptions,
+    WebRTCSdp,
+    WebRTCSdpType,
+    WebRTCState
+} from './webrtc.common';
 
+declare var co, org;
+
+export class WebRTC extends Common {
     private webrtc: any /* co.fitcom.fancywebrtc.FancyWebRTC */;
 
     constructor(
@@ -48,25 +62,22 @@ export class WebRTC extends Common {
         if (nativeIceServers) {
             this.webrtc = new co.fitcom.fancywebrtc.FancyWebRTC(
                 ad.getApplicationContext(),
-                !!options.enableVideo,
-                !!options.enableAudio,
+                new java.lang.Boolean(!!options.enableVideo).booleanValue(),
+                new java.lang.Boolean(!!options.enableAudio).booleanValue(),
                 nativeIceServers
             );
         } else {
             this.webrtc = new co.fitcom.fancywebrtc.FancyWebRTC(
                 ad.getApplicationContext(),
-                !!options.enableVideo,
-                !!options.enableAudio
+                new java.lang.Boolean(!!options.enableVideo).booleanValue(),
+                new java.lang.Boolean(!!options.enableAudio).booleanValue()
             );
         }
 
         const ref = new WeakRef(this);
         this.webrtc.setListener(
             new co.fitcom.fancywebrtc.FancyWebRTCListener({
-                webRTCClientDidReceiveError(
-                    param0: any,
-                    param1: string
-                ): void {
+                webRTCClientDidReceiveError(param0: any, param1: string): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientDidReceiveError',
@@ -76,10 +87,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientStartCallWithSdp(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientStartCallWithSdp(param0: any, param1: any): void {
                     const owner = ref.get();
                     let type;
                     switch (param1.type) {
@@ -159,10 +167,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnRemoveStream(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientOnRemoveStream(param0: any, param1: any): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientOnRemoveStream',
@@ -187,10 +192,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientDidGenerateIceCandidate(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientDidGenerateIceCandidate(param0: any, param1: any): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientDidGenerateIceCandidate',
@@ -205,9 +207,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnRenegotiationNeeded(
-                    param0: any
-                ): void {
+                webRTCClientOnRenegotiationNeeded(param0: any): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientOnRenegotiationNeeded',
@@ -229,10 +229,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnIceConnectionChange(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientOnIceConnectionChange(param0: any, param1: any): void {
                     const owner = ref.get();
                     let state;
                     switch (param1) {
@@ -279,10 +276,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnIceGatheringChange(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientOnIceGatheringChange(param0: any, param1: any): void {
                     const owner = ref.get();
                     let state;
                     switch (param1) {
@@ -304,10 +298,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnSignalingChange(
-                    param0: any,
-                    param1: any
-                ): void {
+                webRTCClientOnSignalingChange(param0: any, param1: any): void {
                     const owner = ref.get();
                     let state;
                     switch (param0) {
@@ -339,10 +330,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnCameraSwitchDone(
-                    param0: any,
-                    param1: boolean
-                ): void {
+                webRTCClientOnCameraSwitchDone(param0: any, param1: boolean): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientOnCameraSwitchDone',
@@ -352,10 +340,7 @@ export class WebRTC extends Common {
                         })
                     });
                 },
-                webRTCClientOnCameraSwitchError(
-                    param0: any,
-                    param1: string
-                ): void {
+                webRTCClientOnCameraSwitchError(param0: any, param1: string): void {
                     const owner = ref.get();
                     owner.notify({
                         eventName: 'webRTCClientOnCameraSwitchError',
@@ -390,14 +375,20 @@ export class WebRTC extends Common {
         co.fitcom.fancywebrtc.FancyWebRTC.init(ad.getApplicationContext());
     }
 
-    public dataChannelSend(name: string, data: string, type: WebRTCDataChannelMessageType) {
+    public dataChannelSend(
+        name: string,
+        data: string,
+        type: WebRTCDataChannelMessageType
+    ) {
         let nativeType;
         switch (type) {
             case WebRTCDataChannelMessageType.BINARY:
-                nativeType = co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType.BINARY;
+                nativeType =
+                    co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType.BINARY;
                 break;
             case WebRTCDataChannelMessageType.TEXT:
-                nativeType = co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType.TEXT;
+                nativeType =
+                    co.fitcom.fancywebrtc.FancyWebRTC.DataChannelMessageType.TEXT;
                 break;
         }
         this.webrtc.dataChannelSend(name, data, nativeType);
@@ -516,10 +507,7 @@ export class WebRTC extends Common {
             this.webrtc.getUserMedia(
                 nativeQuality,
                 new co.fitcom.fancywebrtc.FancyWebRTCListener.GetUserMediaListener({
-                    webRTCClientOnGetUserMedia(
-                        param0: any,
-                        param1: any
-                    ): void {
+                    webRTCClientOnGetUserMedia(param0: any, param1: any): void {
                         resolve(param1);
                     },
                     webRTCClientOnGetUserMediaDidReceiveError(
@@ -542,11 +530,15 @@ export class WebRTCView extends View {
     }
 
     set mirror(mirror: boolean) {
-        this.nativeView.setMirror(mirror);
+        if (this.nativeView) {
+            this.nativeView.setMirror(mirror);
+        }
     }
 
     set videoTrack(track: any) {
-        this.nativeView.setVideoTrack(track);
+        if (this.nativeView) {
+            this.nativeView.setVideoTrack(track);
+        }
     }
 
     set stream(stream: any) {

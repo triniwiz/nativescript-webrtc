@@ -8,7 +8,7 @@
 android {
   compileSdkVersion 28
   defaultConfig {
-    minSdkVersion 24
+    minSdkVersion 17
     targetSdkVersion 28
     generatedDensities = []
     applicationId = "org.nativescript.demo"

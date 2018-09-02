@@ -5,6 +5,7 @@
 *.js
 *.js.map
 *.log
+*.metadata.json
 src/*.d.ts
 !src/async-await.js
 !src/index.d.ts
@@ -26,3 +27,14 @@ demo/report/report.html
 demo/report/stats.json
 !demo-server/app.js
 package-lock.json
+
+!demo/app/async-await.js
+!demo-ng/app/async-await.js
+
+demo-ng/node_modules
+demo-ng/*.d.ts
+demo-ng/references.d.ts
+demo-ng/lib
+demo-ng/platforms
+demo-ng/report/report.html
+demo-ng/report/stats.json

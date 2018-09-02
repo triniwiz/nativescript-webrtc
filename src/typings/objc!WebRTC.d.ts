@@ -1,5 +1,3 @@
-/// <reference path="../node_modules/tns-platform-declarations/ios.d.ts" />
-
 declare class RTCAudioSession extends NSObject implements RTCAudioSessionActivationDelegate {
 
     static alloc(): RTCAudioSession; // inherited from NSObject

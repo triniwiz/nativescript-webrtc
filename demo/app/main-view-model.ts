@@ -15,7 +15,7 @@ export class HelloWorldModel extends Observable {
     this.socketIO = SocketService.getInstance();
     this.socketIO.on('call:incoming', data => {
       frame.topmost().navigate({
-        moduleName: 'call',
+        moduleName: 'call-page',
         context: {
           to: data.to,
           from: data.from,
@@ -39,7 +39,7 @@ export class HelloWorldModel extends Observable {
   callUser(event: ItemEventData) {
     const user = this.items.getItem(event.index);
     frame.topmost().navigate({
-      moduleName: 'call',
+      moduleName: 'call-page',
       context: {
         to: user.username,
         from: settings.getString('me')
