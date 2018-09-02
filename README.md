@@ -23,6 +23,18 @@ WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
 <webrtc:WebRTCView  id="localVideoView" height="50%" />
 ```
 
+
+#### Using Angular ? 
+
+
+Import the WebRTCModule from nativescript-webrtc-plugin/angular and add it to the imports of your initial @NgModule, like shown [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/app.module.ts#L23).
+
+```html
+<WebRTCView #remoteVideoView height="50%" ></WebRTCView>
+<WebRTCView #localVideoView height="50%" ></WebRTCView>
+```
+
+
 **Caller**
 
 ```typescript

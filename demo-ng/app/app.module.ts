@@ -14,6 +14,7 @@ import { CallService } from '~/call.service';
 import { WebRTC } from 'nativescript-webrtc-plugin';
 import { WebRTCModule } from 'nativescript-webrtc-plugin/angular';
 WebRTC.init();
+
 @NgModule({
     bootstrap: [AppComponent],
     imports: [
