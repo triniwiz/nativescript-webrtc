@@ -1,6 +1,6 @@
 {
     "name": "nativescript-webrtc-plugin",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "WebRTC for NativeScript",
     "main": "webrtc",
     "typings": "index.d.ts",

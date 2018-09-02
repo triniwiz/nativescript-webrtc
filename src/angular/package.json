@@ -1,4 +1,3 @@
 {
-    "name": "nativescript-webrtc-module",
-    "main": "index.js"
+    "main": "index"
 }
