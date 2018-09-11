@@ -146,6 +146,18 @@ webrtc.createAnswerForOfferReceived({
 });
 ```
 
+
+### Using demo
+
+**Note** the demo can be ran on a device w/o a camera but you will need to disable the video option [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo/app/call-view-model.ts#L50) an [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo/app/call-view-model.ts#L129) for core or [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/call.service.ts#L155) an [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/call.service.ts#L89) for angular  also the app connects to remote [stun server(s)](https://www.3cx.com/pbx/what-is-a-stun-server/) so internet connection is needed.
+
+
+1. Start demo-server by running `npm i && node app`
+
+2. Edit the [socket-server.ts ](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo/app/socket-server.ts#L8) or [environment.ts](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/environment.ts#L1) to point to your computer's local ip where the demo-server is running
+
+3. Run the demo/demo-ng enter usernames on both device then tap on the username of the other device the demo will auto answer the call . 🙂
+
 ## License
 
 Apache License Version 2.0, January 2004
