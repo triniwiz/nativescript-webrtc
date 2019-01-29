@@ -16,7 +16,7 @@ WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
 ### How to make a call
 
 
-**IMPORTANT**: Make sure you include xmlns:webrtc="nativescript-webrtc-plugin" on the Page element any element can be used in the pager
+**IMPORTANT**: Make sure you include xmlns:webrtc="nativescript-webrtc-plugin" on the Page element
 
 ```xml
 <webrtc:WebRTCView id="remoteVideoView" height="50%" />
@@ -29,11 +29,23 @@ WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
 
 Import the WebRTCModule from nativescript-webrtc-plugin/angular and add it to the imports of your initial @NgModule, like shown [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/app.module.ts#L23).
 
+
+#### Vue
+```js
+import Vue from 'nativescript-vue';
+import WebRTCView from 'nativescript-webrtc-plugin/vue';
+
+Vue.use(WebRTCView);
+
+```
+
+
 ```html
 <WebRTCView #remoteVideoView height="50%" ></WebRTCView>
 <WebRTCView #localVideoView height="50%" ></WebRTCView>
 ```
 
+## Basic Api
 
 **Caller**
 
@@ -145,6 +157,11 @@ webrtc.createAnswerForOfferReceived({
   sdp: sdp.sdp
 });
 ```
+
+
+## Standard Api
+This api is similar to the webrtc browser api -> [example](demo/app/standard/standard-vm.ts)
+
 
 ## License
 

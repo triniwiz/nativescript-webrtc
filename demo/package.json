@@ -1,11 +1,11 @@
 {
   "nativescript": {
-    "id": "org.nativescript.demo",
+    "id": "com.github.triniwiz.nativescript.webrtc.demo.core",
     "tns-ios": {
-      "version": "4.2.0"
+      "version": "5.1.1"
     },
     "tns-android": {
-      "version": "4.2.0"
+      "version": "5.1.0"
     }
   },
   "dependencies": {
@@ -13,7 +13,7 @@
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "^0.3.4",
     "nativescript-webrtc-plugin": "../src",
-    "tns-core-modules": "^4.2.0"
+    "tns-core-modules": "^5.1.2"
   },
   "devDependencies": {
     "jasmine-core": "^2.5.2",
@@ -21,9 +21,9 @@
     "karma-jasmine": "^1.0.2",
     "karma-nativescript-launcher": "^0.4.0",
     "nativescript-css-loader": "~0.26.1",
-    "nativescript-dev-typescript": "~0.7.2",
-    "nativescript-dev-webpack": "~0.15.1",
-    "tns-platform-declarations": "^4.2.0",
+    "nativescript-dev-typescript": "^0.7.9",
+    "nativescript-dev-webpack": "^0.19.0",
+    "tns-platform-declarations": "^5.1.2",
     "tslint": "~5.4.3",
     "typescript": "~2.8.2"
   },

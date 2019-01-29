@@ -16,6 +16,7 @@ import { fromObject } from 'tns-core-modules/data/observable';
 import { View } from 'tns-core-modules/ui/core/view';
 import { ad } from 'tns-core-modules/utils/utils';
 import * as permissions from 'nativescript-permissions';
+import { TNSRTCMediaStream } from './src/android/TNSRTCMediaStream';
 
 export {
     IceConnectionState,
@@ -547,4 +548,15 @@ export class WebRTCView extends View {
             this.videoTrack = stream.videoTracks.get(0);
         }
     }
+
+    set srcObject(value: any) {
+        if (value instanceof TNSRTCMediaStream) {
+            this.nativeView.setSrcObject(value.instance);
+        }
+        if (value instanceof org.webrtc.MediaStream) {
+            this.nativeView.setSrcObject(value);
+        }
+    }
 }
+
+export * from './src/android';

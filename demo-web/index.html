@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+        <script src="index.js"></script>
+        <link rel="stylesheet" href="index.css"></link>
+    </head>
+    <body>
+        <div class="container">
+            <video id="localVideo" mute autoplay></video>
+            <div class="actions">
+                <button id="hangUp">Hang Up</button>
+                <button id="call">Call</button>
+                <button id="answer">Answer</button>
+                <button id="switch">Switch</button>
+            </div>
+            <video id="remoteVideo" autoplay></video>
+        </div>
+    </body>
+</html>

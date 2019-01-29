@@ -1,0 +1,17 @@
+.container {
+    display: grid;
+    grid-row: 1fr 1fr 1fr;
+}
+
+#localVideo {
+background-color: black;
+}
+
+#remoteVideo{
+    background-color: blue;
+}
+
+.actions {
+    display: grid;
+    grid-column: 1fr 1fr 1fr 1fr;
+}
