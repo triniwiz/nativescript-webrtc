@@ -45,7 +45,7 @@ Vue.use(WebRTCView);
 
 
 ## Standard Api :sparkles: New :sparkles:
-This api is similar to the webrtc browser api -> [example](demo/app/standard/standard-vm.ts)
+This api is similar to the webrtc browser api -> [example](demo/app/standard/standard-vm.ts) but with `TNS` appended e.g `TNSRTCPeerConnection`
 
 
 ## Basic Api
