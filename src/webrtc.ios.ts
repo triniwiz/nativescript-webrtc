@@ -441,15 +441,19 @@ export class WebRTC extends Common {
         );
         try {
             if (enabled) {
+                audioSession.lockForConfiguration();
                 audioSession.overrideOutputAudioPortError(
                     AVAudioSessionPortOverride.Speaker
                 );
                 audioSession.setActiveError(true);
+                audioSession.unlockForConfiguration();
             } else {
+                audioSession.lockForConfiguration();
                 audioSession.overrideOutputAudioPortError(
                     AVAudioSessionPortOverride.None
                 );
                 audioSession.setActiveError(true);
+                audioSession.unlockForConfiguration();
             }
         } catch (e) {
         }
