@@ -11,11 +11,12 @@ import {
     WebRTCSdp,
     WebRTCSdpType
 } from './webrtc.common';
-import { View } from 'tns-core-modules/ui/core/view';
+import { layout, View } from 'tns-core-modules/ui/core/view';
 import { fromObject } from 'tns-core-modules/data/observable';
 import './async-await';
 
 import { ios } from 'tns-core-modules/utils/utils';
+import { TNSRTCMediaStream } from './src/ios';
 
 export {
     IceConnectionState,
@@ -42,7 +43,8 @@ declare var RTCSdpType, RTCSessionDescription, RTCIceCandidate, RTCIceConnection
     RTCConfiguration, RTCContinualGatheringPolicy, RTCTcpCandidatePolicy, RTCRtcpMuxPolicy, RTCEncryptionKeyType,
     RTCDefaultVideoDecoderFactory, RTCDefaultVideoEncoderFactory, RTCPeerConnectionFactory, RTCIceServer, RTCDataBuffer,
     RTCDataChannelConfiguration, RTCCameraVideoCapturer, RTCAudioSession, RTCDataChannelDelegate,
-    RTCPeerConnectionDelegate, RTCDataChannelState, RTCIceGatheringState, RTCSignalingState, RTCEAGLVideoView;
+    RTCPeerConnectionDelegate, RTCDataChannelState, RTCIceGatheringState, RTCSignalingState, RTCEAGLVideoView,
+    RTCMediaStream;
 
 enum ErrorDomain {
     videoPermissionDenied = 'Video permission denied',
@@ -1018,38 +1020,46 @@ class WebRTCClientDelegate extends NSObject {
 }
 
 export class WebRTCView extends View {
-    private _stream: any;
-    private _localVideoTrack: any;
-    private _mirror: boolean;
 
-    constructor() {
-        super();
-        this.nativeView = RTCEAGLVideoView.alloc().init();
+    createNativeView(): Object {
+        return FancyWebRTCView.new();
     }
 
     set mirror(mirror: boolean) {
-        if (mirror) {
-            this._mirror = true;
-            this.nativeView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-        } else {
-            this.nativeView.transform = CGAffineTransformMakeScale(1.0, 1.0);
-            this._mirror = false;
-        }
+        this.nativeView.setMirrorWithMirror(mirror);
     }
 
     set videoTrack(track) {
-        this._localVideoTrack = track;
-        if (track) {
-            track.addRenderer(this.nativeView);
-        }
+        this.nativeView.setVideoTrackWithTrack(track);
     }
 
     set stream(stream: any) {
-        this._stream = stream;
-        if (stream.videoTracks && stream.videoTracks.firstObject) {
-            this.videoTrack = stream.videoTracks.firstObject;
+        if (stream instanceof RTCMediaStream) {
+            this.nativeView.setSrcObjectWith(stream);
         }
     }
+
+    set srcObject(value: any) {
+        if (!this.nativeView) return;
+        if (value instanceof TNSRTCMediaStream) {
+            this.nativeView.setSrcObjectWithStream(value.instance);
+
+        } else if (value instanceof RTCMediaStream) {
+            this.nativeView.setSrcObjectWith(value);
+        }
+
+    }
+
+
+    public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number) {
+        const nativeView = this.nativeView;
+        if (nativeView) {
+            const width = layout.getMeasureSpecSize(widthMeasureSpec);
+            const height = layout.getMeasureSpecSize(heightMeasureSpec);
+            this.setMeasuredDimension(width, height);
+        }
+    }
+
 }
 
 class WebRTCCapturer {
@@ -1236,3 +1246,5 @@ class WebRTCCapturer {
         this.startWithError(true);
     }
 }
+
+export * from './src/ios';

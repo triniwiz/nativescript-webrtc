@@ -1,6 +1,6 @@
 {
     "name": "nativescript-webrtc-plugin",
-    "version": "1.0.2",
+    "version": "2.0.0-alpha.0",
     "description": "WebRTC for NativeScript",
     "main": "webrtc",
     "typings": "index.d.ts",
@@ -13,7 +13,7 @@
     "scripts": {
         "ngc.clean": "find ./ angular/ -name '*.metadata.json' -delete",
         "ngc": "npm run ngc.clean && ngc -skipLibCheck --project tsconfig.json",
-        "tsc": "npm run ngc",
+        "tsc": "tsc",
         "build": "npm i && tsc && npm run build.native",
         "build.native": "node scripts/build-native.js",
         "postclone": "npm i && node scripts/postclone.js && cd ../demo && npm i",

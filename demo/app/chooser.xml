@@ -1,0 +1,6 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd">
+    <StackLayout>
+        <Button text="Basic WebRTC" tap="toBasic"/>
+        <Button text="Standard WebRTC" tap="toStandard"/>
+    </StackLayout>
+</Page>

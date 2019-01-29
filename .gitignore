@@ -38,3 +38,5 @@ demo-ng/lib
 demo-ng/platforms
 demo-ng/report/report.html
 demo-ng/report/stats.json
+
+!src/vue/index.js

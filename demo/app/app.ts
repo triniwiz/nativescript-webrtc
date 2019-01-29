@@ -2,6 +2,7 @@
 import './async-await';
 import { WebRTC } from 'nativescript-webrtc-plugin';
 import * as settings from 'tns-core-modules/application-settings';
+
 settings.clear();
 WebRTC.init();
-application.run({ moduleName: 'app-root' });
+application.run({moduleName: 'app-root'});
