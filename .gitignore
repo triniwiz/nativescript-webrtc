@@ -8,7 +8,11 @@
 *.metadata.json
 
 src/*.d.ts
-src/src/*.d.ts
+!src/src/index.d.ts
+src/src/android/*.d.ts
+src/src/core/*.d.ts
+src/src/base/*.d.ts
+src/src/ios/*.d.ts
 !src/vue/*.js
 !src/async-await.js
 !src/index.d.ts
