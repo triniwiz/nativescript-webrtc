@@ -35,5 +35,9 @@
         "@angular/compiler-cli": "~7.1.0",
         "@ngtools/webpack": "~7.1.0"
     },
-    "readme": "NativeScript Application"
+    "readme": "NativeScript Application",
+    "scripts": {
+        "build.plugin": "cd ../src && npm run build",
+        "ci.tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
+    }
 }
