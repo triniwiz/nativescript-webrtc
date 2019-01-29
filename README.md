@@ -8,11 +8,6 @@
 
 - `tns plugin add nativescript-webrtc-plugin`
 
-```typescript
-import { WebRTC } from 'nativescript-webrtc-plugin';
-WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
-```
-
 ### How to make a call
 
 
@@ -51,6 +46,11 @@ This api is similar to the webrtc browser api -> [example](demo/app/standard/sta
 
 
 ## Basic Api
+
+```typescript
+import { WebRTC } from 'nativescript-webrtc-plugin';
+WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
+```
 
 **Caller**
 
