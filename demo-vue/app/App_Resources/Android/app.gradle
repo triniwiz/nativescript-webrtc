@@ -1,0 +1,15 @@
+// Add your native dependencies here:
+
+android {
+  defaultConfig {
+    generatedDensities = []
+    applicationId = "com.github.triniwiz.nativescript.webrtc.demo.vue"
+  }
+  compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
+}

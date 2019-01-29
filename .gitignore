@@ -6,9 +6,13 @@
 *.js.map
 *.log
 *.metadata.json
+
 src/*.d.ts
+src/src/*.d.ts
+!src/vue/*.js
 !src/async-await.js
 !src/index.d.ts
+!src/src/index.d.ts
 !src/references.d.ts
 !src/scripts/*.js
 !seed-tests/*.js
@@ -39,4 +43,11 @@ demo-ng/platforms
 demo-ng/report/report.html
 demo-ng/report/stats.json
 
-!src/vue/index.js
+demo-vue/node_modules
+demo-vue/lib
+demo-vue/platforms
+demo-vue/report/report.html
+demo-vue/report/stats.json
+demo-vue/hooks
+demo-vue/*.js
+!demo-vue/types/*.d.ts

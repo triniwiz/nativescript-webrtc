@@ -33,6 +33,8 @@ export {
     WebRTCState
 } from './webrtc.common';
 
+export * from './src/ios';
+
 interface RTCDataChannelDelegate {
 }
 
@@ -1251,4 +1253,3 @@ class WebRTCCapturer {
     }
 }
 
-export * from './src/ios';

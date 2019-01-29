@@ -5,27 +5,27 @@ export class TNSRTCSessionDescription {
     private _sessionDescription;
 
     constructor(...args) {
-        if(args.length === 1){
+        if (args.length === 1) {
             this._sessionDescription = args[0];
-        }else{
+        } else {
             let type: TNSRTCSdpType = args[0];
             let sdp: string = args[1];
-        let nativeType;
-        switch (type) {
-            case TNSRTCSdpType.ANSWER:
-                nativeType = FancyRTCSdpType.ANSWER;
-                break;
-            case TNSRTCSdpType.OFFER:
-                nativeType = FancyRTCSdpType.OFFER;
-                break;
-            case TNSRTCSdpType.PRANSWER:
-                nativeType = FancyRTCSdpType.PRANSWER;
-                break;
-            case TNSRTCSdpType.ROLLBACK:
-                nativeType = FancyRTCSdpType.ROLLBACK;
-                break;
-        }
-        this._sessionDescription = FancyRTCSessionDescription.alloc().initWithTypeDescription(nativeType, sdp);
+            let nativeType;
+            switch (type) {
+                case TNSRTCSdpType.ANSWER:
+                    nativeType = FancyRTCSdpType.ANSWER;
+                    break;
+                case TNSRTCSdpType.OFFER:
+                    nativeType = FancyRTCSdpType.OFFER;
+                    break;
+                case TNSRTCSdpType.PRANSWER:
+                    nativeType = FancyRTCSdpType.PRANSWER;
+                    break;
+                case TNSRTCSdpType.ROLLBACK:
+                    nativeType = FancyRTCSdpType.ROLLBACK;
+                    break;
+            }
+            this._sessionDescription = FancyRTCSessionDescription.alloc().initWithTypeDescription(nativeType, sdp);
         }
     }
 

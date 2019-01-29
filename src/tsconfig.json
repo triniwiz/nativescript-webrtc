@@ -13,13 +13,17 @@
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "noEmitHelpers": true,
-        "noEmitOnError": true,
+        "noEmitOnError": false,
         "noImplicitAny": false,
         "noImplicitReturns": true,
         "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true,
         "skipLibCheck": true
     },
+    "include":[
+        "**/*.ts",
+        "!*.d.ts"
+    ],
     "exclude": [
         "node_modules",
         "typings"

@@ -1,6 +1,6 @@
 platform :ios, '9.0'
 pod 'GoogleWebRTC', '~> 1.1.26266'
-pod 'FancyWebRTC',  :path => '/Users/triniwiz/Documents/oss/fancy-webrtc-ios' #:git => 'https://github.com/triniwiz/fancy-webrtc-ios.git'
+pod 'FancyWebRTC', :git => 'https://github.com/triniwiz/fancy-webrtc-ios.git'
 
 post_install do |installer|
     installer.pods_project.targets.each do |target|

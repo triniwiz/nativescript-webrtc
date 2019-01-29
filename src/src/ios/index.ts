@@ -30,7 +30,6 @@ export * from '../core/TNSRTCRtcpMuxPolicy';
 export * from '../core/TNSRTCRtpTransceiverDirection';
 export * from '../core/TNSRTCSdpSemantics';
 
-/*
 export * from '../base/TNSRTCConfigurationBase';
 export * from '../base/TNSRTCDataChannelBase';
 export * from '../base/TNSRTCDataChannelEventBase';
@@ -45,5 +44,4 @@ export * from '../base/TNSRTCRtpReceiverBase';
 export * from '../base/TNSRTCRtpSenderBase';
 export * from '../base/TNSRTCRtpTransceiverBase';
 export * from '../base/TNSRTCTrackEventBase';
-*/
 

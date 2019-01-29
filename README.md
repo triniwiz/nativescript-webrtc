@@ -11,7 +11,25 @@ Uses [this](https://github.com/triniwiz/fancy-webrtc-android) for Android and [t
 
 - `tns plugin add nativescript-webrtc-plugin`
 
+## Android
+Add the following to your app.gradle located in `app/App_Resources`
+
+```gradle
+android {
+....
+compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+  }
+}
+```
+
 ### How to make a call
+
+```javascript
+import { WebRTC } from 'nativescript-webrtc-plugin';
+WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
+```
 
 
 **IMPORTANT**: Make sure you include xmlns:webrtc="nativescript-webrtc-plugin" on the Page element
@@ -22,7 +40,7 @@ Uses [this](https://github.com/triniwiz/fancy-webrtc-android) for Android and [t
 ```
 
 
-#### Using Angular ? 
+#### Using Angular ?
 
 
 Import the WebRTCModule from nativescript-webrtc-plugin/angular and add it to the imports of your initial @NgModule, like shown [here](https://github.com/triniwiz/nativescript-webrtc/blob/master/demo-ng/app/app.module.ts#L23).
@@ -49,11 +67,6 @@ This api is similar to the webrtc browser api -> [example](demo/app/standard/sta
 
 
 ## Basic Api
-
-```typescript
-import { WebRTC } from 'nativescript-webrtc-plugin';
-WebRTC.init(); // <= Try calling this in you app.js or app.ts or main.ts
-```
 
 **Caller**
 

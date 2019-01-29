@@ -10,13 +10,13 @@ export class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
         this._stream = stream;
     }
 
-    public get id(): string{
-        return this._stream.getId;
+    public get id(): string {
+        return this._stream ? this._stream.getId : null;
     }
 
     public get videoTracks(): Array<TNSRTCVideoTrack> {
         const array = [];
-        const nativeArray = this._stream.videoTracks;
+        const nativeArray = this._stream ? this._stream.videoTracks : [];
         const size = nativeArray.count;
         for (let i = 0; i < size; i++) {
             const track = nativeArray.objectAtIndex(i);
@@ -28,7 +28,7 @@ export class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
 
     public get audioTracks(): Array<TNSRTCAudioTrack> {
         const array = [];
-        const nativeArray = this._stream.audioTracks;
+        const nativeArray = this._stream ? this._stream.audioTracks : [];
         const size = nativeArray.count;
         for (let i = 0; i < size; i++) {
             const track = nativeArray.objectAtIndex(i);
@@ -66,7 +66,7 @@ export class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
     }
 
     public get ios() {
-        return this._stream.stream;
+        return this._stream ? this._stream.stream : null;
     }
 
 }
