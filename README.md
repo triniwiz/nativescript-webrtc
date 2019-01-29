@@ -45,6 +45,11 @@ Vue.use(WebRTCView);
 <WebRTCView #localVideoView height="50%" ></WebRTCView>
 ```
 
+
+## Standard Api :sparkles: New :sparkles:
+This api is similar to the webrtc browser api -> [example](demo/app/standard/standard-vm.ts)
+
+
 ## Basic Api
 
 **Caller**
@@ -158,10 +163,6 @@ webrtc.createAnswerForOfferReceived({
 });
 ```
 
-
-
-## Standard Api
-This api is similar to the webrtc browser api -> [example](demo/app/standard/standard-vm.ts)
 
 
 ### Using demo
