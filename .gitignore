@@ -53,5 +53,5 @@ demo-vue/platforms
 demo-vue/report/report.html
 demo-vue/report/stats.json
 demo-vue/hooks
-demo-vue/*.js
+!demo-vue/**/*.js
 !demo-vue/types/*.d.ts
