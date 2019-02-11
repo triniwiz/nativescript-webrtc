@@ -20,7 +20,7 @@ export class TNSRTCPeerConnection {
     android;
 
     constructor(config?: TNSRTCConfiguration) {
-        const configuration = config ? config : new TNSRTCConfiguration();
+        const configuration = config  && config instanceof TNSRTCConfiguration ? config : new TNSRTCConfiguration();
         this.android = new co.fitcom.fancywebrtc.FancyRTCPeerConnection(app.android.context, configuration.instance);
     }
 
