@@ -18,7 +18,7 @@ export class TNSRTCPeerConnection {
     ios: FancyRTCPeerConnection;
 
     constructor(config?: TNSRTCConfiguration) {
-        const configuration = config ? config : new TNSRTCConfiguration();
+        const configuration = config && config instanceof TNSRTCConfiguration ? config : new TNSRTCConfiguration();
         this.ios = FancyRTCPeerConnection.alloc().initWithConfig(configuration.instance);
     }
 

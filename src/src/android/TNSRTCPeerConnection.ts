@@ -13,15 +13,15 @@ import {
 } from './';
 import * as app from 'tns-core-modules/application';
 import { TNSRTCPeerConnectionState } from '../core/TNSRTCPeerConnectionState';
-
+import * as utils from 'tns-core-modules/utils/utils';
 declare var co;
 
 export class TNSRTCPeerConnection {
     android;
 
     constructor(config?: TNSRTCConfiguration) {
-        const configuration = config  && config instanceof TNSRTCConfiguration ? config : new TNSRTCConfiguration();
-        this.android = new co.fitcom.fancywebrtc.FancyRTCPeerConnection(app.android.context, configuration.instance);
+        const configuration = config && config instanceof TNSRTCConfiguration ? config : new TNSRTCConfiguration();
+        this.android = new co.fitcom.fancywebrtc.FancyRTCPeerConnection(utils.ad.getApplicationContext(), configuration.instance);
     }
 
     public get localDescription(): TNSRTCSessionDescription {
@@ -217,9 +217,7 @@ export class TNSRTCPeerConnection {
                     reject(error);
                 },
                 onSuccess(sdp): void {
-                    setTimeout(() => { // TODO check why this is needed to fix the freezing when getting local SDP
-                        resolve(TNSRTCSessionDescription.fromNative(sdp));
-                    });
+                    resolve(TNSRTCSessionDescription.fromNative(sdp));
                 }
             }));
         });
@@ -246,9 +244,7 @@ export class TNSRTCPeerConnection {
                     reject(error);
                 },
                 onSuccess(sdp): void {
-                    setTimeout(() => {
-                        resolve(TNSRTCSessionDescription.fromNative(sdp));
-                    });
+                    resolve(TNSRTCSessionDescription.fromNative(sdp));
                 }
             }));
         });
@@ -258,9 +254,7 @@ export class TNSRTCPeerConnection {
         return new Promise((resolve, reject) => {
             this.android.setLocalDescription(sdp.instance, new co.fitcom.fancywebrtc.FancyRTCPeerConnection.SdpSetListener({
                 onSuccess(): void {
-                    setTimeout(() => {
                         resolve();
-                    });
                 }, onError(error: string): void {
                     reject(error);
                 }
