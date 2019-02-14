@@ -11,13 +11,15 @@ import {
     TNSRTCMediaStreamTrack,
     TNSRTCTrackEvent
 } from './';
-import * as app from 'tns-core-modules/application';
 import { TNSRTCPeerConnectionState } from '../core/TNSRTCPeerConnectionState';
 import * as utils from 'tns-core-modules/utils/utils';
+
 declare var co;
 
 export class TNSRTCPeerConnection {
     android;
+    private _remoteDescription: TNSRTCSessionDescription = null;
+    private _localDescription: TNSRTCSessionDescription = null;
 
     constructor(config?: TNSRTCConfiguration) {
         const configuration = config && config instanceof TNSRTCConfiguration ? config : new TNSRTCConfiguration();
@@ -25,19 +27,11 @@ export class TNSRTCPeerConnection {
     }
 
     public get localDescription(): TNSRTCSessionDescription {
-        const localDescription = this.android.getLocalDescription();
-        if (localDescription) {
-            return TNSRTCSessionDescription.fromNative(localDescription);
-        }
-        return null;
+        return this._localDescription;
     }
 
     public get remoteDescription(): TNSRTCSessionDescription {
-        const remoteDescription = this.android.getRemoteDescription();
-        if (remoteDescription) {
-            return TNSRTCSessionDescription.fromNative(remoteDescription);
-        }
-        return null;
+        return this._remoteDescription;
     }
 
     public get connectionState(): TNSRTCPeerConnectionState {
@@ -252,9 +246,14 @@ export class TNSRTCPeerConnection {
 
     public setLocalDescription(sdp: TNSRTCSessionDescription): Promise<any> {
         return new Promise((resolve, reject) => {
+            const ref = new WeakRef(this);
             this.android.setLocalDescription(sdp.instance, new co.fitcom.fancywebrtc.FancyRTCPeerConnection.SdpSetListener({
                 onSuccess(): void {
-                        resolve();
+                    const owner = ref.get();
+                    if (owner) {
+                        owner._localDescription = sdp;
+                    }
+                    resolve();
                 }, onError(error: string): void {
                     reject(error);
                 }
@@ -264,8 +263,13 @@ export class TNSRTCPeerConnection {
 
     public setRemoteDescription(sdp: TNSRTCSessionDescription): Promise<any> {
         return new Promise((resolve, reject) => {
+            const ref = new WeakRef(this);
             this.android.setRemoteDescription(sdp.instance, new co.fitcom.fancywebrtc.FancyRTCPeerConnection.SdpSetListener({
                 onSuccess(): void {
+                    const owner = ref.get();
+                    if (owner) {
+                        owner._remoteDescription = sdp;
+                    }
                     resolve();
                 }, onError(error: string): void {
                     reject(error);
