@@ -21,7 +21,15 @@ export class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
     }
 
     get kind(): string {
-        return this._mediaStreamTrack.getKind();
+        const track = this._mediaStreamTrack.getMediaStreamTrack();
+        if (!track) return '';
+        let name = track.getClass().getName();
+        if (name === 'org.webrtc.VideoTrack') {
+            return 'video';
+        } else if (name === 'org.webrtc.AudioTrack') {
+            return 'audio';
+        }
+        return '';
     }
 
     get readyState(): string {
