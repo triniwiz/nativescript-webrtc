@@ -14,9 +14,12 @@ export class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
     constructor(event) {
         super(event);
         this._event = event;
-        this._mediaTrack = TNSRTCMediaStreamTrack.fromNative(this._event.getMediaTrack());
-        this._transceiver = this._event.getTransceiver() ? TNSRTCRtpTransceiver.fromNative(this._event.getTransceiver()) : null;
-        this._receiver = this._event.getReceiver() ? TNSRTCRtpReceiver.fromNative(this._event.getReceiver()) : null;
+        const track = this._event.getMediaTrack();
+        this._mediaTrack = track ? TNSRTCMediaStreamTrack.fromNative(track) : null;
+        const transceiver = this._event.getTransceiver();
+        this._transceiver = transceiver ? TNSRTCRtpTransceiver.fromNative(transceiver) : null;
+        const receiver = event.getReceiver();
+        this._receiver = receiver ? TNSRTCRtpReceiver.fromNative(receiver) : null;
         const array = [];
         const nativeArray = this._event.getStreams();
         if (nativeArray) {
