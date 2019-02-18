@@ -16,7 +16,8 @@ import { fromObject } from 'tns-core-modules/data/observable';
 import { View } from 'tns-core-modules/ui/core/view';
 import { ad } from 'tns-core-modules/utils/utils';
 import * as permissions from 'nativescript-permissions';
-import { TNSRTCMediaStream } from './src/android';
+import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/android';
+
 export * from './src/android';
 export {
     IceConnectionState,
@@ -550,10 +551,13 @@ export class WebRTCView extends View {
     }
 
     set srcObject(value: any) {
-        if (value instanceof TNSRTCMediaStream) {
+        if (value instanceof TNSRTCMediaStream || value instanceof TNSRTCMediaStreamTrack) {
             this.nativeView.setSrcObject(value.instance);
-        }
-        if (value instanceof org.webrtc.MediaStream) {
+        } else if (value instanceof org.webrtc.MediaStream) {
+            this.nativeView.setSrcObject(value);
+        } else if (value instanceof co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack) {
+            this.nativeView.setSrcObject(value);
+        } else if (value instanceof org.webrtc.MediaStreamTrack) {
             this.nativeView.setSrcObject(value);
         }
     }

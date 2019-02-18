@@ -280,7 +280,7 @@ declare class RTCCVPixelBuffer extends NSObject implements RTCVideoFrameBuffer {
 
 	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-	cropAndScaleToWithTempBuffer(outputPixelBuffer: any, tmpBuffer: string): boolean;
+	cropAndScaleToWithTempBuffer(outputPixelBuffer: any, tmpBuffer: string | interop.Pointer | interop.Reference<any>): boolean;
 
 	initWithPixelBuffer(pixelBuffer: any): this;
 
@@ -336,11 +336,11 @@ declare class RTCCameraPreviewView extends UIView {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): RTCCameraPreviewView; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): RTCCameraPreviewView; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCCameraPreviewView; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): RTCCameraPreviewView; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): RTCCameraPreviewView; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCCameraPreviewView; // inherited from UIAppearance
 
 	static new(): RTCCameraPreviewView; // inherited from NSObject
 
@@ -908,11 +908,11 @@ declare class RTCEAGLVideoView extends UIView implements RTCVideoRenderer {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): RTCEAGLVideoView; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): RTCEAGLVideoView; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCEAGLVideoView; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): RTCEAGLVideoView; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): RTCEAGLVideoView; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCEAGLVideoView; // inherited from UIAppearance
 
 	static new(): RTCEAGLVideoView; // inherited from NSObject
 
@@ -1200,7 +1200,7 @@ declare class RTCI420Buffer extends NSObject implements RTCI420BufferProtocol {
 
 	constructor(o: { width: number; height: number; }); // inherited from RTCYUVPlanarBuffer
 
-	constructor(o: { width: number; height: number; dataY: string; dataU: string; dataV: string; }); // inherited from RTCYUVPlanarBuffer
+	constructor(o: { width: number; height: number; dataY: string | interop.Pointer | interop.Reference<any>; dataU: string | interop.Pointer | interop.Reference<any>; dataV: string | interop.Pointer | interop.Reference<any>; }); // inherited from RTCYUVPlanarBuffer
 
 	constructor(o: { width: number; height: number; strideY: number; strideU: number; strideV: number; }); // inherited from RTCYUVPlanarBuffer
 
@@ -1210,7 +1210,7 @@ declare class RTCI420Buffer extends NSObject implements RTCI420BufferProtocol {
 
 	initWithWidthHeight(width: number, height: number): this;
 
-	initWithWidthHeightDataYDataUDataV(width: number, height: number, dataY: string, dataU: string, dataV: string): this;
+	initWithWidthHeightDataYDataUDataV(width: number, height: number, dataY: string | interop.Pointer | interop.Reference<any>, dataU: string | interop.Pointer | interop.Reference<any>, dataV: string | interop.Pointer | interop.Reference<any>): this;
 
 	initWithWidthHeightStrideYStrideUStrideV(width: number, height: number, strideY: number, strideU: number, strideV: number): this;
 
@@ -1309,29 +1309,29 @@ declare class RTCIceServer extends NSObject {
 
 	readonly username: string;
 
-	constructor(o: { URLStrings: NSArray<string>; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; });
 
-	constructor(o: { URLStrings: NSArray<string>; username: string; credential: string; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; username: string; credential: string; });
 
-	constructor(o: { URLStrings: NSArray<string>; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; });
 
-	constructor(o: { URLStrings: NSArray<string>; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; });
 
-	constructor(o: { URLStrings: NSArray<string>; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; tlsAlpnProtocols: NSArray<string>; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; tlsAlpnProtocols: NSArray<string> | string[]; });
 
-	constructor(o: { URLStrings: NSArray<string>; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; tlsAlpnProtocols: NSArray<string>; tlsEllipticCurves: NSArray<string>; });
+	constructor(o: { URLStrings: NSArray<string> | string[]; username: string; credential: string; tlsCertPolicy: RTCTlsCertPolicy; hostname: string; tlsAlpnProtocols: NSArray<string> | string[]; tlsEllipticCurves: NSArray<string> | string[]; });
 
-	initWithURLStrings(urlStrings: NSArray<string>): this;
+	initWithURLStrings(urlStrings: NSArray<string> | string[]): this;
 
-	initWithURLStringsUsernameCredential(urlStrings: NSArray<string>, username: string, credential: string): this;
+	initWithURLStringsUsernameCredential(urlStrings: NSArray<string> | string[], username: string, credential: string): this;
 
-	initWithURLStringsUsernameCredentialTlsCertPolicy(urlStrings: NSArray<string>, username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy): this;
+	initWithURLStringsUsernameCredentialTlsCertPolicy(urlStrings: NSArray<string> | string[], username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy): this;
 
-	initWithURLStringsUsernameCredentialTlsCertPolicyHostname(urlStrings: NSArray<string>, username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string): this;
+	initWithURLStringsUsernameCredentialTlsCertPolicyHostname(urlStrings: NSArray<string> | string[], username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string): this;
 
-	initWithURLStringsUsernameCredentialTlsCertPolicyHostnameTlsAlpnProtocols(urlStrings: NSArray<string>, username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string, tlsAlpnProtocols: NSArray<string>): this;
+	initWithURLStringsUsernameCredentialTlsCertPolicyHostnameTlsAlpnProtocols(urlStrings: NSArray<string> | string[], username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string, tlsAlpnProtocols: NSArray<string> | string[]): this;
 
-	initWithURLStringsUsernameCredentialTlsCertPolicyHostnameTlsAlpnProtocolsTlsEllipticCurves(urlStrings: NSArray<string>, username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string, tlsAlpnProtocols: NSArray<string>, tlsEllipticCurves: NSArray<string>): this;
+	initWithURLStringsUsernameCredentialTlsCertPolicyHostnameTlsAlpnProtocolsTlsEllipticCurves(urlStrings: NSArray<string> | string[], username: string, credential: string, tlsCertPolicy: RTCTlsCertPolicy, hostname: string, tlsAlpnProtocols: NSArray<string> | string[], tlsEllipticCurves: NSArray<string> | string[]): this;
 }
 
 declare const enum RTCIceTransportPolicy {
@@ -1404,11 +1404,11 @@ declare class RTCMTLVideoView extends UIView implements RTCVideoRenderer {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): RTCMTLVideoView; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): RTCMTLVideoView; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCMTLVideoView; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): RTCMTLVideoView; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): RTCMTLVideoView; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): RTCMTLVideoView; // inherited from UIAppearance
 
 	static new(): RTCMTLVideoView; // inherited from NSObject
 
@@ -1585,7 +1585,7 @@ declare class RTCMutableI420Buffer extends RTCI420Buffer implements RTCMutableI4
 
 	constructor(o: { width: number; height: number; }); // inherited from RTCYUVPlanarBuffer
 
-	constructor(o: { width: number; height: number; dataY: string; dataU: string; dataV: string; }); // inherited from RTCYUVPlanarBuffer
+	constructor(o: { width: number; height: number; dataY: string | interop.Pointer | interop.Reference<any>; dataU: string | interop.Pointer | interop.Reference<any>; dataV: string | interop.Pointer | interop.Reference<any>; }); // inherited from RTCYUVPlanarBuffer
 
 	constructor(o: { width: number; height: number; strideY: number; strideU: number; strideV: number; }); // inherited from RTCYUVPlanarBuffer
 
@@ -1595,7 +1595,7 @@ declare class RTCMutableI420Buffer extends RTCI420Buffer implements RTCMutableI4
 
 	initWithWidthHeight(width: number, height: number): this;
 
-	initWithWidthHeightDataYDataUDataV(width: number, height: number, dataY: string, dataU: string, dataV: string): this;
+	initWithWidthHeightDataYDataUDataV(width: number, height: number, dataY: string | interop.Pointer | interop.Reference<any>, dataU: string | interop.Pointer | interop.Reference<any>, dataV: string | interop.Pointer | interop.Reference<any>): this;
 
 	initWithWidthHeightStrideYStrideUStrideV(width: number, height: number, strideY: number, strideU: number, strideV: number): this;
 
@@ -1674,7 +1674,7 @@ declare class RTCPeerConnection extends NSObject {
 
 	addStream(stream: RTCMediaStream): void;
 
-	addTrackStreamIds(track: RTCMediaStreamTrack, streamIds: NSArray<string>): RTCRtpSender;
+	addTrackStreamIds(track: RTCMediaStreamTrack, streamIds: NSArray<string> | string[]): RTCRtpSender;
 
 	addTransceiverOfType(mediaType: RTCRtpMediaType): RTCRtpTransceiver;
 
@@ -1692,7 +1692,7 @@ declare class RTCPeerConnection extends NSObject {
 
 	offerForConstraintsCompletionHandler(constraints: RTCMediaConstraints, completionHandler: (p1: RTCSessionDescription, p2: NSError) => void): void;
 
-	removeIceCandidates(candidates: NSArray<RTCIceCandidate>): void;
+	removeIceCandidates(candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
 	removeStream(stream: RTCMediaStream): void;
 
@@ -1717,7 +1717,7 @@ declare class RTCPeerConnection extends NSObject {
 
 interface RTCPeerConnectionDelegate extends NSObjectProtocol {
 
-	peerConnectionDidAddReceiverStreams?(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream>): void;
+	peerConnectionDidAddReceiverStreams?(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
 
 	peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
@@ -1733,7 +1733,7 @@ interface RTCPeerConnectionDelegate extends NSObjectProtocol {
 
 	peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
 
-	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate>): void;
+	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
 	peerConnectionDidRemoveReceiver?(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
 
@@ -2469,7 +2469,7 @@ declare class RTCVideoDecoderVP9 extends NSObject {
 
 interface RTCVideoEncoder extends NSObjectProtocol {
 
-	encodeCodecSpecificInfoFrameTypes(frame: RTCVideoFrame, info: RTCCodecSpecificInfo, frameTypes: NSArray<number>): number;
+	encodeCodecSpecificInfoFrameTypes(frame: RTCVideoFrame, info: RTCCodecSpecificInfo, frameTypes: NSArray<number> | number[]): number;
 
 	implementationName(): string;
 
@@ -2568,7 +2568,7 @@ declare class RTCVideoEncoderH264 extends NSObject implements RTCVideoEncoder {
 
 	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
-	encodeCodecSpecificInfoFrameTypes(frame: RTCVideoFrame, info: RTCCodecSpecificInfo, frameTypes: NSArray<number>): number;
+	encodeCodecSpecificInfoFrameTypes(frame: RTCVideoFrame, info: RTCCodecSpecificInfo, frameTypes: NSArray<number> | number[]): number;
 
 	implementationName(): string;
 
@@ -2827,7 +2827,7 @@ interface RTCYUVPlanarBuffer extends RTCVideoFrameBuffer {
 
 	initWithWidthHeight?(width: number, height: number): RTCYUVPlanarBuffer;
 
-	initWithWidthHeightDataYDataUDataV?(width: number, height: number, dataY: string, dataU: string, dataV: string): RTCYUVPlanarBuffer;
+	initWithWidthHeightDataYDataUDataV?(width: number, height: number, dataY: string | interop.Pointer | interop.Reference<any>, dataU: string | interop.Pointer | interop.Reference<any>, dataV: string | interop.Pointer | interop.Reference<any>): RTCYUVPlanarBuffer;
 
 	initWithWidthHeightStrideYStrideUStrideV?(width: number, height: number, strideY: number, strideU: number, strideV: number): RTCYUVPlanarBuffer;
 }

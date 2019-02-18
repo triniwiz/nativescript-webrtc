@@ -150,11 +150,13 @@ export class TNSRTCPeerConnection {
     }
 
     public addTrack(track: TNSRTCMediaStreamTrack, streamIds: Array<string>) {
-        const ids = new java.util.ArrayList();
-        for (let id of streamIds) {
-            ids.add(id);
+        if(streamIds){
+            const ids = new java.util.ArrayList();
+            for (let id of streamIds) {
+                ids.add(id);
+            }
+            this.android.addTrack(track.mediaStreamTrack, ids);
         }
-        this.android.addTrack(track.mediaStreamTrack, ids);
     }
 
     public close() {

@@ -13,6 +13,10 @@ export class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
 
     }
 
+    public get track(): TNSRTCMediaStreamTrack {
+        return this.mediaTrack;
+    }
+
     public get mediaTrack(): TNSRTCMediaStreamTrack {
         return TNSRTCMediaStreamTrack.fromNative(this._event.mediaTrack);
     }
@@ -28,6 +32,7 @@ export class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
     public get streams(): Array<TNSRTCMediaStream> {
         const array = [];
         const nativeArray = this._event.streams;
+        if (!nativeArray) return array;
         const size = nativeArray.count;
         for (let i = 0; i < size; i++) {
             const stream = nativeArray.objectAtIndex(i);

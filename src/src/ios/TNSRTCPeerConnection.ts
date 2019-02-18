@@ -88,63 +88,63 @@ export class TNSRTCPeerConnection {
     }
 
     public onConnectionStateChange(callback: () => void): void {
-        this.ios.onConnectionStateChange = () => {
+        this.ios.onConnectionStateChange(() => {
             callback();
-        };
+        });
     }
 
     public onTrack(callback: (track: TNSRTCTrackEvent) => void): void {
-        this.ios.onTrack = (track) => {
+        this.ios.onTrack(track => {
             callback(TNSRTCTrackEvent.fromNative(track));
-        };
+        });
     }
 
     public onRemoveTrackListener(callback: () => void): void {
-        this.ios.onRemoveTrack = () => {
+        this.ios.onRemoveTrack(() => {
             callback();
-        };
+        });
     }
 
     public onRemoveStream(callback: (stream: TNSRTCMediaStream) => void): void {
-        this.ios.onRemoveStream = (nativeStream) => {
+        this.ios.onRemoveStream((nativeStream) => {
             callback(TNSRTCMediaStream.fromNative(nativeStream));
-        };
+        });
     }
 
     public onIceGatheringStateChange(callback: any): void {
-        this.ios.onIceGatheringStateChange = () => {
+        this.ios.onIceGatheringStateChange(() => {
             callback();
-        };
+        });
     }
 
     public onAddStream(callback: any): void {
-        this.ios.onAddStream = (nativeStream) => {
+        this.ios.onAddStream((nativeStream) => {
             callback(TNSRTCMediaStream.fromNative(nativeStream));
-        };
+        });
     }
 
     public onNegotiationNeeded(callback: () => void): void {
-        this.ios.onNegotiationNeeded = () => {
+        this.ios.onNegotiationNeeded(() => {
             callback();
-        };
+        });
     }
 
     public onSignalingStateChange(callback: () => void): void {
-        this.ios.onSignalingStateChange = () => {
+        this.ios.onSignalingStateChange(() => {
             callback();
-        };
+        });
     }
 
     public onIceCandidate(callback: (candidate: TNSRTCIceCandidate) => void): void {
-        this.ios.onIceCandidate = (nativeCandidate) => {
+        this.ios.onIceCandidate((nativeCandidate) => {
             callback(TNSRTCIceCandidate.fromNative(nativeCandidate));
-        };
+        });
     }
 
     public onDataChannel(callback: (channel: TNSRTCDataChannelEvent) => void): any {
-        this.ios.onDataChannel = (event) => {
+        this.ios.onDataChannel((event) => {
             callback(TNSRTCDataChannelEvent.fromNative(event));
-        };
+        });
     }
 
 

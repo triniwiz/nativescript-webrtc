@@ -16,7 +16,7 @@ import { fromObject } from 'tns-core-modules/data/observable';
 import './async-await';
 
 import { ios } from 'tns-core-modules/utils/utils';
-import { TNSRTCMediaStream } from './src/ios';
+import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/ios';
 
 export {
     IceConnectionState,
@@ -1049,9 +1049,12 @@ export class WebRTCView extends View {
         if (!this.nativeView) return;
         if (value instanceof TNSRTCMediaStream) {
             this.nativeView.setSrcObjectWithStream(value.instance);
-
         } else if (value instanceof RTCMediaStream) {
             this.nativeView.setSrcObjectWith(value);
+        } else if (value instanceof TNSRTCMediaStreamTrack) {
+            this.nativeView.setSrcObjectWithFancy(value.instance);
+        } else if (value instanceof RTCMediaStreamTrack) {
+            this.nativeView.setSrcObjectWithRtc(value);
         }
 
     }

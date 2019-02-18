@@ -339,26 +339,6 @@ declare class FancyRTCPeerConnection extends NSObject {
 
 	readonly localDescription: FancyRTCSessionDescription;
 
-	onAddStream: (p1: FancyRTCMediaStream) => void;
-
-	onConnectionStateChange: () => void;
-
-	onDataChannel: (p1: FancyRTCDataChannelEvent) => void;
-
-	onIceCandidate: (p1: FancyRTCIceCandidate) => void;
-
-	onIceGatheringStateChange: () => void;
-
-	onNegotiationNeeded: () => void;
-
-	onRemoveStream: (p1: FancyRTCMediaStream) => void;
-
-	onRemoveTrack: () => void;
-
-	onSignalingStateChange: () => void;
-
-	onTrack: (p1: FancyRTCTrackEvent) => void;
-
 	readonly remoteDescription: FancyRTCSessionDescription;
 
 	constructor(o: { config: FancyRTCConfiguration; });
@@ -381,9 +361,31 @@ declare class FancyRTCPeerConnection extends NSObject {
 
 	localDescriptionWithSdpListener(sdp: FancyRTCSessionDescription, listener: (p1: string) => void): void;
 
+	onAddStream(listener: (p1: FancyRTCMediaStream) => void): void;
+
+	onConnectionStateChange(listener: () => void): void;
+
+	onDataChannel(listener: (p1: FancyRTCDataChannelEvent) => void): void;
+
+	onIceCandidate(listener: (p1: FancyRTCIceCandidate) => void): void;
+
+	onIceGatheringStateChange(listener: () => void): void;
+
+	onNegotiationNeeded(listener: () => void): void;
+
+	onRemoveStream(listener: (p1: FancyRTCMediaStream) => void): void;
+
+	onRemoveTrack(listener: () => void): void;
+
+	onSignalingStateChange(listener: () => void): void;
+
+	onTrack(listener: (p1: FancyRTCTrackEvent) => void): void;
+
 	peerConnectionDidAddReceiverStreams(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
 
 	peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+
+	peerConnectionDidChangeConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
 
 	peerConnectionDidChangeIceConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
 
@@ -397,9 +399,9 @@ declare class FancyRTCPeerConnection extends NSObject {
 
 	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
-	peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
-
 	peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+
+	peerConnectionDidStartReceivingOnTransceiver(peerConnection: RTCPeerConnection, transceiver: RTCRtpTransceiver): void;
 
 	peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void;
 
@@ -734,6 +736,10 @@ declare class FancyWebRTCView extends UIView {
 	setMirrorWithMirror(mirror: boolean): void;
 
 	setSrcObjectWith(rtcStream: RTCMediaStream): void;
+
+	setSrcObjectWithFancy(rtcStreamTrack: FancyRTCMediaStreamTrack): void;
+
+	setSrcObjectWithRtc(mediaStreamTrack: RTCMediaStreamTrack): void;
 
 	setSrcObjectWithStream(stream: FancyRTCMediaStream): void;
 

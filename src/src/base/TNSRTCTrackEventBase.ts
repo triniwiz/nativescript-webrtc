@@ -6,8 +6,8 @@ import { TNSRTCRtpTransceiverBase } from './TNSRTCRtpTransceiverBase';
 export class TNSRTCTrackEventBase {
     mediaTrack: TNSRTCMediaStreamTrackBase;
     transceiver: TNSRTCRtpTransceiverBase;
-    receiver: TNSRTCRtpReceiverBase;
-    streams: Array<TNSRTCMediaStreamBase>;
+    receiver?: TNSRTCRtpReceiverBase;
+    streams?: Array<TNSRTCMediaStreamBase>;
 
     constructor(event) {
     }
