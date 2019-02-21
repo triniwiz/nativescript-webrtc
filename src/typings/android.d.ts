@@ -1,5 +1,3 @@
-/// <reference path="android-declarations.d.ts"/>
-
 declare module co {
 	export module fitcom {
 		export module fancywebrtc {
@@ -22,6 +20,7 @@ declare module co {
 		export module fancywebrtc {
 			export class FancyRTCAudioTrack extends co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack {
 				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCAudioTrack>;
+				public applyConstraints(param0: co.fitcom.fancywebrtc.FancyRTCMediaTrackConstraints, param1: co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack.FancyRTCMediaStreamTrackListener): void;
 				public setVolume(param0: number): void;
 				public setEnabled(param0: boolean): void;
 				public getAudioTrack(): org.webrtc.AudioTrack;
@@ -239,6 +238,12 @@ declare module co {
 				public constructor();
 			}
 			export module FancyRTCMediaDevices {
+				export class FancyCapturer {
+					public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCMediaDevices.FancyCapturer>;
+					public setPosition(param0: string): void;
+					public getCapturer(): org.webrtc.CameraVideoCapturer;
+					public getPosition(): string;
+				}
 				export class GetUserMediaListener {
 					public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCMediaDevices.GetUserMediaListener>;
 					/**
@@ -306,6 +311,21 @@ declare module co {
 				public setEnabled(param0: boolean): void;
 				public getReadyState(): string;
 			}
+			export module FancyRTCMediaStreamTrack {
+				export class FancyRTCMediaStreamTrackListener {
+					public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack.FancyRTCMediaStreamTrackListener>;
+					/**
+					 * Constructs a new instance of the co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack$FancyRTCMediaStreamTrackListener interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+					 */
+					public constructor(implementation: {
+						onSuccess(): void;
+						onError(param0: string): void;
+					});
+					public constructor();
+					public onError(param0: string): void;
+					public onSuccess(): void;
+				}
+			}
 		}
 	}
 }
@@ -315,6 +335,9 @@ declare module co {
 		export module fancywebrtc {
 			export class FancyRTCMediaTrackConstraints {
 				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCMediaTrackConstraints>;
+				public constructor(param0: java.util.Map<string,any>);
+				public getFacingMode(): string;
+				public setFacingMode(param0: string): void;
 			}
 		}
 	}
@@ -686,6 +709,7 @@ declare module co {
 			export class FancyRTCVideoTrack extends co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack {
 				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCVideoTrack>;
 				public getVideoTrack(): org.webrtc.VideoTrack;
+				public applyConstraints(param0: co.fitcom.fancywebrtc.FancyRTCMediaTrackConstraints, param1: co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack.FancyRTCMediaStreamTrackListener): void;
 				public constructor(param0: org.webrtc.MediaStreamTrack);
 				public constructor(param0: org.webrtc.VideoTrack);
 				public setEnabled(param0: boolean): void;
@@ -894,11 +918,13 @@ declare module co {
 		export module fancywebrtc {
 			export class FancyWebRTCView {
 				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyWebRTCView>;
+				public setSrcObject(param0: co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack): void;
 				public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet);
 				public setMirror(param0: boolean): void;
 				public setSrcObject(param0: co.fitcom.fancywebrtc.FancyRTCMediaStream): void;
 				public setVideoTrack(param0: org.webrtc.VideoTrack): void;
 				public setSrcObject(param0: org.webrtc.MediaStream): void;
+				public setSrcObject(param0: org.webrtc.MediaStreamTrack): void;
 			}
 		}
 	}

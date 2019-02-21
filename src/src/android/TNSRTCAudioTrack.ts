@@ -1,4 +1,5 @@
 import { TNSRTCMediaStreamTrack } from './TNSRTCMediaStreamTrack';
+import { TNSMediaTrackConstraints } from '../core/TNSMediaTrackConstraints';
 
 export class TNSRTCAudioTrack extends TNSRTCMediaStreamTrack {
 
@@ -23,5 +24,9 @@ export class TNSRTCAudioTrack extends TNSRTCMediaStreamTrack {
 
     public set volume(volume: number) {
         this._audioTrack.setVolume(volume);
+    }
+
+    public applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any> {
+        return Promise.resolve();
     }
 }

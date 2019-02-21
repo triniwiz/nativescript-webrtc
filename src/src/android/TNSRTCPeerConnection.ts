@@ -150,7 +150,7 @@ export class TNSRTCPeerConnection {
     }
 
     public addTrack(track: TNSRTCMediaStreamTrack, streamIds: Array<string>) {
-        if(streamIds){
+        if (streamIds) {
             const ids = new java.util.ArrayList();
             for (let id of streamIds) {
                 ids.add(id);

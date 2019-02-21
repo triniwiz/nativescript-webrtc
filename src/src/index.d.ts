@@ -1,5 +1,7 @@
 /* Core */
 
+import { TNSMediaTrackConstraints } from './core/TNSMediaTrackConstraints';
+
 export interface TNSKeyValue {
     key: string;
     value: string;
@@ -69,6 +71,7 @@ export interface TNSRTCConfigurationOptions {
     iceServers?: Array<TNSRTCIceServerBase>;
     peerIdentity?: string;
 }
+
 /* Core */
 
 /* Base */
@@ -82,13 +85,17 @@ declare abstract class TNSRTCDataChannelBase {
 
 declare class TNSRTCDataChannelEventBase {
     event: TNSRTCDataChannelBase;
+
     constructor(event: any);
 }
 
 declare abstract class TNSRTCDTMFSenderBase {
     constructor(sender: any);
+
     toneBuffer: string;
+
     abstract dispose(): void;
+
     abstract insertDTMF(tones: string, duration?: number, interToneGap?: number): void;
 }
 
@@ -101,14 +108,18 @@ declare abstract class TNSRTCIceCandidateBase {
     sdpMLineIndex: number;
     usernameFragment: string;
     serverUrl: string;
+
     constructor(sdp: string, sdpMid: string | null, sdpMLineIndex: number);
 }
 
 
 declare abstract class TNSRTCIceServerBase {
     server: any;
+
     protected constructor(urls: Array<string>, username?: string, credential?: string);
+
     abstract toWebRtc(): void;
+
     iceServer: any;
     credentialType: any;
     urls: Array<String>;
@@ -128,8 +139,11 @@ declare abstract class TNSRTCMediaStreamTrackBase {
     enabled: boolean;
     kind: string;
     mute: boolean;
+
     abstract dispose(): void;
+
     readyState: string;
+
     constructor(mediaStreamTrack: any);
 }
 
@@ -144,22 +158,28 @@ declare class TNSRTCRtpReceiverBase {
 
 declare abstract class TNSRTCRtpSenderBase {
     constructor(sender: any);
+
     dtmf: TNSRTCDTMFSenderBase;
     id: string;
+
     abstract dispose(): void;
+
     track: TNSRTCMediaStreamTrackBase;
     parameters: TNSRTCRtpParametersBase;
+
     abstract replaceTrack(track: TNSRTCMediaStreamTrackBase): void;
 }
 
 declare abstract class TNSRTCRtpTransceiverBase {
     constructor(transceiver: any);
+
     direction: TNSRTCRtpTransceiverDirection;
     currentDirection: TNSRTCRtpTransceiverDirection;
     mid: string;
     receiver: TNSRTCRtpReceiverBase;
     sender: TNSRTCRtpSenderBase;
     stopped: boolean;
+
     abstract stop(): void;
 }
 
@@ -168,6 +188,7 @@ declare class TNSRTCTrackEventBase {
     transceiver: TNSRTCRtpTransceiverBase;
     receiver: TNSRTCRtpReceiverBase;
     streams: Array<TNSRTCMediaStreamBase>;
+
     constructor(event: any);
 }
 
@@ -175,17 +196,24 @@ declare class TNSRTCTrackEventBase {
 
 export declare class TNSRTCAudioTrack extends TNSRTCMediaStreamTrack {
     private _audioTrack;
+
     constructor(track: any);
+
     static fromNative(track: any): TNSRTCAudioTrack;
+
     readonly android: any;
     readonly ios: any;
     readonly instance: any;
     volume: number;
+
+    applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any>;
 }
 
 export declare class TNSRTCConfiguration extends TNSRTCConfigurationBase {
     private _configuration;
+
     constructor(options?: TNSRTCConfigurationOptions);
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
@@ -193,8 +221,11 @@ export declare class TNSRTCConfiguration extends TNSRTCConfigurationBase {
 
 export declare class TNSRTCDataChannel extends TNSRTCDataChannelBase {
     private _channel;
+
     private constructor();
+
     static fromNative(channel: any): TNSRTCDataChannel;
+
     readonly android: any;
     readonly instance: any;
     readonly ios: any;
@@ -202,17 +233,25 @@ export declare class TNSRTCDataChannel extends TNSRTCDataChannelBase {
 
 export declare class TNSRTCDataChannelEvent extends TNSRTCDataChannelEventBase {
     private _event;
+
     constructor(event: any);
+
     readonly channel: TNSRTCDataChannel;
+
     static fromNative(event: any): TNSRTCDataChannelEvent;
 }
 
 export declare class TNSRTCDTMFSender extends TNSRTCDTMFSenderBase {
     private _sender;
+
     private constructor();
+
     static fromNative(sender: any): TNSRTCDTMFSender;
+
     dispose(): void;
+
     insertDTMF(tones: string, duration?: number, interToneGap?: number): void;
+
     readonly toneBuffer: string;
     readonly android: any;
     readonly instance: any;
@@ -221,8 +260,11 @@ export declare class TNSRTCDTMFSender extends TNSRTCDTMFSenderBase {
 
 export declare class TNSRTCIceCandidate extends TNSRTCIceCandidateBase {
     _iceCandidate: any;
+
     constructor(sdp: string, sdpMid: string | null, sdpMLineIndex: number);
+
     static fromNative(candidate: any): TNSRTCIceCandidate;
+
     readonly candidate: string;
     readonly sdp: string;
     readonly sdpMid: string | null;
@@ -237,8 +279,11 @@ export declare class TNSRTCIceCandidate extends TNSRTCIceCandidateBase {
 
 export declare class TNSRTCIceServer extends TNSRTCIceServerBase {
     constructor(urls: Array<string>, username?: string, credential?: string);
+
     credential: string;
+
     toWebRtc(): any;
+
     readonly iceServer: any;
     readonly android: any;
     readonly ios: any;
@@ -254,13 +299,19 @@ export declare class TNSRTCMediaDevices {
 
 export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
     private _stream;
+
     private constructor();
+
     readonly id: string;
     readonly videoTracks: Array<TNSRTCVideoTrack>;
     readonly audioTracks: Array<TNSRTCAudioTrack>;
+
     addTrack(track: TNSRTCVideoTrack | TNSRTCAudioTrack): void;
+
     removeTrack(track: TNSRTCVideoTrack | TNSRTCAudioTrack): void;
+
     static fromNative(stream: any): TNSRTCMediaStream;
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
@@ -268,7 +319,9 @@ export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
 
 declare class TNSRTCMediaStreamConstraints extends TNSRTCMediaStreamConstraintsBase {
     private _mediaStreamConstraints;
+
     constructor(audio: any, video: any);
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
@@ -277,7 +330,9 @@ declare class TNSRTCMediaStreamConstraints extends TNSRTCMediaStreamConstraintsB
 
 export declare class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
     private _mediaStreamTrack;
+
     constructor(mediaStreamTrack: any);
+
     readonly id: string;
     enabled: boolean;
     readonly kind: string;
@@ -287,43 +342,70 @@ export declare class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
     readonly ios: any;
     readonly instance: any;
     readonly mediaStreamTrack: any;
+
     dispose(): void;
+
     static fromNative(mediaStreamTrack: any): TNSRTCMediaStreamTrack;
 }
 
 export declare class TNSRTCPeerConnection {
     android: any;
     os: any;
+
     constructor(config?: TNSRTCConfiguration);
+
     readonly localDescription: TNSRTCSessionDescription;
     readonly remoteDescription: TNSRTCSessionDescription;
     readonly connectionState: TNSRTCPeerConnectionState;
+
     onConnectionStateChange(callback: () => void): void;
+
     onTrack(callback: (track: TNSRTCTrackEvent) => void): void;
+
     onRemoveTrackListener(callback: () => void): void;
+
     onRemoveStream(callback: (stream: TNSRTCMediaStream) => void): void;
+
     onIceGatheringStateChange(callback: any): void;
+
     onAddStream(callback: (stream: TNSRTCMediaStream) => void): void;
+
     onNegotiationNeeded(callback: () => void): void;
+
     onSignalingStateChange(callback: () => void): void;
+
     onIceCandidate(callback: (candidate: TNSRTCIceCandidate) => void): void;
+
     onDataChannel(callback: (channel: TNSRTCDataChannelEvent) => void): any;
+
     defaultIceServers(): Array<TNSRTCIceServer>;
+
     addIceCandidate(candidate: TNSRTCIceCandidate): void;
+
     addTrack(track: TNSRTCMediaStreamTrack, streamIds: Array<string>): void;
+
     close(): void;
+
     createDataChannel(label: string, channelInit: TNSRTCDataChannelInit): TNSRTCDataChannel;
+
     createAnswer(mediaConstraints: TNSRTCMediaConstraints): Promise<TNSRTCSessionDescription>;
+
     createOffer(mediaConstraints: TNSRTCMediaConstraints): Promise<TNSRTCSessionDescription>;
+
     setLocalDescription(sdp: TNSRTCSessionDescription): Promise<any>;
+
     setRemoteDescription(sdp: TNSRTCSessionDescription): Promise<any>;
+
     dispose(): void;
 }
 
 export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
     private _parameters;
+
     private constructor();
+
     static fromNative(parameters: any): TNSRTCRtpParameters;
+
     readonly android: any;
     readonly ios: any;
     readonly instance: any;
@@ -332,8 +414,11 @@ export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
 
 export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
     private _receiver;
+
     private constructor();
+
     static fromNative(receiver: any): TNSRTCRtpReceiver;
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
@@ -342,13 +427,19 @@ export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
 
 export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
     private _sender;
+
     private constructor();
+
     static fromNative(sender: any): TNSRTCRtpSender;
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
+
     dispose(): void;
+
     replaceTrack(track: TNSRTCMediaStreamTrack): void;
+
     readonly dtmf: TNSRTCDTMFSender;
     readonly id: string;
     readonly track: TNSRTCMediaStreamTrack;
@@ -358,9 +449,13 @@ export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
 
 export declare class TNSRTCRtpTransceiver extends TNSRTCRtpTransceiverBase {
     private _transceiver;
+
     private constructor();
+
     static fromNative(transceiver: any): TNSRTCRtpTransceiver;
+
     stop(): void;
+
     readonly direction: TNSRTCRtpTransceiverDirection;
     readonly currentDirection: TNSRTCRtpTransceiverDirection;
     readonly mid: string;
@@ -373,20 +468,25 @@ export declare class TNSRTCRtpTransceiver extends TNSRTCRtpTransceiverBase {
 }
 
 export declare enum TNSRTCSdpType {
-    ANSWER = "answer",
-    OFFER = "offer",
-    PRANSWER = "pranswer",
-    ROLLBACK = "rollback"
+    ANSWER = 'answer',
+    OFFER = 'offer',
+    PRANSWER = 'pranswer',
+    ROLLBACK = 'rollback'
 }
 
 
 export declare class TNSRTCSessionDescription {
     private _sessionDescription;
+
     constructor(...args: any[]);
+
     static fromNative(sdp: any): TNSRTCSessionDescription;
+
     readonly type: TNSRTCSdpType;
     readonly sdp: string;
+
     toJSON(): string;
+
     readonly instance: any;
     readonly android: any;
     readonly ios: any;
@@ -395,21 +495,29 @@ export declare class TNSRTCSessionDescription {
 
 export declare class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
     private _event;
+
     constructor(event: any);
+
     readonly mediaTrack: TNSRTCMediaStreamTrack;
     readonly transceiver: TNSRTCRtpTransceiver;
     readonly receiver: TNSRTCRtpReceiver;
     readonly streams: Array<TNSRTCMediaStream>;
+
     static fromNative(event: any): TNSRTCTrackEvent;
 }
 
 
 export declare class TNSRTCVideoTrack extends TNSRTCMediaStreamTrack {
     private _videoTrack;
+
     constructor(track: any);
+
     static fromNative(track: any): TNSRTCVideoTrack;
+
     readonly android: any;
     readonly ios: any;
     readonly instance: any;
+
+    applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any>;
 }
 

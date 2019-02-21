@@ -22,6 +22,8 @@ declare class FancyRTCAudioTrack extends FancyRTCMediaStreamTrack {
 
 	constructor();
 
+	applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
+
 	init(track: RTCAudioTrack): this;
 }
 
@@ -325,6 +327,19 @@ declare class FancyRTCMediaStreamTrack extends NSObject {
 	dispose(): void;
 }
 
+declare class FancyRTCMediaTrackConstraints extends NSObject {
+
+	static alloc(): FancyRTCMediaTrackConstraints; // inherited from NSObject
+
+	static new(): FancyRTCMediaTrackConstraints; // inherited from NSObject
+
+	facingMode: string;
+
+	constructor(o: { constraints: NSDictionary<string, any>; });
+
+	initWithConstraints(constraints: NSDictionary<string, any>): this;
+}
+
 declare class FancyRTCPeerConnection extends NSObject {
 
 	static alloc(): FancyRTCPeerConnection; // inherited from NSObject
@@ -354,6 +369,10 @@ declare class FancyRTCPeerConnection extends NSObject {
 	createDataChannelWithLabelChannelInit(label: string, channelInit: FancyRTCDataChannelInit): FancyRTCDataChannel;
 
 	createOfferWithMediaConstraintsListener(mediaConstraints: FancyRTCMediaConstraints, listener: (p1: FancyRTCSessionDescription, p2: string) => void): void;
+
+	dataChannelDidChangeState(dataChannel: RTCDataChannel): void;
+
+	dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
 
 	dispose(): void;
 
@@ -398,6 +417,8 @@ declare class FancyRTCPeerConnection extends NSObject {
 	peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
 
 	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
+
+	peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
 
 	peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
@@ -591,6 +612,8 @@ declare class FancyRTCVideoTrack extends FancyRTCMediaStreamTrack {
 
 	constructor();
 
+	applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
+
 	init(track: RTCVideoTrack): this;
 }
 
@@ -734,6 +757,8 @@ declare class FancyWebRTCView extends UIView {
 	static new(): FancyWebRTCView; // inherited from NSObject
 
 	setMirrorWithMirror(mirror: boolean): void;
+
+	setSizeWithSize(size: CGSize): void;
 
 	setSrcObjectWith(rtcStream: RTCMediaStream): void;
 

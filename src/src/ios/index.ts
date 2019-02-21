@@ -29,6 +29,7 @@ export * from '../core/TNSRTCPeerConnectionState';
 export * from '../core/TNSRTCRtcpMuxPolicy';
 export * from '../core/TNSRTCRtpTransceiverDirection';
 export * from '../core/TNSRTCSdpSemantics';
+export * from '../core/TNSMediaTrackConstraints';
 
 export * from '../base/TNSRTCConfigurationBase';
 export * from '../base/TNSRTCDataChannelBase';
