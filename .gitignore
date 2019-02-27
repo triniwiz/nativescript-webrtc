@@ -34,6 +34,7 @@ publish/package
 demo/report/report.html
 demo/report/stats.json
 !demo-server/app.js
+!demo-server/one_on_one.js
 package-lock.json
 
 !demo/app/async-await.js
