@@ -140,6 +140,18 @@ export class StandardViewModel extends Observable {
         });
     }
 
+    public shareScreen(event) {
+        TNSRTCMediaDevices.getDisplayMedia(new TNSRTCMediaStreamConstraints(true, true))
+            .then(mediaStream => {
+                this.localStream = mediaStream;
+                this.localView.srcObject = mediaStream;
+                this.localView.mirror = false;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     public switchCamera(event) {
         if (this.localStream) {
             for (let track of this.localStream.videoTracks) {

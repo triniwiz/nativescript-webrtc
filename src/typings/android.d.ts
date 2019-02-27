@@ -1,3 +1,5 @@
+/// <reference path="android-declarations.d.ts"/>
+
 declare module co {
 	export module fitcom {
 		export module fancywebrtc {
@@ -10,6 +12,38 @@ declare module co {
 				public static VERSION_CODE: number;
 				public static VERSION_NAME: string;
 				public constructor();
+			}
+		}
+	}
+}
+
+declare module co {
+	export module fitcom {
+		export module fancywebrtc {
+			export class FancyRTCApplicationHelper {
+				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCApplicationHelper>;
+				public requestPermissions(param0: globalAndroid.content.Context, param1: native.Array<string>, param2: number, param3: co.fitcom.fancywebrtc.FancyRTCApplicationHelper.Callback): void;
+				public handlePermissionResult(param0: number, param1: native.Array<string>, param2: native.Array<number>): void;
+				public handleResult(param0: number, param1: number, param2: globalAndroid.content.Intent): void;
+				public static getInstance(): co.fitcom.fancywebrtc.FancyRTCApplicationHelper;
+				public requestPermission(param0: globalAndroid.content.Context, param1: string, param2: number, param3: co.fitcom.fancywebrtc.FancyRTCApplicationHelper.Callback): void;
+				public constructor();
+				public onResult(param0: number, param1: co.fitcom.fancywebrtc.FancyRTCApplicationHelper.Callback): void;
+			}
+			export module FancyRTCApplicationHelper {
+				export class Callback {
+					public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCApplicationHelper.Callback>;
+					/**
+					 * Constructs a new instance of the co.fitcom.fancywebrtc.FancyRTCApplicationHelper$Callback interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+					 */
+					public constructor(implementation: {
+						onPermissionResult(param0: number, param1: native.Array<string>, param2: native.Array<number>): void;
+						onResult(param0: number, param1: number, param2: globalAndroid.content.Intent): void;
+					});
+					public constructor();
+					public onResult(param0: number, param1: number, param2: globalAndroid.content.Intent): void;
+					public onPermissionResult(param0: number, param1: native.Array<string>, param2: native.Array<number>): void;
+				}
 			}
 		}
 	}
@@ -234,7 +268,9 @@ declare module co {
 		export module fancywebrtc {
 			export class FancyRTCMediaDevices {
 				public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyRTCMediaDevices>;
+				public static WEBRTC_SCREEN_PERMISSIONS_REQUEST_CODE: number;
 				public static getUserMedia(param0: globalAndroid.content.Context, param1: co.fitcom.fancywebrtc.FancyRTCMediaStreamConstraints, param2: co.fitcom.fancywebrtc.FancyRTCMediaDevices.GetUserMediaListener): void;
+				public static getDisplayMedia(param0: globalAndroid.content.Context, param1: co.fitcom.fancywebrtc.FancyRTCMediaStreamConstraints, param2: co.fitcom.fancywebrtc.FancyRTCMediaDevices.GetUserMediaListener): void;
 				public constructor();
 			}
 			export module FancyRTCMediaDevices {

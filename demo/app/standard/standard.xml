@@ -2,11 +2,12 @@
       xmlns:ui="nativescript-webrtc-plugin">
     <GridLayout rows="*,*,*">
         <ui:WebRTCView loaded="videoLoaded" row="0" id="remoteVideoView"/>
-        <GridLayout verticalAlignment="center" horizontalAlignment="center" row="1" rows="auto,auto,auto" columns="auto,auto,auto">
+        <GridLayout verticalAlignment="center" horizontalAlignment="center" row="1" rows="auto,auto,auto,auto" columns="auto,auto,auto">
             <Button tap="makeCall" row="0" col="1" text="Call"/>
             <Button row="1" col="0" text="Switch" tap="switchCamera"/>
             <Button row="1" col="2" text="Mute"/>
             <Button row="2" col="1" text="End"/>
+            <Button row="3" col="2" text="ShareScreen" tap="shareScreen"/>
         </GridLayout>
         <ui:WebRTCView row="2" id="localVideoView" loaded="videoLoaded"/>
     </GridLayout>

@@ -13,4 +13,16 @@ export class TNSRTCMediaDevices {
             });
         });
     }
+
+    public static getDisplayMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream> {
+        return new Promise((resolve, reject) => {
+            FancyRTCMediaDevices.getDisplayMediaWithConstraintsListener(constraints.instance, (stream: FancyRTCMediaStream, error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(TNSRTCMediaStream.fromNative(stream));
+                }
+            });
+        });
+    }
 }

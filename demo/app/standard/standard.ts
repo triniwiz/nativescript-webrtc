@@ -40,3 +40,7 @@ export function endCall(event) {
 export function switchCamera(event) {
     vm.switchCamera(event.object);
 }
+
+export function shareScreen(event) {
+    vm.shareScreen(event.object);
+}

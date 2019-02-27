@@ -17,6 +17,7 @@ import { View } from 'tns-core-modules/ui/core/view';
 import { ad } from 'tns-core-modules/utils/utils';
 import * as permissions from 'nativescript-permissions';
 import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/android';
+import * as app from 'tns-core-modules/application';
 
 export * from './src/android';
 export {
@@ -373,8 +374,19 @@ export class WebRTC extends Common {
         );
     }
 
+    private static _callbackFn(args: app.AndroidActivityResultEventData) {
+        co.fitcom.fancywebrtc.FancyRTCApplicationHelper.getInstance().handleResult(args.requestCode, args.resultCode, args.intent);
+    }
+
+    private static callback: any;
+
     public static init(): void {
         co.fitcom.fancywebrtc.FancyWebRTC.init(ad.getApplicationContext());
+        if (!this.callback) {
+            this.callback = this._callbackFn.bind(this);
+        }
+        app.android.off(app.AndroidApplication.activityResultEvent, this.callback);
+        app.android.on(app.AndroidApplication.activityResultEvent, this.callback);
     }
 
     public dataChannelSend(

@@ -295,6 +295,7 @@ export declare class TNSRTCIceServer extends TNSRTCIceServerBase {
 
 export declare class TNSRTCMediaDevices {
     static getUserMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream>;
+    static getDisplayMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream>;
 }
 
 export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {

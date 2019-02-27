@@ -245,6 +245,8 @@ declare class FancyRTCMediaDevices extends NSObject {
 
 	static alloc(): FancyRTCMediaDevices; // inherited from NSObject
 
+	static getDisplayMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
+
 	static getUserMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
 
 	static new(): FancyRTCMediaDevices; // inherited from NSObject
