@@ -1025,10 +1025,25 @@ class WebRTCClientDelegate extends NSObject {
     }
 }
 
+export enum TNSRTCScaling {
+    FIT = 'fit',
+    FILL = 'fill',
+    NONE = 'none'
+}
+
+
 export class WebRTCView extends View {
+    private _scaling;
 
     createNativeView(): Object {
         return FancyWebRTCView.new();
+    }
+
+    initNativeView(): void {
+        super.initNativeView();
+        if (this.nativeView && this._scaling) {
+            this.nativeView.setScalingWithScale(this._scaling);
+        }
     }
 
     set mirror(mirror: boolean) {
@@ -1043,6 +1058,24 @@ export class WebRTCView extends View {
         if (stream instanceof RTCMediaStream) {
             this.nativeView.setSrcObjectWith(stream);
         }
+    }
+
+    set scaling(scaling: TNSRTCScaling) {
+        let nativeScaling = FancyWebRTCViewScaling.None;
+        switch (scaling) {
+            case TNSRTCScaling.FILL:
+                nativeScaling = FancyWebRTCViewScaling.Fill;
+                break;
+            case TNSRTCScaling.FIT:
+                nativeScaling = FancyWebRTCViewScaling.Fit;
+                break;
+            default:
+                break;
+        }
+        if (this.nativeView) {
+            this.nativeView.setScalingWithScale(nativeScaling);
+        }
+        this._scaling = nativeScaling;
     }
 
     set srcObject(value: any) {

@@ -957,10 +957,21 @@ declare module co {
 				public setSrcObject(param0: co.fitcom.fancywebrtc.FancyRTCMediaStreamTrack): void;
 				public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet);
 				public setMirror(param0: boolean): void;
+				public setScaling(param0: co.fitcom.fancywebrtc.FancyWebRTCView.Scaling): void;
 				public setSrcObject(param0: co.fitcom.fancywebrtc.FancyRTCMediaStream): void;
 				public setVideoTrack(param0: org.webrtc.VideoTrack): void;
 				public setSrcObject(param0: org.webrtc.MediaStream): void;
 				public setSrcObject(param0: org.webrtc.MediaStreamTrack): void;
+			}
+			export module FancyWebRTCView {
+				export class Scaling {
+					public static class: java.lang.Class<co.fitcom.fancywebrtc.FancyWebRTCView.Scaling>;
+					public static FIT: co.fitcom.fancywebrtc.FancyWebRTCView.Scaling;
+					public static FILL: co.fitcom.fancywebrtc.FancyWebRTCView.Scaling;
+					public static NONE: co.fitcom.fancywebrtc.FancyWebRTCView.Scaling;
+					public static values(): native.Array<co.fitcom.fancywebrtc.FancyWebRTCView.Scaling>;
+					public static valueOf(param0: string): co.fitcom.fancywebrtc.FancyWebRTCView.Scaling;
+				}
 			}
 		}
 	}

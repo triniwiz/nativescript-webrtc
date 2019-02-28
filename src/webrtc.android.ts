@@ -536,17 +536,50 @@ export class WebRTC extends Common {
     }
 }
 
+export enum TNSRTCScaling {
+    FIT = 'fit',
+    FILL = 'fill',
+    NONE = 'none'
+}
+
 export class WebRTCView extends View {
     private _stream: any;
+    private _scaling;
 
     createNativeView(): any {
         return new co.fitcom.fancywebrtc.FancyWebRTCView(this._context, null);
+    }
+
+    initNativeView(): void {
+        super.initNativeView();
+        if (this.nativeView && this._scaling) {
+            this.nativeView.setScaling(this._scaling);
+        }
     }
 
     set mirror(mirror: boolean) {
         if (this.nativeView) {
             this.nativeView.setMirror(mirror);
         }
+    }
+
+    set scaling(scaling: TNSRTCScaling) {
+        let nativeScaling = co.fitcom.fancywebrtc.FancyWebRTCView.Scaling.NONE;
+        switch (scaling) {
+            case TNSRTCScaling.FILL:
+                nativeScaling = co.fitcom.fancywebrtc.FancyWebRTCView.Scaling.FILL;
+                break;
+            case TNSRTCScaling.FIT:
+                nativeScaling = co.fitcom.fancywebrtc.FancyWebRTCView.Scaling.FIT;
+                break;
+            default:
+                break;
+        }
+
+        if (this.nativeView) {
+            this.nativeView.setScaling(nativeScaling);
+        }
+        this._scaling = nativeScaling;
     }
 
     set videoTrack(track: any) {

@@ -760,6 +760,8 @@ declare class FancyWebRTCView extends UIView {
 
 	setMirrorWithMirror(mirror: boolean): void;
 
+	setScalingWithScale(scale: FancyWebRTCViewScaling): void;
+
 	setSizeWithSize(size: CGSize): void;
 
 	setSrcObjectWith(rtcStream: RTCMediaStream): void;
@@ -773,6 +775,15 @@ declare class FancyWebRTCView extends UIView {
 	setVideoTrackWithTrack(track: RTCVideoTrack): void;
 
 	videoViewDidChangeVideoSize(videoView: RTCVideoRenderer, size: CGSize): void;
+}
+
+declare const enum FancyWebRTCViewScaling {
+
+	Fit = 0,
+
+	Fill = 1,
+
+	None = 2
 }
 
 declare class Format extends NSObject {
