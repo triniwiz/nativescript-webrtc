@@ -1,5 +1,32 @@
 # Change Log
 
+## [2.0.0-alpha.14](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.14) (2019-02-28)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.13...2.0.0-alpha.14)
+
+**Implemented enhancements:**
+
+- Video tag WebRTCView  aspect ratio [\#12](https://github.com/triniwiz/nativescript-webrtc/issues/12)
+
+## [2.0.0-alpha.13](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.13) (2019-02-27)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.12...2.0.0-alpha.13)
+
+## [2.0.0-alpha.12](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.12) (2019-02-21)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.11...2.0.0-alpha.12)
+
+**Closed issues:**
+
+- ng-demo doesn't contains the demo [\#11](https://github.com/triniwiz/nativescript-webrtc/issues/11)
+- Unable to connect between two different networks [\#9](https://github.com/triniwiz/nativescript-webrtc/issues/9)
+
+## [2.0.0-alpha.11](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.11) (2019-02-18)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.9...2.0.0-alpha.11)
+
+## [2.0.0-alpha.9](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.9) (2019-02-18)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.8...2.0.0-alpha.9)
+
+## [2.0.0-alpha.8](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.8) (2019-02-14)
+[Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.7...2.0.0-alpha.8)
+
 ## [2.0.0-alpha.7](https://github.com/triniwiz/nativescript-webrtc/tree/2.0.0-alpha.7) (2019-02-14)
 [Full Changelog](https://github.com/triniwiz/nativescript-webrtc/compare/2.0.0-alpha.6...2.0.0-alpha.7)
 
