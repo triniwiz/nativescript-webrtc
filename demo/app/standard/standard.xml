@@ -1,7 +1,7 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
       xmlns:ui="nativescript-webrtc-plugin">
     <GridLayout rows="*,*,*">
-        <ui:WebRTCView stretch="fit" loaded="videoLoaded" row="0" id="remoteVideoView"/>
+        <ui:WebRTCView loaded="videoLoaded" row="0" id="remoteVideoView"/>
         <GridLayout verticalAlignment="center" horizontalAlignment="center" row="1" rows="auto,auto,auto,auto"
                     columns="auto,auto,auto">
             <Button tap="makeCall" row="0" col="1" text="Call"/>
@@ -10,6 +10,6 @@
             <Button row="2" col="1" text="End"/>
             <Button row="3" col="2" text="ShareScreen" tap="shareScreen"/>
         </GridLayout>
-        <ui:WebRTCView row="2" id="localVideoView" loaded="videoLoaded"/>
+        <ui:WebRTCView scaling="fill" row="2" id="localVideoView" loaded="videoLoaded"/>
     </GridLayout>
 </Page>
