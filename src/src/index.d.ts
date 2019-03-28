@@ -222,7 +222,7 @@ export declare class TNSRTCConfiguration extends TNSRTCConfigurationBase {
 export declare class TNSRTCDataChannel extends TNSRTCDataChannelBase {
     private _channel;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(channel: any): TNSRTCDataChannel;
 
@@ -244,7 +244,7 @@ export declare class TNSRTCDataChannelEvent extends TNSRTCDataChannelEventBase {
 export declare class TNSRTCDTMFSender extends TNSRTCDTMFSenderBase {
     private _sender;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(sender: any): TNSRTCDTMFSender;
 
@@ -301,7 +301,7 @@ export declare class TNSRTCMediaDevices {
 export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
     private _stream;
 
-    private constructor();
+    protected constructor();
 
     readonly id: string;
     readonly videoTracks: Array<TNSRTCVideoTrack>;
@@ -403,7 +403,7 @@ export declare class TNSRTCPeerConnection {
 export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
     private _parameters;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(parameters: any): TNSRTCRtpParameters;
 
@@ -416,7 +416,7 @@ export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
 export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
     private _receiver;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(receiver: any): TNSRTCRtpReceiver;
 
@@ -429,7 +429,7 @@ export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
 export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
     private _sender;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(sender: any): TNSRTCRtpSender;
 
@@ -451,7 +451,7 @@ export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
 export declare class TNSRTCRtpTransceiver extends TNSRTCRtpTransceiverBase {
     private _transceiver;
 
-    private constructor();
+    protected constructor();
 
     static fromNative(transceiver: any): TNSRTCRtpTransceiver;
 
