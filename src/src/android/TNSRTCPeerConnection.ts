@@ -9,6 +9,7 @@ import {
     TNSRTCMediaConstraints,
     TNSRTCMediaStream,
     TNSRTCMediaStreamTrack,
+    TNSRTCRtpSender,
     TNSRTCTrackEvent
 } from './';
 import { TNSRTCPeerConnectionState } from '../core/TNSRTCPeerConnectionState';
@@ -282,5 +283,17 @@ export class TNSRTCPeerConnection {
 
     public dispose() {
         this.android.dispose();
+    }
+
+    public getSenders() {
+        let senders: TNSRTCRtpSender[] = [];
+        const nativeSenders = this.android.getSenders();
+        if (nativeSenders) {
+            const count = nativeSenders.size();
+            for (let i = 0; i < count; i++) {
+                senders.push(TNSRTCRtpSender.fromNative(nativeSenders.get(i)));
+            }
+        }
+        return senders;
     }
 }

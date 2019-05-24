@@ -1,11 +1,14 @@
 import { TNSRTCMediaStreamTrackBase } from '../base/TNSRTCMediaStreamTrackBase';
+import { TNSRTCMediaTrackSettings } from './TNSRTCMediaTrackSettings';
 
 export class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
     private _mediaStreamTrack;
+    private _mediaStreamTrackSettings;
 
     constructor(mediaStreamTrack: any) {
         super(mediaStreamTrack);
         this._mediaStreamTrack = mediaStreamTrack;
+        this._mediaStreamTrackSettings = TNSRTCMediaTrackSettings.fromNative(mediaStreamTrack.settings);
     }
 
     get id(): string {
@@ -46,6 +49,14 @@ export class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
 
     dispose(): void {
         this._mediaStreamTrack.dispose();
+    }
+
+    stop(): void {
+        this._mediaStreamTrack.stop();
+    }
+
+    get settings(): TNSRTCMediaTrackSettings {
+        return this._mediaStreamTrackSettings;
     }
 
     static fromNative(mediaStreamTrack: any): TNSRTCMediaStreamTrack {

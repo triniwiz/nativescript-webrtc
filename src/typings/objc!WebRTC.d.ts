@@ -1868,6 +1868,10 @@ declare class RTCRtpEncodingParameters extends NSObject {
 
 	numTemporalLayers: number;
 
+	rid: string;
+
+	scaleResolutionDownBy: number;
+
 	readonly ssrc: number;
 }
 
@@ -2331,9 +2335,7 @@ interface RTCVideoDecoder extends NSObjectProtocol {
 
 	setCallback(callback: (p1: RTCVideoFrame) => void): void;
 
-	startDecodeWithNumberOfCores?(numberOfCores: number): number;
-
-	startDecodeWithSettingsNumberOfCores(settings: RTCVideoEncoderSettings, numberOfCores: number): number;
+	startDecodeWithNumberOfCores(numberOfCores: number): number;
 }
 declare var RTCVideoDecoder: {
 
@@ -2445,8 +2447,6 @@ declare class RTCVideoDecoderH264 extends NSObject implements RTCVideoDecoder {
 	setCallback(callback: (p1: RTCVideoFrame) => void): void;
 
 	startDecodeWithNumberOfCores(numberOfCores: number): number;
-
-	startDecodeWithSettingsNumberOfCores(settings: RTCVideoEncoderSettings, numberOfCores: number): number;
 }
 
 declare class RTCVideoDecoderVP8 extends NSObject {
@@ -2860,8 +2860,6 @@ declare var kRTCFieldTrialAudioForceABWENoTWCCKey: string;
 
 declare var kRTCFieldTrialAudioForceNoTWCCKey: string;
 
-declare var kRTCFieldTrialAudioSendSideBweForVideoKey: string;
-
 declare var kRTCFieldTrialAudioSendSideBweKey: string;
 
 declare var kRTCFieldTrialEnabledValue: string;
@@ -2899,22 +2897,6 @@ declare var kRTCMaxSupportedH264ProfileLevelConstrainedHigh: string;
 declare var kRTCMediaConstraintsAudioNetworkAdaptorConfig: string;
 
 declare var kRTCMediaConstraintsIceRestart: string;
-
-declare var kRTCMediaConstraintsMaxAspectRatio: string;
-
-declare var kRTCMediaConstraintsMaxFrameRate: string;
-
-declare var kRTCMediaConstraintsMaxHeight: string;
-
-declare var kRTCMediaConstraintsMaxWidth: string;
-
-declare var kRTCMediaConstraintsMinAspectRatio: string;
-
-declare var kRTCMediaConstraintsMinFrameRate: string;
-
-declare var kRTCMediaConstraintsMinHeight: string;
-
-declare var kRTCMediaConstraintsMinWidth: string;
 
 declare var kRTCMediaConstraintsOfferToReceiveAudio: string;
 

@@ -18,6 +18,7 @@ export * from './TNSRTCSdpType';
 export * from './TNSRTCSessionDescription';
 export * from './TNSRTCTrackEvent';
 export * from './TNSRTCVideoTrack';
+export * from './TNSRTCMediaTrackSettings';
 
 export * from '../core/TNSKeyValue';
 export * from '../core/TNSRTCBundlePolicy';

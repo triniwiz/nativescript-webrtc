@@ -295,6 +295,7 @@ export declare class TNSRTCIceServer extends TNSRTCIceServerBase {
 
 export declare class TNSRTCMediaDevices {
     static getUserMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream>;
+
     static getDisplayMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream>;
 }
 
@@ -343,8 +344,11 @@ export declare class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
     readonly ios: any;
     readonly instance: any;
     readonly mediaStreamTrack: any;
+    readonly settings: TNSRTCMediaTrackSettings;
 
     dispose(): void;
+
+    stop(): void;
 
     static fromNative(mediaStreamTrack: any): TNSRTCMediaStreamTrack;
 }
@@ -398,6 +402,8 @@ export declare class TNSRTCPeerConnection {
     setRemoteDescription(sdp: TNSRTCSessionDescription): Promise<any>;
 
     dispose(): void;
+
+    getSenders(): TNSRTCRtpSender[];
 }
 
 export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
@@ -522,3 +528,17 @@ export declare class TNSRTCVideoTrack extends TNSRTCMediaStreamTrack {
     applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any>;
 }
 
+
+export declare class TNSRTCMediaTrackSettings {
+    private _mediaTrackSettings;
+
+    protected constructor(settings: any);
+
+    static fromNative(settings: any): TNSRTCMediaTrackSettings;
+
+    readonly width: number;
+    readonly height: number;
+    readonly frameRate: number;
+    readonly aspectRatio: number;
+    readonly facingMode: string;
+}

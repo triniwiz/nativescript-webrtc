@@ -1,739 +1,768 @@
-
 declare class AVCaptureState extends NSObject {
 
-	static alloc(): AVCaptureState; // inherited from NSObject
+    static alloc(): AVCaptureState; // inherited from NSObject
 
-	static isAudioDisabled(): boolean;
+    static isAudioDisabled(): boolean;
 
-	static isVideoDisabled(): boolean;
+    static isVideoDisabled(): boolean;
 
-	static new(): AVCaptureState; // inherited from NSObject
+    static new(): AVCaptureState; // inherited from NSObject
 }
 
 declare class FancyRTCAudioTrack extends FancyRTCMediaStreamTrack {
 
-	static alloc(): FancyRTCAudioTrack; // inherited from NSObject
+    static alloc(): FancyRTCAudioTrack; // inherited from NSObject
 
-	static new(): FancyRTCAudioTrack; // inherited from NSObject
+    static new(): FancyRTCAudioTrack; // inherited from NSObject
 
-	readonly audioTrack: RTCAudioTrack;
+    readonly audioTrack: RTCAudioTrack;
 
-	volume: number;
+    volume: number;
 
-	constructor();
+    constructor();
 
-	applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
+    applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
 
-	init(track: RTCAudioTrack): this;
+    init(track: RTCAudioTrack): this;
 }
 
 declare const enum FancyRTCBundlePolicy {
 
-	BALANCED = 0,
+    BALANCED = 0,
 
-	MAX_COMPAT = 1,
+    MAX_COMPAT = 1,
 
-	MAX_BUNDLE = 2
+    MAX_BUNDLE = 2
 }
 
 declare class FancyRTCConfiguration extends NSObject {
 
-	static alloc(): FancyRTCConfiguration; // inherited from NSObject
+    static alloc(): FancyRTCConfiguration; // inherited from NSObject
 
-	static new(): FancyRTCConfiguration; // inherited from NSObject
+    static new(): FancyRTCConfiguration; // inherited from NSObject
 
-	bundlePolicy: FancyRTCBundlePolicy;
+    bundlePolicy: FancyRTCBundlePolicy;
 
-	readonly configuration: RTCConfiguration;
+    readonly configuration: RTCConfiguration;
 
-	iceCandidatePoolSize: number;
+    iceCandidatePoolSize: number;
 
-	iceServers: NSArray<FancyRTCIceServer>;
+    iceServers: NSArray<FancyRTCIceServer>;
 
-	iceTransportPolicy: FancyRTCIceTransportPolicy;
+    iceTransportPolicy: FancyRTCIceTransportPolicy;
 
-	peerIdentity: string;
+    peerIdentity: string;
 
-	rtcpMuxPolicy: FancyRTCRtcpMuxPolicy;
+    rtcpMuxPolicy: FancyRTCRtcpMuxPolicy;
 
-	sdpSemantics: FancyRTCSdpSemantics;
+    sdpSemantics: FancyRTCSdpSemantics;
 
-	constructor(o: { iceServers: NSArray<FancyRTCIceServer> | FancyRTCIceServer[]; });
+    constructor(o: { iceServers: NSArray<FancyRTCIceServer> | FancyRTCIceServer[]; });
 
-	constructor(o: { options: NSDictionary<any, any>; });
+    constructor(o: { options: NSDictionary<any, any>; });
 
-	initWithIceServers(iceServers: NSArray<FancyRTCIceServer> | FancyRTCIceServer[]): this;
+    initWithIceServers(iceServers: NSArray<FancyRTCIceServer> | FancyRTCIceServer[]): this;
 
-	initWithOptions(options: NSDictionary<any, any>): this;
+    initWithOptions(options: NSDictionary<any, any>): this;
 }
 
 declare class FancyRTCDTMFSender extends NSObject {
 
-	static alloc(): FancyRTCDTMFSender; // inherited from NSObject
+    static alloc(): FancyRTCDTMFSender; // inherited from NSObject
 
-	static new(): FancyRTCDTMFSender; // inherited from NSObject
+    static new(): FancyRTCDTMFSender; // inherited from NSObject
 
-	readonly sender: RTCDtmfSender;
+    readonly sender: RTCDtmfSender;
 
-	readonly toneBuffer: string;
+    readonly toneBuffer: string;
 
-	constructor(o: { sender: RTCDtmfSender; });
+    constructor(o: { sender: RTCDtmfSender; });
 
-	dispose(): void;
+    dispose(): void;
 
-	initWithSender(sender: RTCDtmfSender): this;
+    initWithSender(sender: RTCDtmfSender): this;
 
-	insertDTMFWithTonesDurationInterToneGap(tones: string, duration: number, interToneGap: number): void;
+    insertDTMFWithTonesDurationInterToneGap(tones: string, duration: number, interToneGap: number): void;
 }
 
 declare class FancyRTCDataChannel extends NSObject {
 
-	static alloc(): FancyRTCDataChannel; // inherited from NSObject
+    static alloc(): FancyRTCDataChannel; // inherited from NSObject
 
-	static new(): FancyRTCDataChannel; // inherited from NSObject
+    static new(): FancyRTCDataChannel; // inherited from NSObject
 
-	constructor(o: { channel: RTCDataChannel; });
+    constructor(o: { channel: RTCDataChannel; });
 
-	initWithChannel(channel: RTCDataChannel): this;
+    initWithChannel(channel: RTCDataChannel): this;
 }
 
 declare class FancyRTCDataChannelEvent extends NSObject {
 
-	static alloc(): FancyRTCDataChannelEvent; // inherited from NSObject
+    static alloc(): FancyRTCDataChannelEvent; // inherited from NSObject
 
-	static new(): FancyRTCDataChannelEvent; // inherited from NSObject
+    static new(): FancyRTCDataChannelEvent; // inherited from NSObject
 
-	_channel: FancyRTCDataChannel;
+    _channel: FancyRTCDataChannel;
 
-	readonly channel: FancyRTCDataChannel;
+    readonly channel: FancyRTCDataChannel;
 
-	constructor(o: { channel: FancyRTCDataChannel; });
+    constructor(o: { channel: FancyRTCDataChannel; });
 
-	initWithChannel(channel: FancyRTCDataChannel): this;
+    initWithChannel(channel: FancyRTCDataChannel): this;
 }
 
 declare class FancyRTCDataChannelInit extends NSObject {
 
-	static alloc(): FancyRTCDataChannelInit; // inherited from NSObject
+    static alloc(): FancyRTCDataChannelInit; // inherited from NSObject
 
-	static new(): FancyRTCDataChannelInit; // inherited from NSObject
+    static new(): FancyRTCDataChannelInit; // inherited from NSObject
 
-	readonly channelInit: RTCDataChannelConfiguration;
+    readonly channelInit: RTCDataChannelConfiguration;
 
-	readonly id: number;
+    readonly id: number;
 
-	readonly maxPacketLifeTime: number;
+    readonly maxPacketLifeTime: number;
 
-	readonly maxRetransmits: number;
+    readonly maxRetransmits: number;
 
-	readonly protocol: string;
+    readonly protocol: string;
 
-	toJSON(): string;
+    toJSON(): string;
 }
 
 declare class FancyRTCIceCandidate extends NSObject {
 
-	static alloc(): FancyRTCIceCandidate; // inherited from NSObject
+    static alloc(): FancyRTCIceCandidate; // inherited from NSObject
 
-	static new(): FancyRTCIceCandidate; // inherited from NSObject
+    static new(): FancyRTCIceCandidate; // inherited from NSObject
 
-	candidate: string;
+    candidate: string;
 
-	readonly iceCandidate: RTCIceCandidate;
+    readonly iceCandidate: RTCIceCandidate;
 
-	sdp: string;
+    sdp: string;
 
-	sdpMLineIndex: number;
+    sdpMLineIndex: number;
 
-	sdpMid: string;
+    sdpMid: string;
 
-	serverUrl: string;
+    serverUrl: string;
 
-	usernameFragment: string;
+    usernameFragment: string;
 
-	constructor(o: { candidate: RTCIceCandidate; });
+    constructor(o: { candidate: RTCIceCandidate; });
 
-	constructor(o: { sdp: string; sdpMid: string; sdpMLineIndex: number; });
+    constructor(o: { sdp: string; sdpMid: string; sdpMLineIndex: number; });
 
-	initWithCandidate(candidate: RTCIceCandidate): this;
+    initWithCandidate(candidate: RTCIceCandidate): this;
 
-	initWithSdpSdpMidSdpMLineIndex(sdp: string, sdpMid: string, sdpMLineIndex: number): this;
+    initWithSdpSdpMidSdpMLineIndex(sdp: string, sdpMid: string, sdpMLineIndex: number): this;
 
-	toJSON(): string;
+    toJSON(): string;
 }
 
 declare const enum FancyRTCIceCredentialType {
 
-	PASSWORD = 0,
+    PASSWORD = 0,
 
-	TOKEN = 1
+    TOKEN = 1
 }
 
 declare class FancyRTCIceServer extends NSObject {
 
-	static alloc(): FancyRTCIceServer; // inherited from NSObject
+    static alloc(): FancyRTCIceServer; // inherited from NSObject
 
-	static new(): FancyRTCIceServer; // inherited from NSObject
+    static new(): FancyRTCIceServer; // inherited from NSObject
 
-	credential: string;
+    credential: string;
 
-	urls: NSArray<string>;
+    urls: NSArray<string>;
 
-	username: string;
+    username: string;
 
-	constructor(o: { iceServer: RTCIceServer; });
+    constructor(o: { iceServer: RTCIceServer; });
 
-	constructor(o: { url: string; });
+    constructor(o: { url: string; });
 
-	constructor(o: { url: string; username: string; credential: string; });
+    constructor(o: { url: string; username: string; credential: string; });
 
-	constructor(o: { urls: NSArray<string> | string[]; });
+    constructor(o: { urls: NSArray<string> | string[]; });
 
-	constructor(o: { urls: NSArray<string> | string[]; username: string; credential: string; });
+    constructor(o: { urls: NSArray<string> | string[]; username: string; credential: string; });
 
-	iceServer(): RTCIceServer;
+    iceServer(): RTCIceServer;
 
-	initWithIceServer(iceServer: RTCIceServer): this;
+    initWithIceServer(iceServer: RTCIceServer): this;
 
-	initWithUrl(url: string): this;
+    initWithUrl(url: string): this;
 
-	initWithUrlUsernameCredential(url: string, username: string, credential: string): this;
+    initWithUrlUsernameCredential(url: string, username: string, credential: string): this;
 
-	initWithUrls(urls: NSArray<string> | string[]): this;
+    initWithUrls(urls: NSArray<string> | string[]): this;
 
-	initWithUrlsUsernameCredential(urls: NSArray<string> | string[], username: string, credential: string): this;
+    initWithUrlsUsernameCredential(urls: NSArray<string> | string[], username: string, credential: string): this;
 
-	toWebRtc(): RTCIceServer;
+    toWebRtc(): RTCIceServer;
 }
 
 declare const enum FancyRTCIceTransportPolicy {
 
-	ALL = 0,
+    ALL = 0,
 
-	PUBLIC = 1,
+    PUBLIC = 1,
 
-	RELAY = 2
+    RELAY = 2
 }
 
 declare class FancyRTCKeyValue extends NSObject {
 
-	static alloc(): FancyRTCKeyValue; // inherited from NSObject
+    static alloc(): FancyRTCKeyValue; // inherited from NSObject
 
-	static new(): FancyRTCKeyValue; // inherited from NSObject
+    static new(): FancyRTCKeyValue; // inherited from NSObject
 
-	constructor(o: { key: string; value: string; });
+    constructor(o: { key: string; value: string; });
 
-	initWithKeyValue(key: string, value: string): this;
+    initWithKeyValue(key: string, value: string): this;
 }
 
 declare class FancyRTCMediaConstraints extends NSObject {
 
-	static alloc(): FancyRTCMediaConstraints; // inherited from NSObject
+    static alloc(): FancyRTCMediaConstraints; // inherited from NSObject
 
-	static new(): FancyRTCMediaConstraints; // inherited from NSObject
+    static new(): FancyRTCMediaConstraints; // inherited from NSObject
 
-	mandatory: NSArray<FancyRTCKeyValue>;
+    mandatory: NSArray<FancyRTCKeyValue>;
 
-	readonly mediaConstraints: RTCMediaConstraints;
+    readonly mediaConstraints: RTCMediaConstraints;
 
-	optional: NSArray<FancyRTCKeyValue>;
+    optional: NSArray<FancyRTCKeyValue>;
 
-	toJSON(): string;
+    toJSON(): string;
 }
 
 declare class FancyRTCMediaDevices extends NSObject {
 
-	static alloc(): FancyRTCMediaDevices; // inherited from NSObject
+    static alloc(): FancyRTCMediaDevices; // inherited from NSObject
 
-	static getDisplayMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
+    static getDisplayMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
 
-	static getUserMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
+    static getUserMediaWithConstraintsListener(constraints: FancyRTCMediaStreamConstraints, listener: (p1: FancyRTCMediaStream, p2: string) => void): void;
 
-	static new(): FancyRTCMediaDevices; // inherited from NSObject
+    static new(): FancyRTCMediaDevices; // inherited from NSObject
 
-	static selectFormatForDeviceWithDeviceWidthHeightCapturer(device: AVCaptureDevice, width: number, height: number, capturer: RTCCameraVideoCapturer): AVCaptureDeviceFormat;
+    static selectFormatForDeviceWithDeviceWidthHeightCapturer(device: AVCaptureDevice, width: number, height: number, capturer: RTCCameraVideoCapturer): AVCaptureDeviceFormat;
 
-	static selectFpsForFormatWithFormat(format: AVCaptureDeviceFormat): number;
+    static selectFpsForFormatWithFormat(format: AVCaptureDeviceFormat): number;
 }
 
 declare class FancyRTCMediaStream extends NSObject {
 
-	static alloc(): FancyRTCMediaStream; // inherited from NSObject
+    static alloc(): FancyRTCMediaStream; // inherited from NSObject
 
-	static new(): FancyRTCMediaStream; // inherited from NSObject
+    static new(): FancyRTCMediaStream; // inherited from NSObject
 
-	readonly audioTracks: NSArray<FancyRTCAudioTrack>;
+    readonly audioTracks: NSArray<FancyRTCAudioTrack>;
 
-	readonly getId: string;
+    readonly getId: string;
 
-	readonly id: string;
+    readonly id: string;
 
-	readonly stream: RTCMediaStream;
+    readonly stream: RTCMediaStream;
 
-	readonly videoTracks: NSArray<FancyRTCVideoTrack>;
+    readonly tracks: NSArray<FancyRTCMediaStreamTrack>;
 
-	constructor(o: { mediaStream: RTCMediaStream; });
+    readonly videoTracks: NSArray<FancyRTCVideoTrack>;
 
-	addTrackWithAudio(track: FancyRTCAudioTrack): void;
+    constructor(o: { mediaStream: RTCMediaStream; });
 
-	addTrackWithVideo(track: FancyRTCVideoTrack): void;
+    addTrackWithAudio(track: FancyRTCAudioTrack): void;
 
-	initWithMediaStream(mediaStream: RTCMediaStream): this;
+    addTrackWithVideo(track: FancyRTCVideoTrack): void;
 
-	removeTrackWithAudio(track: FancyRTCAudioTrack): void;
+    initWithMediaStream(mediaStream: RTCMediaStream): this;
 
-	removeTrackWithVideo(track: FancyRTCVideoTrack): void;
+    removeTrackWithAudio(track: FancyRTCAudioTrack): void;
+
+    removeTrackWithVideo(track: FancyRTCVideoTrack): void;
 }
 
 declare class FancyRTCMediaStreamConstraints extends NSObject {
 
-	static alloc(): FancyRTCMediaStreamConstraints; // inherited from NSObject
+    static alloc(): FancyRTCMediaStreamConstraints; // inherited from NSObject
 
-	static new(): FancyRTCMediaStreamConstraints; // inherited from NSObject
+    static new(): FancyRTCMediaStreamConstraints; // inherited from NSObject
 
-	constructor(o: { audioDict: NSDictionary<string, any>; video: boolean; });
+    constructor(o: { audioDict: NSDictionary<string, any>; video: boolean; });
 
-	constructor(o: { audioDict: NSDictionary<string, any>; videoDict: NSDictionary<string, any>; });
+    constructor(o: { audioDict: NSDictionary<string, any>; videoDict: NSDictionary<string, any>; });
 
-	constructor(o: { audio: boolean; video: boolean; });
+    constructor(o: { audio: boolean; video: boolean; });
 
-	constructor(o: { videoDict: boolean; video: NSDictionary<string, any>; });
+    constructor(o: { videoDict: boolean; video: NSDictionary<string, any>; });
 
-	initWithAudioDictVideo(audio: NSDictionary<string, any>, video: boolean): this;
+    initWithAudioDictVideo(audio: NSDictionary<string, any>, video: boolean): this;
 
-	initWithAudioDictVideoDict(audio: NSDictionary<string, any>, video: NSDictionary<string, any>): this;
+    initWithAudioDictVideoDict(audio: NSDictionary<string, any>, video: NSDictionary<string, any>): this;
 
-	initWithAudioVideo(audio: boolean, video: boolean): this;
+    initWithAudioVideo(audio: boolean, video: boolean): this;
 
-	initWithVideoDictVideo(audio: boolean, video: NSDictionary<string, any>): this;
+    initWithVideoDictVideo(audio: boolean, video: NSDictionary<string, any>): this;
 }
 
 declare class FancyRTCMediaStreamTrack extends NSObject {
 
-	static alloc(): FancyRTCMediaStreamTrack; // inherited from NSObject
+    static alloc(): FancyRTCMediaStreamTrack; // inherited from NSObject
 
-	static new(): FancyRTCMediaStreamTrack; // inherited from NSObject
+    static new(): FancyRTCMediaStreamTrack; // inherited from NSObject
 
-	enabled: boolean;
+    enabled: boolean;
 
-	readonly id: string;
+    readonly id: string;
 
-	readonly kind: string;
+    readonly kind: string;
 
-	readonly mediaStreamTrack: RTCMediaStreamTrack;
+    readonly mediaStreamTrack: RTCMediaStreamTrack;
 
-	readonly mute: boolean;
+    readonly mute: boolean;
 
-	readonly readyState: string;
+    readonly readyState: string;
 
-	dispose(): void;
+    readonly settings: FancyRTCMediaTrackSettings;
+
+    dispose(): void;
+
+    stop(): void;
 }
 
 declare class FancyRTCMediaTrackConstraints extends NSObject {
 
-	static alloc(): FancyRTCMediaTrackConstraints; // inherited from NSObject
+    static alloc(): FancyRTCMediaTrackConstraints; // inherited from NSObject
 
-	static new(): FancyRTCMediaTrackConstraints; // inherited from NSObject
+    static new(): FancyRTCMediaTrackConstraints; // inherited from NSObject
 
-	facingMode: string;
+    facingMode: string;
 
-	constructor(o: { constraints: NSDictionary<string, any>; });
+    constructor(o: { constraints: NSDictionary<string, any>; });
 
-	initWithConstraints(constraints: NSDictionary<string, any>): this;
+    initWithConstraints(constraints: NSDictionary<string, any>): this;
+}
+
+declare class FancyRTCMediaTrackSettings extends NSObject {
+
+    static alloc(): FancyRTCMediaTrackSettings; // inherited from NSObject
+
+    static new(): FancyRTCMediaTrackSettings; // inherited from NSObject
+
+    readonly aspectRatio: number;
+
+    readonly facingMode: string;
+
+    readonly frameRate: number;
+
+    readonly height: number;
+
+    readonly width: number;
+
+    constructor(o: { id: string; type: string; });
+
+    initWithIdType(id: string, type: string): this;
 }
 
 declare class FancyRTCPeerConnection extends NSObject {
 
-	static alloc(): FancyRTCPeerConnection; // inherited from NSObject
+    static alloc(): FancyRTCPeerConnection; // inherited from NSObject
 
-	static new(): FancyRTCPeerConnection; // inherited from NSObject
+    static new(): FancyRTCPeerConnection; // inherited from NSObject
 
-	readonly connection: RTCPeerConnection;
+    readonly connection: RTCPeerConnection;
 
-	readonly connectionState: FancyRTCPeerConnectionState;
+    readonly connectionState: FancyRTCPeerConnectionState;
 
-	readonly defaultIceServers: NSArray<FancyRTCIceServer>;
+    readonly defaultIceServers: NSArray<FancyRTCIceServer>;
 
-	readonly localDescription: FancyRTCSessionDescription;
+    readonly localDescription: FancyRTCSessionDescription;
 
-	readonly remoteDescription: FancyRTCSessionDescription;
+    readonly remoteDescription: FancyRTCSessionDescription;
 
-	constructor(o: { config: FancyRTCConfiguration; });
+    readonly senders: NSArray<FancyRTCRtpSender>;
 
-	addIceCandidateWithCandidate(candidate: FancyRTCIceCandidate): void;
+    constructor(o: { config: FancyRTCConfiguration; });
 
-	addTrackWithTrackStreamIds(track: FancyRTCMediaStreamTrack, streamIds: NSArray<string> | string[]): void;
+    addIceCandidateWithCandidate(candidate: FancyRTCIceCandidate): void;
 
-	close(): void;
+    addTrackWithTrackStreamIds(track: FancyRTCMediaStreamTrack, streamIds: NSArray<string> | string[]): void;
 
-	createAnswerWithMediaConstraintsListener(mediaConstraints: FancyRTCMediaConstraints, listener: (p1: FancyRTCSessionDescription, p2: string) => void): void;
+    close(): void;
 
-	createDataChannelWithLabelChannelInit(label: string, channelInit: FancyRTCDataChannelInit): FancyRTCDataChannel;
+    createAnswerWithMediaConstraintsListener(mediaConstraints: FancyRTCMediaConstraints, listener: (p1: FancyRTCSessionDescription, p2: string) => void): void;
 
-	createOfferWithMediaConstraintsListener(mediaConstraints: FancyRTCMediaConstraints, listener: (p1: FancyRTCSessionDescription, p2: string) => void): void;
+    createDataChannelWithLabelChannelInit(label: string, channelInit: FancyRTCDataChannelInit): FancyRTCDataChannel;
 
-	dataChannelDidChangeState(dataChannel: RTCDataChannel): void;
+    createOfferWithMediaConstraintsListener(mediaConstraints: FancyRTCMediaConstraints, listener: (p1: FancyRTCSessionDescription, p2: string) => void): void;
 
-	dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
+    dataChannelDidChangeState(dataChannel: RTCDataChannel): void;
 
-	dispose(): void;
+    dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
 
-	initWithConfig(config: FancyRTCConfiguration): this;
+    dispose(): void;
 
-	localDescriptionWithSdpListener(sdp: FancyRTCSessionDescription, listener: (p1: string) => void): void;
+    initWithConfig(config: FancyRTCConfiguration): this;
 
-	onAddStream(listener: (p1: FancyRTCMediaStream) => void): void;
+    localDescriptionWithSdpListener(sdp: FancyRTCSessionDescription, listener: (p1: string) => void): void;
 
-	onConnectionStateChange(listener: () => void): void;
+    onAddStream(listener: (p1: FancyRTCMediaStream) => void): void;
 
-	onDataChannel(listener: (p1: FancyRTCDataChannelEvent) => void): void;
+    onConnectionStateChange(listener: () => void): void;
 
-	onIceCandidate(listener: (p1: FancyRTCIceCandidate) => void): void;
+    onDataChannel(listener: (p1: FancyRTCDataChannelEvent) => void): void;
 
-	onIceGatheringStateChange(listener: () => void): void;
+    onIceCandidate(listener: (p1: FancyRTCIceCandidate) => void): void;
 
-	onNegotiationNeeded(listener: () => void): void;
+    onIceGatheringStateChange(listener: () => void): void;
 
-	onRemoveStream(listener: (p1: FancyRTCMediaStream) => void): void;
+    onNegotiationNeeded(listener: () => void): void;
 
-	onRemoveTrack(listener: () => void): void;
+    onRemoveStream(listener: (p1: FancyRTCMediaStream) => void): void;
 
-	onSignalingStateChange(listener: () => void): void;
+    onRemoveTrack(listener: () => void): void;
 
-	onTrack(listener: (p1: FancyRTCTrackEvent) => void): void;
+    onSignalingStateChange(listener: () => void): void;
 
-	peerConnectionDidAddReceiverStreams(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
+    onTrack(listener: (p1: FancyRTCTrackEvent) => void): void;
 
-	peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+    peerConnectionDidAddReceiverStreams(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
 
-	peerConnectionDidChangeConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
+    peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
-	peerConnectionDidChangeIceConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
+    peerConnectionDidChangeConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
 
-	peerConnectionDidChangeIceGatheringState(peerConnection: RTCPeerConnection, newState: any): void;
+    peerConnectionDidChangeIceConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
 
-	peerConnectionDidChangeSignalingState(peerConnection: RTCPeerConnection, stateChanged: any): void;
+    peerConnectionDidChangeIceGatheringState(peerConnection: RTCPeerConnection, newState: any): void;
 
-	peerConnectionDidGenerateIceCandidate(peerConnection: RTCPeerConnection, candidate: RTCIceCandidate): void;
+    peerConnectionDidChangeSignalingState(peerConnection: RTCPeerConnection, stateChanged: any): void;
 
-	peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
+    peerConnectionDidGenerateIceCandidate(peerConnection: RTCPeerConnection, candidate: RTCIceCandidate): void;
 
-	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
+    peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
 
-	peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
+    peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
-	peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+    peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
 
-	peerConnectionDidStartReceivingOnTransceiver(peerConnection: RTCPeerConnection, transceiver: RTCRtpTransceiver): void;
+    peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
-	peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void;
+    peerConnectionDidStartReceivingOnTransceiver(peerConnection: RTCPeerConnection, transceiver: RTCRtpTransceiver): void;
 
-	remoteDescriptionWithSdpListener(sdp: FancyRTCSessionDescription, listener: (p1: string) => void): void;
+    peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void;
+
+    remoteDescriptionWithSdpListener(sdp: FancyRTCSessionDescription, listener: (p1: string) => void): void;
 }
 
 declare const enum FancyRTCPeerConnectionState {
 
-	NEW = 0,
+    NEW = 0,
 
-	CONNECTING = 1,
+    CONNECTING = 1,
 
-	CONNECTED = 2,
+    CONNECTED = 2,
 
-	DISCONNECTED = 3,
+    DISCONNECTED = 3,
 
-	FAILED = 4,
+    FAILED = 4,
 
-	CLOSED = 5
+    CLOSED = 5
 }
 
 declare const enum FancyRTCRtcpMuxPolicy {
 
-	NEGOTIATE = 0,
+    NEGOTIATE = 0,
 
-	REQUIRE = 1
+    REQUIRE = 1
 }
 
 declare class FancyRTCRtpParameters extends NSObject {
 
-	static alloc(): FancyRTCRtpParameters; // inherited from NSObject
+    static alloc(): FancyRTCRtpParameters; // inherited from NSObject
 
-	static new(): FancyRTCRtpParameters; // inherited from NSObject
+    static new(): FancyRTCRtpParameters; // inherited from NSObject
 
-	readonly parameters: RTCRtpParameters;
+    readonly parameters: RTCRtpParameters;
 
-	constructor(o: { parameters: RTCRtpParameters; });
+    constructor(o: { parameters: RTCRtpParameters; });
 
-	initWithParameters(parameters: RTCRtpParameters): this;
+    initWithParameters(parameters: RTCRtpParameters): this;
 }
 
 declare class FancyRTCRtpReceiver extends NSObject {
 
-	static alloc(): FancyRTCRtpReceiver; // inherited from NSObject
+    static alloc(): FancyRTCRtpReceiver; // inherited from NSObject
 
-	static new(): FancyRTCRtpReceiver; // inherited from NSObject
+    static new(): FancyRTCRtpReceiver; // inherited from NSObject
 
-	readonly rtpReceiver: RTCRtpReceiver;
+    readonly rtpReceiver: RTCRtpReceiver;
 
-	constructor(o: { rtpReceiver: RTCRtpReceiver; });
+    constructor(o: { rtpReceiver: RTCRtpReceiver; });
 
-	initWithRtpReceiver(rtpReceiver: RTCRtpReceiver): this;
+    initWithRtpReceiver(rtpReceiver: RTCRtpReceiver): this;
 }
 
 declare class FancyRTCRtpSender extends NSObject {
 
-	static alloc(): FancyRTCRtpSender; // inherited from NSObject
+    static alloc(): FancyRTCRtpSender; // inherited from NSObject
 
-	static new(): FancyRTCRtpSender; // inherited from NSObject
+    static new(): FancyRTCRtpSender; // inherited from NSObject
 
-	readonly dtmf: FancyRTCDTMFSender;
+    readonly dtmf: FancyRTCDTMFSender;
 
-	readonly id: string;
+    readonly id: string;
 
-	readonly parameters: FancyRTCRtpParameters;
+    readonly parameters: FancyRTCRtpParameters;
 
-	readonly sender: RTCRtpSender;
+    readonly sender: RTCRtpSender;
 
-	readonly track: FancyRTCMediaStreamTrack;
+    readonly track: FancyRTCMediaStreamTrack;
 
-	constructor(o: { sender: RTCRtpSender; });
+    constructor(o: { sender: RTCRtpSender; });
 
-	dispose(): void;
+    dispose(): void;
 
-	initWithSender(sender: RTCRtpSender): this;
+    initWithSender(sender: RTCRtpSender): this;
 
-	replaceTrackWithTrack(track: FancyRTCMediaStreamTrack): void;
+    replaceTrackWithTrack(track: FancyRTCMediaStreamTrack): void;
 }
 
 declare class FancyRTCRtpTransceiver extends NSObject {
 
-	static alloc(): FancyRTCRtpTransceiver; // inherited from NSObject
+    static alloc(): FancyRTCRtpTransceiver; // inherited from NSObject
 
-	static new(): FancyRTCRtpTransceiver; // inherited from NSObject
+    static new(): FancyRTCRtpTransceiver; // inherited from NSObject
 
-	readonly currentDirection: FancyRTCRtpTransceiverDirection;
+    readonly currentDirection: FancyRTCRtpTransceiverDirection;
 
-	direction: FancyRTCRtpTransceiverDirection;
+    direction: FancyRTCRtpTransceiverDirection;
 
-	readonly mid: string;
+    readonly mid: string;
 
-	readonly receiver: FancyRTCRtpReceiver;
+    readonly receiver: FancyRTCRtpReceiver;
 
-	readonly rtpTransceiver: RTCRtpTransceiver;
+    readonly rtpTransceiver: RTCRtpTransceiver;
 
-	readonly sender: FancyRTCRtpSender;
+    readonly sender: FancyRTCRtpSender;
 
-	readonly stopped: boolean;
+    readonly stopped: boolean;
 
-	constructor(o: { rtpTransceiver: RTCRtpTransceiver; });
+    constructor(o: { rtpTransceiver: RTCRtpTransceiver; });
 
-	initWithRtpTransceiver(rtpTransceiver: RTCRtpTransceiver): this;
+    initWithRtpTransceiver(rtpTransceiver: RTCRtpTransceiver): this;
 
-	stop(): void;
+    stop(): void;
 }
 
 declare const enum FancyRTCRtpTransceiverDirection {
 
-	INACTIVE = 0,
+    INACTIVE = 0,
 
-	RECV_ONLY = 1,
+    RECV_ONLY = 1,
 
-	SEND_ONLY = 2,
+    SEND_ONLY = 2,
 
-	SEND_RECV = 3,
+    SEND_RECV = 3,
 
-	NONE = 4
+    NONE = 4
 }
 
 declare const enum FancyRTCSdpSemantics {
 
-	PLAN_B = 0,
+    PLAN_B = 0,
 
-	UNIFIED_PLAN = 1
+    UNIFIED_PLAN = 1
 }
 
 declare const enum FancyRTCSdpType {
 
-	ANSWER = 0,
+    ANSWER = 0,
 
-	OFFER = 1,
+    OFFER = 1,
 
-	PRANSWER = 2,
+    PRANSWER = 2,
 
-	ROLLBACK = 3
+    ROLLBACK = 3
 }
 
 declare class FancyRTCSessionDescription extends NSObject {
 
-	static alloc(): FancyRTCSessionDescription; // inherited from NSObject
+    static alloc(): FancyRTCSessionDescription; // inherited from NSObject
 
-	static new(): FancyRTCSessionDescription; // inherited from NSObject
+    static new(): FancyRTCSessionDescription; // inherited from NSObject
 
-	readonly sdp: string;
+    readonly sdp: string;
 
-	readonly sessionDescription: RTCSessionDescription;
+    readonly sessionDescription: RTCSessionDescription;
 
-	readonly type: FancyRTCSdpType;
+    readonly type: FancyRTCSdpType;
 
-	constructor(o: { sdp: RTCSessionDescription; });
+    constructor(o: { sdp: RTCSessionDescription; });
 
-	constructor(o: { type: FancyRTCSdpType; description: string; });
+    constructor(o: { type: FancyRTCSdpType; description: string; });
 
-	initWithSdp(sdp: RTCSessionDescription): this;
+    initWithSdp(sdp: RTCSessionDescription): this;
 
-	initWithTypeDescription(type: FancyRTCSdpType, description: string): this;
+    initWithTypeDescription(type: FancyRTCSdpType, description: string): this;
 
-	toJSON(): string;
+    toJSON(): string;
 }
 
 declare class FancyRTCTrackEvent extends NSObject {
 
-	static alloc(): FancyRTCTrackEvent; // inherited from NSObject
+    static alloc(): FancyRTCTrackEvent; // inherited from NSObject
 
-	static new(): FancyRTCTrackEvent; // inherited from NSObject
+    static new(): FancyRTCTrackEvent; // inherited from NSObject
 
-	readonly mediaTrack: FancyRTCMediaStreamTrack;
+    readonly mediaTrack: FancyRTCMediaStreamTrack;
 
-	readonly receiver: FancyRTCRtpReceiver;
+    readonly receiver: FancyRTCRtpReceiver;
 
-	readonly streams: NSArray<FancyRTCMediaStream>;
+    readonly streams: NSArray<FancyRTCMediaStream>;
 
-	readonly transceiver: FancyRTCRtpTransceiver;
+    readonly transceiver: FancyRTCRtpTransceiver;
 
-	constructor(o: { receiver: FancyRTCRtpReceiver; streams: NSArray<FancyRTCMediaStream> | FancyRTCMediaStream[]; mediaTrack: FancyRTCMediaStreamTrack; transceiver: FancyRTCRtpTransceiver; });
+    constructor(o: { receiver: FancyRTCRtpReceiver; streams: NSArray<FancyRTCMediaStream> | FancyRTCMediaStream[]; mediaTrack: FancyRTCMediaStreamTrack; transceiver: FancyRTCRtpTransceiver; });
 
-	initWithReceiverStreamsMediaTrackTransceiver(receiver: FancyRTCRtpReceiver, streams: NSArray<FancyRTCMediaStream> | FancyRTCMediaStream[], mediaTrack: FancyRTCMediaStreamTrack, transceiver: FancyRTCRtpTransceiver): this;
+    initWithReceiverStreamsMediaTrackTransceiver(receiver: FancyRTCRtpReceiver, streams: NSArray<FancyRTCMediaStream> | FancyRTCMediaStream[], mediaTrack: FancyRTCMediaStreamTrack, transceiver: FancyRTCRtpTransceiver): this;
 }
 
 declare class FancyRTCVideoTrack extends FancyRTCMediaStreamTrack {
 
-	static alloc(): FancyRTCVideoTrack; // inherited from NSObject
+    static alloc(): FancyRTCVideoTrack; // inherited from NSObject
 
-	static new(): FancyRTCVideoTrack; // inherited from NSObject
+    static new(): FancyRTCVideoTrack; // inherited from NSObject
 
-	readonly videoTrack: RTCVideoTrack;
+    readonly videoTrack: RTCVideoTrack;
 
-	constructor();
+    constructor();
 
-	applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
+    applyConstraintsWithConstraintsListener(constraints: FancyRTCMediaTrackConstraints, listener: (p1: string) => void): void;
 
-	init(track: RTCVideoTrack): this;
+    init(track: RTCVideoTrack): this;
 }
 
 declare class FancyUtils extends NSObject {
 
-	static alloc(): FancyUtils; // inherited from NSObject
+    static alloc(): FancyUtils; // inherited from NSObject
 
-	static getLongUUID(): number;
+    static getLongUUID(): number;
 
-	static getUUID(): string;
+    static getUUID(): string;
 
-	static new(): FancyUtils; // inherited from NSObject
+    static new(): FancyUtils; // inherited from NSObject
 }
 
 declare class FancyWebRTC extends NSObject {
 
-	static alloc(): FancyWebRTC; // inherited from NSObject
+    static alloc(): FancyWebRTC; // inherited from NSObject
 
-	static hasPermissions(): boolean;
+    static hasPermissions(): boolean;
 
-	static initWithOptions(options: NSDictionary<string, any>): FancyWebRTC;
+    static initWithOptions(options: NSDictionary<string, any>): FancyWebRTC;
 
-	static new(): FancyWebRTC; // inherited from NSObject
+    static new(): FancyWebRTC; // inherited from NSObject
 
-	static requestPermissionsWithCallback(callback: (p1: string) => void): void;
+    static requestPermissionsWithCallback(callback: (p1: string) => void): void;
 
-	addIceCandidateWithIceCandidate(iceCandidate: WebRTCIceCandidate): void;
+    addIceCandidateWithIceCandidate(iceCandidate: WebRTCIceCandidate): void;
 
-	addLocalStreamWithStream(stream: RTCMediaStream): void;
+    addLocalStreamWithStream(stream: RTCMediaStream): void;
 
-	addRemoteStreamWithStream(stream: RTCMediaStream): void;
+    addRemoteStreamWithStream(stream: RTCMediaStream): void;
 
-	connect(): void;
+    connect(): void;
 
-	createAnswerForOfferReceivedWithSdp(sdp: WebRTCSdp): void;
+    createAnswerForOfferReceivedWithSdp(sdp: WebRTCSdp): void;
 
-	dataChannelCloseWithName(name: string): void;
+    dataChannelCloseWithName(name: string): void;
 
-	dataChannelCreateWithName(name: string): void;
+    dataChannelCreateWithName(name: string): void;
 
-	dataChannelDidChangeState(dataChannel: RTCDataChannel): void;
+    dataChannelDidChangeState(dataChannel: RTCDataChannel): void;
 
-	dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
+    dataChannelDidReceiveMessageWithBuffer(dataChannel: RTCDataChannel, buffer: RTCDataBuffer): void;
 
-	dataChannelSendWithNameDataType(name: string, data: string, type: WebRTCDataChannelMessageType): void;
+    dataChannelSendWithNameDataType(name: string, data: string, type: WebRTCDataChannelMessageType): void;
 
-	disconnect(): void;
+    disconnect(): void;
 
-	handleAnswerReceivedWithAnswer(answer: WebRTCSdp): void;
+    handleAnswerReceivedWithAnswer(answer: WebRTCSdp): void;
 
-	makeOffer(): void;
+    makeOffer(): void;
 
-	peerConnectionDidAddReceiverStreams(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
+    peerConnectionDidAddReceiverStreams(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver, mediaStreams: NSArray<RTCMediaStream> | RTCMediaStream[]): void;
 
-	peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+    peerConnectionDidAddStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
-	peerConnectionDidChangeIceConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
+    peerConnectionDidChangeIceConnectionState(peerConnection: RTCPeerConnection, newState: any): void;
 
-	peerConnectionDidChangeIceGatheringState(peerConnection: RTCPeerConnection, newState: any): void;
+    peerConnectionDidChangeIceGatheringState(peerConnection: RTCPeerConnection, newState: any): void;
 
-	peerConnectionDidChangeSignalingState(peerConnection: RTCPeerConnection, stateChanged: any): void;
+    peerConnectionDidChangeSignalingState(peerConnection: RTCPeerConnection, stateChanged: any): void;
 
-	peerConnectionDidGenerateIceCandidate(peerConnection: RTCPeerConnection, candidate: RTCIceCandidate): void;
+    peerConnectionDidGenerateIceCandidate(peerConnection: RTCPeerConnection, candidate: RTCIceCandidate): void;
 
-	peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
+    peerConnectionDidOpenDataChannel(peerConnection: RTCPeerConnection, dataChannel: RTCDataChannel): void;
 
-	peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
+    peerConnectionDidRemoveIceCandidates(peerConnection: RTCPeerConnection, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
-	peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
+    peerConnectionDidRemoveReceiver(peerConnection: RTCPeerConnection, rtpReceiver: RTCRtpReceiver): void;
 
-	peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
+    peerConnectionDidRemoveStream(peerConnection: RTCPeerConnection, stream: RTCMediaStream): void;
 
-	peerConnectionDidStartReceivingOnTransceiver(peerConnection: RTCPeerConnection, transceiver: RTCRtpTransceiver): void;
+    peerConnectionDidStartReceivingOnTransceiver(peerConnection: RTCPeerConnection, transceiver: RTCRtpTransceiver): void;
 
-	peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void;
+    peerConnectionShouldNegotiate(peerConnection: RTCPeerConnection): void;
 
-	setListenerWithListener(listener: FancyWebRTCClientDelegate): void;
+    setListenerWithListener(listener: FancyWebRTCClientDelegate): void;
 
-	switchCameraWithTrackId(trackId: string): void;
+    switchCameraWithTrackId(trackId: string): void;
 }
 
 interface FancyWebRTCClientDelegate {
 
-	webRTCClientDataChannelMessageTypeWithClientNameDataType(client: FancyWebRTC, name: string, data: string, type: WebRTCDataChannelMessageType): void;
+    webRTCClientDataChannelMessageTypeWithClientNameDataType(client: FancyWebRTC, name: string, data: string, type: WebRTCDataChannelMessageType): void;
 
-	webRTCClientDataChannelStateChangedWithClientNameType(client: FancyWebRTC, name: string, type: any): void;
+    webRTCClientDataChannelStateChangedWithClientNameType(client: FancyWebRTC, name: string, type: any): void;
 
-	webRTCClientDidGenerateIceCandidateWithClientIceCandidate(client: FancyWebRTC, iceCandidate: RTCIceCandidate): void;
+    webRTCClientDidGenerateIceCandidateWithClientIceCandidate(client: FancyWebRTC, iceCandidate: RTCIceCandidate): void;
 
-	webRTCClientDidReceiveErrorWithClientError(client: FancyWebRTC, error: NSError): void;
+    webRTCClientDidReceiveErrorWithClientError(client: FancyWebRTC, error: NSError): void;
 
-	webRTCClientDidReceiveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
+    webRTCClientDidReceiveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
 
-	webRTCClientDidRemoveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
+    webRTCClientDidRemoveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
 
-	webRTCClientOnCameraSwitchDoneWithClientDone(client: FancyWebRTC, done: boolean): void;
+    webRTCClientOnCameraSwitchDoneWithClientDone(client: FancyWebRTC, done: boolean): void;
 
-	webRTCClientOnCameraSwitchErrorWithClientError(client: FancyWebRTC, error: string): void;
+    webRTCClientOnCameraSwitchErrorWithClientError(client: FancyWebRTC, error: string): void;
 
-	webRTCClientOnIceCandidatesRemovedWithClientCandidates(client: FancyWebRTC, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
+    webRTCClientOnIceCandidatesRemovedWithClientCandidates(client: FancyWebRTC, candidates: NSArray<RTCIceCandidate> | RTCIceCandidate[]): void;
 
-	webRTCClientOnIceConnectionChangeWithClientConnectionState(client: FancyWebRTC, connectionState: any): void;
+    webRTCClientOnIceConnectionChangeWithClientConnectionState(client: FancyWebRTC, connectionState: any): void;
 
-	webRTCClientOnIceConnectionReceivingChangeWithClientChange(client: FancyWebRTC, change: boolean): void;
+    webRTCClientOnIceConnectionReceivingChangeWithClientChange(client: FancyWebRTC, change: boolean): void;
 
-	webRTCClientOnIceGatheringChangeWithClientGatheringState(client: FancyWebRTC, gatheringState: any): void;
+    webRTCClientOnIceGatheringChangeWithClientGatheringState(client: FancyWebRTC, gatheringState: any): void;
 
-	webRTCClientOnRemoveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
+    webRTCClientOnRemoveStreamWithClientStream(client: FancyWebRTC, stream: RTCMediaStream): void;
 
-	webRTCClientOnRenegotiationNeededWithClient(client: FancyWebRTC): void;
+    webRTCClientOnRenegotiationNeededWithClient(client: FancyWebRTC): void;
 
-	webRTCClientOnSignalingChangeWithClientSignalingState(client: FancyWebRTC, signalingState: any): void;
+    webRTCClientOnSignalingChangeWithClientSignalingState(client: FancyWebRTC, signalingState: any): void;
 
-	webRTCClientStartCallWithSdpWithClientSdp(client: FancyWebRTC, sdp: RTCSessionDescription): void;
+    webRTCClientStartCallWithSdpWithClientSdp(client: FancyWebRTC, sdp: RTCSessionDescription): void;
 }
+
 declare var FancyWebRTCClientDelegate: {
 
-	prototype: FancyWebRTCClientDelegate;
+    prototype: FancyWebRTCClientDelegate;
 };
 
 declare var FancyWebRTCVersionNumber: number;
@@ -742,207 +771,210 @@ declare var FancyWebRTCVersionString: interop.Reference<number>;
 
 declare class FancyWebRTCView extends UIView {
 
-	static alloc(): FancyWebRTCView; // inherited from NSObject
+    static alloc(): FancyWebRTCView; // inherited from NSObject
 
-	static appearance(): FancyWebRTCView; // inherited from UIAppearance
+    static appearance(): FancyWebRTCView; // inherited from UIAppearance
 
-	static appearanceForTraitCollection(trait: UITraitCollection): FancyWebRTCView; // inherited from UIAppearance
+    static appearanceForTraitCollection(trait: UITraitCollection): FancyWebRTCView; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): FancyWebRTCView; // inherited from UIAppearance
+    static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): FancyWebRTCView; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): FancyWebRTCView; // inherited from UIAppearance
+    static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): FancyWebRTCView; // inherited from UIAppearance
 
-	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): FancyWebRTCView; // inherited from UIAppearance
+    static appearanceWhenContainedIn(ContainerClass: typeof NSObject): FancyWebRTCView; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): FancyWebRTCView; // inherited from UIAppearance
+    static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): FancyWebRTCView; // inherited from UIAppearance
 
-	static new(): FancyWebRTCView; // inherited from NSObject
+    static new(): FancyWebRTCView; // inherited from NSObject
 
-	setMirrorWithMirror(mirror: boolean): void;
+    setMirrorWithMirror(mirror: boolean): void;
 
-	setScalingWithScale(scale: FancyWebRTCViewScaling): void;
+    setScalingWithScale(scale: FancyWebRTCViewScaling): void;
 
-	setSizeWithSize(size: CGSize): void;
+    setSizeWithSize(size: CGSize): void;
 
-	setSrcObjectWith(rtcStream: RTCMediaStream): void;
+    setSrcObjectWith(rtcStream: RTCMediaStream): void;
 
-	setSrcObjectWithFancy(rtcStreamTrack: FancyRTCMediaStreamTrack): void;
+    setSrcObjectWithFancy(rtcStreamTrack: FancyRTCMediaStreamTrack): void;
 
-	setSrcObjectWithRtc(mediaStreamTrack: RTCMediaStreamTrack): void;
+    setSrcObjectWithRtc(mediaStreamTrack: RTCMediaStreamTrack): void;
 
-	setSrcObjectWithStream(stream: FancyRTCMediaStream): void;
+    setSrcObjectWithStream(stream: FancyRTCMediaStream): void;
 
-	setVideoTrackWithTrack(track: RTCVideoTrack): void;
+    setVideoTrackWithTrack(track: RTCVideoTrack): void;
 
-	videoViewDidChangeVideoSize(videoView: RTCVideoRenderer, size: CGSize): void;
+    videoViewDidChangeVideoSize(videoView: RTCVideoRenderer, size: CGSize): void;
 }
 
 declare const enum FancyWebRTCViewScaling {
 
-	Fit = 0,
+    Fit = 0,
 
-	Fill = 1,
+    Fill = 1,
 
-	None = 2
+    None = 2
 }
 
 declare class Format extends NSObject {
 
-	static alloc(): Format; // inherited from NSObject
+    static alloc(): Format; // inherited from NSObject
 
-	static new(): Format; // inherited from NSObject
+    static new(): Format; // inherited from NSObject
 }
 
 declare const enum IceConnectionState {
 
-	NEW = 0,
+    NEW = 0,
 
-	CHECKING = 1,
+    CHECKING = 1,
 
-	CONNECTED = 2,
+    CONNECTED = 2,
 
-	COMPLETED = 3,
+    COMPLETED = 3,
 
-	FAILED = 4,
+    FAILED = 4,
 
-	DISCONNECTED = 5,
+    DISCONNECTED = 5,
 
-	CLOSED = 6
+    CLOSED = 6
 }
 
 declare const enum IceGatheringState {
 
-	NEW = 0,
+    NEW = 0,
 
-	GATHERING = 1,
+    GATHERING = 1,
 
-	COMPLETE = 2
+    COMPLETE = 2
 }
 
 declare class IceServer extends NSObject {
 
-	static alloc(): IceServer; // inherited from NSObject
+    static alloc(): IceServer; // inherited from NSObject
 
-	static new(): IceServer; // inherited from NSObject
+    static new(): IceServer; // inherited from NSObject
 
-	constructor(o: { urls: NSArray<any> | any[]; username: string; password: string; });
+    constructor(o: { urls: NSArray<any> | any[]; username: string; password: string; });
 
-	initWithUrlsUsernamePassword(urls: NSArray<any> | any[], username: string, password: string): this;
+    initWithUrlsUsernamePassword(urls: NSArray<any> | any[], username: string, password: string): this;
 }
 
 declare class MediaData extends NSObject {
 
-	static alloc(): MediaData; // inherited from NSObject
+    static alloc(): MediaData; // inherited from NSObject
 
-	static new(): MediaData; // inherited from NSObject
+    static new(): MediaData; // inherited from NSObject
 }
 
 declare const enum Quality {
 
-	MAX_480P = 0,
+    MAX_480P = 0,
 
-	MAX_720P = 1,
+    MAX_720P = 1,
 
-	MAX_1080P = 2,
+    MAX_1080P = 2,
 
-	MAX_2160P = 3,
+    MAX_2160P = 3,
 
-	HIGHEST = 4,
+    HIGHEST = 4,
 
-	LOWEST = 5
+    LOWEST = 5
 }
 
 declare const enum SignalingState {
 
-	STABLE = 0,
+    STABLE = 0,
 
-	HAVE_LOCAL_OFFER = 1,
+    HAVE_LOCAL_OFFER = 1,
 
-	HAVE_LOCAL_PRANSWER = 2,
+    HAVE_LOCAL_PRANSWER = 2,
 
-	HAVE_REMOTE_OFFER = 3,
+    HAVE_REMOTE_OFFER = 3,
 
-	HAVE_REMOTE_PRANSWER = 4,
+    HAVE_REMOTE_PRANSWER = 4,
 
-	CLOSED = 5
+    CLOSED = 5
 }
 
 declare class WebRTCCapturer extends NSObject {
 
-	static alloc(): WebRTCCapturer; // inherited from NSObject
+    static alloc(): WebRTCCapturer; // inherited from NSObject
 
-	static new(): WebRTCCapturer; // inherited from NSObject
+    static new(): WebRTCCapturer; // inherited from NSObject
 }
 
 declare const enum WebRTCDataChannelMessageType {
 
-	BINARY = 0,
+    BINARY = 0,
 
-	TEXT = 1
+    TEXT = 1
 }
 
 declare const enum WebRTCDataChannelState {
 
-	CONNECTING = 0,
+    CONNECTING = 0,
 
-	CLOSED = 1,
+    CLOSED = 1,
 
-	CLOSING = 2,
+    CLOSING = 2,
 
-	OPEN = 3
+    OPEN = 3
 }
 
 interface WebRTCIceCandidate {
 
-	sdp: string;
+    sdp: string;
 
-	sdpMLineIndex: number;
+    sdpMLineIndex: number;
 
-	sdpMid: string;
+    sdpMid: string;
 }
+
 declare var WebRTCIceCandidate: {
 
-	prototype: WebRTCIceCandidate;
+    prototype: WebRTCIceCandidate;
 };
 
 interface WebRTCOptions {
 
-	enableAudio: boolean;
+    enableAudio: boolean;
 
-	enableVideo: boolean;
+    enableVideo: boolean;
 
-	iceServers: NSArray<IceServer>;
+    iceServers: NSArray<IceServer>;
 }
+
 declare var WebRTCOptions: {
 
-	prototype: WebRTCOptions;
+    prototype: WebRTCOptions;
 };
 
 interface WebRTCSdp {
 
-	sdp: string;
+    sdp: string;
 
-	type: WebRTCSdpType;
+    type: WebRTCSdpType;
 }
+
 declare var WebRTCSdp: {
 
-	prototype: WebRTCSdp;
+    prototype: WebRTCSdp;
 };
 
 declare const enum WebRTCSdpType {
 
-	OFFER = 0,
+    OFFER = 0,
 
-	PRANSWER = 1,
+    PRANSWER = 1,
 
-	ANSWER = 2
+    ANSWER = 2
 }
 
 declare const enum WebRTCState {
 
-	CONNECTING = 0,
+    CONNECTING = 0,
 
-	DISCONNECTED = 1,
+    DISCONNECTED = 1,
 
-	CONNECTED = 2
+    CONNECTED = 2
 }
