@@ -307,6 +307,7 @@ export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
     readonly id: string;
     readonly videoTracks: Array<TNSRTCVideoTrack>;
     readonly audioTracks: Array<TNSRTCAudioTrack>;
+    readonly tracks: Array<TNSRTCMediaStreamTrack>;
 
     addTrack(track: TNSRTCVideoTrack | TNSRTCAudioTrack): void;
 

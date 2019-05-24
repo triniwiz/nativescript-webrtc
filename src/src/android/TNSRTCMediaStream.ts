@@ -1,6 +1,7 @@
 import { TNSRTCVideoTrack } from './TNSRTCVideoTrack';
 import { TNSRTCAudioTrack } from './TNSRTCAudioTrack';
 import { TNSRTCMediaStreamBase } from '../base/TNSRTCMediaStreamBase';
+import { TNSRTCMediaStreamTrack } from './TNSRTCMediaStreamTrack';
 
 export class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
     private _stream;
@@ -33,6 +34,17 @@ export class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
         for (let i = 0; i < size; i++) {
             const track = nativeArray.get(i);
             array.push(TNSRTCAudioTrack.fromNative(track));
+        }
+        return array;
+    }
+
+    public get tracks(): Array<TNSRTCMediaStreamTrack> {
+        const array = [];
+        const nativeArray = this._stream.getTracks();
+        const size = nativeArray.size();
+        for (let i = 0; i < size; i++) {
+            const track = nativeArray.get(i);
+            array.push(TNSRTCMediaStreamTrack.fromNative(track));
         }
         return array;
     }
