@@ -15,7 +15,6 @@ import { layout, View } from 'tns-core-modules/ui/core/view';
 import { fromObject } from 'tns-core-modules/data/observable';
 import './async-await';
 
-import { ios } from 'tns-core-modules/utils/utils';
 import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/ios';
 
 export {
@@ -437,10 +436,7 @@ export class WebRTC extends Common {
     }
 
     public speakerEnabled(enabled: boolean) {
-        const audioSession = ios.getter(
-            RTCAudioSession,
-            RTCAudioSession.sharedInstance
-        );
+        const audioSession = RTCAudioSession.sharedInstance;
         try {
             if (enabled) {
                 audioSession.lockForConfiguration();
