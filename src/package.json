@@ -67,7 +67,7 @@
         "tns-core-modules": "^6.0.7",
         "tns-platform-declarations": "^6.0.7",
         "tslint": "~5.4.3",
-        "typescript": "~3.1.1",
+        "typescript": "~3.4.5",
         "zone.js": "~0.9.1"
     },
     "dependencies": {
