@@ -7,17 +7,17 @@
   "nativescript": {
     "id": "com.github.triniwiz.nativescript.webrtc.demo.vue",
     "tns-ios": {
-      "version": "5.0.0"
+      "version": "6.0.1"
     },
     "tns-android": {
-      "version": "5.0.0"
+      "version": "6.0.0"
     }
   },
   "dependencies": {
     "nativescript-socketio": "^3.2.1",
     "nativescript-vue": "^2.0.0",
     "nativescript-webrtc-plugin": "file:../src",
-    "tns-core-modules": "^5.0.2"
+    "tns-core-modules": "6.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
