@@ -1,6 +1,7 @@
 import * as app from 'tns-core-modules/application';
 import { TNSRTCMediaStreamConstraints } from './TNSRTCMediaStreamConstraints';
 import { TNSRTCMediaStream } from './TNSRTCMediaStream';
+import { TNSMediaDevicesInfo } from '../core/TNSMediaDevicesInfo';
 
 export class TNSRTCMediaDevices {
     public static getUserMedia(constraints: TNSRTCMediaStreamConstraints): Promise<TNSRTCMediaStream> {
@@ -26,4 +27,21 @@ export class TNSRTCMediaDevices {
             }));
         });
     }
+
+    public static enumerateDevices(): Promise<TNSMediaDevicesInfo[]> {
+        return new Promise((resolve,reject)=>{
+         const info = co.fitcom.fancywebrtc.FancyRTCMediaDevices.enumerateDevices(app.android.foregroundActivity);
+         const size = info.size();
+         const devices: TNSMediaDevicesInfo[] = [] ;
+         for(let i = 0; i < size;i++){
+             try{
+                 const device = JSON.parse(info.get(i));
+                 devices.push(
+                     new TNSMediaDevicesInfo(device.deviceId, device.groupId, device.kind, device.label)
+                 )
+             }catch(e){}
+         }
+         resolve(devices);
+        })
+     }
 }

@@ -12,12 +12,12 @@ export class TNSRTCConfiguration extends TNSRTCConfigurationBase {
     constructor(options?: TNSRTCConfigurationOptions) {
         super(options);
         if (options != null) {
-            if (options.iceServers != null) {
+            if (Array.isArray(options.iceServers)) {
                 let count = options.iceServers.length;
-                let nativeArray = NSArray.arrayWithArray([] as any);
+                let nativeArray = [];
                 for (let i = 0; i < count; i++) {
                     const server = options.iceServers[i] as TNSRTCIceServer;
-                    nativeArray.arrayByAddingObject(server.instance);
+                    nativeArray.push(server.instance);
                 }
                 this._configuration = FancyRTCConfiguration.alloc().initWithIceServers(nativeArray as any);
             } else {
