@@ -11,7 +11,7 @@ export class TNSRTCConfiguration extends TNSRTCConfigurationBase {
 
     constructor(options?: TNSRTCConfigurationOptions) {
         super(options);
-        if (options != null) {
+        if (Array.isArray(options)) {
             if (options.iceServers != null) {
                 let count = options.iceServers.length;
                 let nativeArray = new java.util.ArrayList();

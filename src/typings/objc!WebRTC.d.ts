@@ -15,6 +15,8 @@ declare class RTCAudioSession extends NSObject implements RTCAudioSessionActivat
 
 	readonly currentRoute: AVAudioSessionRouteDescription;
 
+	ignoresPreferredAttributeConfigurationErrors: boolean;
+
 	readonly inputAvailable: boolean;
 
 	readonly inputDataSource: AVAudioSessionDataSourceDescription;
@@ -506,6 +508,8 @@ declare class RTCConfiguration extends NSObject {
 
 	shouldPruneTurnPorts: boolean;
 
+	shouldSurfaceIceCandidatesOnIceTransportTypeChanged: boolean;
+
 	tcpCandidatePolicy: RTCTcpCandidatePolicy;
 
 	useMediaTransport: boolean;
@@ -710,6 +714,8 @@ declare class RTCDefaultVideoEncoderFactory extends NSObject implements RTCVideo
 	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
 	createEncoder(info: RTCVideoCodecInfo): RTCVideoEncoder;
+
+	implementations(): NSArray<RTCVideoCodecInfo>;
 
 	isEqual(object: any): boolean;
 
@@ -1727,7 +1733,11 @@ interface RTCPeerConnectionDelegate extends NSObjectProtocol {
 
 	peerConnectionDidChangeIceGatheringState(peerConnection: RTCPeerConnection, newState: RTCIceGatheringState): void;
 
+	peerConnectionDidChangeLocalCandidateRemoteCandidateLastReceivedMsChangeReason?(peerConnection: RTCPeerConnection, local: RTCIceCandidate, remote: RTCIceCandidate, lastDataReceivedMs: number, reason: string): void;
+
 	peerConnectionDidChangeSignalingState(peerConnection: RTCPeerConnection, stateChanged: RTCSignalingState): void;
+
+	peerConnectionDidChangeStandardizedIceConnectionState?(peerConnection: RTCPeerConnection, newState: RTCIceConnectionState): void;
 
 	peerConnectionDidGenerateIceCandidate(peerConnection: RTCPeerConnection, candidate: RTCIceCandidate): void;
 
@@ -1865,6 +1875,8 @@ declare class RTCRtpEncodingParameters extends NSObject {
 	maxFramerate: number;
 
 	minBitrateBps: number;
+
+	networkPriority: number;
 
 	numTemporalLayers: number;
 
@@ -2300,9 +2312,9 @@ declare class RTCVideoCodecInfo extends NSObject implements NSCoding {
 
 	constructor(o: { name: string; parameters: NSDictionary<string, string>; });
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithName(name: string): this;
 
@@ -2492,6 +2504,8 @@ interface RTCVideoEncoderFactory extends NSObjectProtocol {
 
 	createEncoder(info: RTCVideoCodecInfo): RTCVideoEncoder;
 
+	implementations?(): NSArray<RTCVideoCodecInfo>;
+
 	supportedCodecs(): NSArray<RTCVideoCodecInfo>;
 }
 declare var RTCVideoEncoderFactory: {
@@ -2522,6 +2536,8 @@ declare class RTCVideoEncoderFactoryH264 extends NSObject implements RTCVideoEnc
 	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
 	createEncoder(info: RTCVideoCodecInfo): RTCVideoEncoder;
+
+	implementations(): NSArray<RTCVideoCodecInfo>;
 
 	isEqual(object: any): boolean;
 

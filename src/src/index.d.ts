@@ -72,6 +72,16 @@ export interface TNSRTCConfigurationOptions {
     peerIdentity?: string;
 }
 
+
+export declare class TNSMediaDevicesInfo {
+    public readonly deviceId: string;
+    public readonly groupId: string;
+    public readonly kind: string;
+    public readonly label: string;
+    constructor(deviceId: string, groupId: string, kind: string, label: string);
+  }
+
+
 /* Core */
 
 /* Base */
