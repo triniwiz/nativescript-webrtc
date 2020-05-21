@@ -1,5 +1,5 @@
-platform :ios, '9.0'
-pod 'GoogleWebRTC', '~> 1.1.27828'
+platform :ios, '10.0'
+pod 'GoogleWebRTC', '~> 1.1.29400'
 pod 'FancyWebRTC', :git => 'https://github.com/triniwiz/fancy-webrtc-ios.git'
 
 post_install do |installer|
