@@ -205,7 +205,7 @@ declare class TNSRTCTrackEventBase {
 /* Base */
 
 export declare class TNSRTCAudioTrack extends TNSRTCMediaStreamTrack {
-    protected _audioTrack;
+    private _audioTrack;
 
     constructor(track: any);
 
@@ -220,7 +220,7 @@ export declare class TNSRTCAudioTrack extends TNSRTCMediaStreamTrack {
 }
 
 export declare class TNSRTCConfiguration extends TNSRTCConfigurationBase {
-    protected _configuration;
+    _configuration;
 
     constructor(options?: TNSRTCConfigurationOptions);
 
@@ -230,7 +230,7 @@ export declare class TNSRTCConfiguration extends TNSRTCConfigurationBase {
 }
 
 export declare class TNSRTCDataChannel extends TNSRTCDataChannelBase {
-    protected _channel;
+    private _channel;
 
     protected constructor();
 
@@ -242,7 +242,7 @@ export declare class TNSRTCDataChannel extends TNSRTCDataChannelBase {
 }
 
 export declare class TNSRTCDataChannelEvent extends TNSRTCDataChannelEventBase {
-    protected _event;
+    private _event;
 
     constructor(event: any);
 
@@ -252,7 +252,7 @@ export declare class TNSRTCDataChannelEvent extends TNSRTCDataChannelEventBase {
 }
 
 export declare class TNSRTCDTMFSender extends TNSRTCDTMFSenderBase {
-    protected _sender;
+    private _sender;
 
     protected constructor();
 
@@ -310,7 +310,7 @@ export declare class TNSRTCMediaDevices {
 }
 
 export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
-    protected _stream;
+    private _stream;
 
     protected constructor();
 
@@ -331,7 +331,7 @@ export declare class TNSRTCMediaStream extends TNSRTCMediaStreamBase {
 }
 
 declare class TNSRTCMediaStreamConstraints extends TNSRTCMediaStreamConstraintsBase {
-    protected _mediaStreamConstraints;
+    private _mediaStreamConstraints;
 
     constructor(audio: any, video: any);
 
@@ -342,7 +342,7 @@ declare class TNSRTCMediaStreamConstraints extends TNSRTCMediaStreamConstraintsB
 
 
 export declare class TNSRTCMediaStreamTrack extends TNSRTCMediaStreamTrackBase {
-    protected _mediaStreamTrack;
+    private _mediaStreamTrack;
 
     constructor(mediaStreamTrack: any);
 
@@ -418,7 +418,7 @@ export declare class TNSRTCPeerConnection {
 }
 
 export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
-    protected _parameters;
+    private _parameters;
 
     protected constructor();
 
@@ -431,7 +431,7 @@ export declare class TNSRTCRtpParameters extends TNSRTCRtpParametersBase {
 
 
 export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
-    protected _receiver;
+    private _receiver;
 
     protected constructor();
 
@@ -444,7 +444,7 @@ export declare class TNSRTCRtpReceiver extends TNSRTCRtpReceiverBase {
 
 
 export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
-    protected _sender;
+    private _sender;
 
     protected constructor();
 
@@ -466,7 +466,7 @@ export declare class TNSRTCRtpSender extends TNSRTCRtpSenderBase {
 
 
 export declare class TNSRTCRtpTransceiver extends TNSRTCRtpTransceiverBase {
-    protected _transceiver;
+    private _transceiver;
 
     protected constructor();
 
@@ -494,7 +494,7 @@ export declare enum TNSRTCSdpType {
 
 
 export declare class TNSRTCSessionDescription {
-    protected _sessionDescription;
+    private _sessionDescription;
 
     constructor(...args: any[]);
 
@@ -512,7 +512,7 @@ export declare class TNSRTCSessionDescription {
 
 
 export declare class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
-    protected _event;
+    private _event;
 
     constructor(event: any);
 
@@ -526,7 +526,7 @@ export declare class TNSRTCTrackEvent extends TNSRTCTrackEventBase {
 
 
 export declare class TNSRTCVideoTrack extends TNSRTCMediaStreamTrack {
-    protected _videoTrack;
+    private _videoTrack;
 
     constructor(track: any);
 

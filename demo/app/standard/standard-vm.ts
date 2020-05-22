@@ -8,7 +8,9 @@ import {
     TNSRTCPeerConnection,
     TNSRTCSdpType,
     TNSRTCSessionDescription,
-    WebRTC
+    WebRTC,
+    TNSRTCIceServer,
+    TNSRTCConfiguration
 } from 'nativescript-webrtc-plugin';
 
 export class StandardViewModel extends Observable {
@@ -27,7 +29,13 @@ export class StandardViewModel extends Observable {
 
     constructor() {
         super();
-        this.connection = new TNSRTCPeerConnection();
+        const config = new TNSRTCConfiguration({
+            iceServers: [
+                new TNSRTCIceServer(['stun:stun.l.google.com:19302']),
+                new TNSRTCIceServer(['stun:stun1.l.google.com:19302']),
+            ]
+        })
+        this.connection = new TNSRTCPeerConnection(config);
         this.connection.onIceCandidate(candidate => {
             const object = {};
             object['from'] = this.me;
@@ -43,7 +51,7 @@ export class StandardViewModel extends Observable {
             }
         });
         this.me = this.generateId();
-        this.socket = new SocketIO('http://192.168.0.10:3001', {
+        this.socket = new SocketIO('http://192.168.0.15:3001', {
             forceNew: true,
             secure: false
         });
@@ -128,7 +136,7 @@ export class StandardViewModel extends Observable {
                 }
             });
         } else {
-            this.setUpUserMedia();
+           this.setUpUserMedia();
         }
     }
 

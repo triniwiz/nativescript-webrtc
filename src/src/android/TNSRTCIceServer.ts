@@ -4,10 +4,15 @@ export class TNSRTCIceServer extends TNSRTCIceServerBase {
 
     constructor(urls: Array<string>, username?: string, credential?: string) {
         super(urls, username, credential);
+        const array = Array.create('java.lang.String', urls.length);
+            const length = urls.length;
+            for(let i = 0; i < length;i++){
+                array[i] = urls[i];
+            }
         if (urls && !username && !credential) {
-            this.server = new co.fitcom.fancywebrtc.FancyRTCIceServer(urls as any);
+            this.server = new co.fitcom.fancywebrtc.FancyRTCIceServer(array);
         } else {
-            this.server = new co.fitcom.fancywebrtc.FancyRTCIceServer(urls as any, username, credential);
+            this.server = new co.fitcom.fancywebrtc.FancyRTCIceServer(array, username, credential);
         }
 
     }
