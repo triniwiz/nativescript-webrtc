@@ -6,6 +6,7 @@
         "emitDecoratorMetadata": true,
         "noEmitHelpers": true,
         "noEmitOnError": true,
+        "skipLibCheck": true,
         "lib": [
             "es6",
             "dom",
@@ -17,19 +18,16 @@
                 "src/*"
             ],
             "*": [
-                "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
             ]
         }
     },
+    "exclude": [
+        "node_modules",
+        "platforms"
+    ],
     "include": [
         "../src",
         "**/*"
-    ],
-    "exclude": [
-        "../src/node_modules",
-        "../src/typings",
-        "node_modules",
-        "platforms"
     ]
 }

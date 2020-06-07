@@ -5,15 +5,23 @@
 //	implementation 'com.android.support:recyclerview-v7:+'
 //}
 
-// If you want to add something to be applied before applying plugins' include.gradle files 
+// If you want to add something to be applied before applying plugins' include.gradle files
 // e.g. project.ext.googlePlayServicesVersion = "15.0.1"
 // create a file named before-plugins.gradle in the current directory and place it there
- 
-android {  
-  defaultConfig {  
+
+android {
+  defaultConfig {
+    // minSdkVersion 17
+    minSdkVersion 21 // required for WebRTC
     generatedDensities = []
-  }  
-  aaptOptions {  
-    additionalParameters "--no-version-vectors"  
-  }  
-} 
+    multiDexEnabled true // required for Firestore dependencies
+  }
+
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
+
+  project.ext {
+    googlePlayServicesVersion = "+"
+  }
+}
