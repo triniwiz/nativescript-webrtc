@@ -1,0 +1,16 @@
+<GridLayout rows="*,*,*">
+  <WebRTCView row="0" id="remoteVideoView" (loaded)="videoLoaded($event)"></WebRTCView>
+  <GridLayout
+    verticalAlignment="center"
+    horizontalAlignment="center"
+    row="1"
+    rows="auto,auto,auto,auto"
+    columns="auto,auto,auto">
+      <Button row="0" col="1" text="Call" (tap)="makeCall($event)" ></Button>
+      <Button row="1" col="0" text="Switch" (tap)="switchCamera($event)"></Button>
+      <Button row="1" col="2" text="Mute"></Button>
+      <Button row="2" col="1" text="End" (tap)="endCall($event)"></Button>
+      <Button row="3" col="2" text="ShareScreen" (tap)="shareScreen($event)"></Button>
+  </GridLayout>
+  <WebRTCView row="2" scaling="fill"  id="localVideoView" (loaded)="videoLoaded($event)"></WebRTCView>
+</GridLayout>

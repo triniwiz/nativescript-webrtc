@@ -1,5 +1,5 @@
 {
-    "name": "nativescript-webrtc-plugin",
+    "name": "nativescript-webrtc",
     "version": "2.0.0-alpha.22",
     "description": "WebRTC for NativeScript",
     "main": "webrtc",
