@@ -17,7 +17,7 @@
     row="1"
     rows="auto,auto"
     columns="auto,auto">
-      <Button row="0" col="0" text="Call" (tap)="makeCall()"></Button>
+      <Button row="0" col="0" text="Call" (tap)="makeCall($event)"></Button>
       <Button row="0" col="1" text="End" (tap)="endCall($event)"></Button>
       <Button row="1" col="0" text="Switch Camera" (tap)="switchCamera($event)"></Button>
       <Button row="1" col="1" text="Share Screen" (tap)="shareScreen($event)"></Button>

@@ -18,7 +18,7 @@ import { WebRTCPeer } from './webrtc.model';
     </StackLayout>
   `,
   styles: [`
-    ListView { margin: 20 0; }
+    ListView { margin: 20 0; height:100%; }
     Label { font-size: 22; }
   `],
 })
