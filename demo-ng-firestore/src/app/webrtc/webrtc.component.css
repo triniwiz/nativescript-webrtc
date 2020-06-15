@@ -1,0 +1,17 @@
+#body {
+  margin: 20 0;
+}
+
+#localVideo {
+  top: 10;
+  left: 10;
+  border-width: 2;
+  border-color: red;
+}
+
+#remoteVideo {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
