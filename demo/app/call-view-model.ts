@@ -1,5 +1,5 @@
 import { fromObject, Observable } from 'tns-core-modules/data/observable';
-import { Quality, WebRTC, WebRTCIceCandidate, WebRTCSdp, WebRTCSdpType, WebRTCView } from 'nativescript-webrtc-plugin';
+import { Quality, WebRTC, WebRTCIceCandidate, WebRTCSdp, WebRTCSdpType, WebRTCView } from 'nativescript-webrtc';
 import * as frame from 'tns-core-modules/ui/frame';
 import { SocketIO } from 'nativescript-socketio';
 import { SocketService } from '~/socket-server';

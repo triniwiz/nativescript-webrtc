@@ -11,7 +11,7 @@ import {
     WebRTC,
     TNSRTCIceServer,
     TNSRTCConfiguration
-} from 'nativescript-webrtc-plugin';
+} from 'nativescript-webrtc';
 
 export class StandardViewModel extends Observable {
     localView;

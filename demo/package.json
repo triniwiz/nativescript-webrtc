@@ -12,7 +12,7 @@
     "nativescript-socketio": "^3.0.2",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "0.7.0",
-    "nativescript-webrtc-plugin": "../src",
+    "nativescript-webrtc": "file:../src",
     "tns-core-modules": "6.0.1"
   },
   "devDependencies": {
