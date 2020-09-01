@@ -1,6 +1,6 @@
-﻿import * as application from 'tns-core-modules/application';
+import * as application from 'tns-core-modules/application';
 import './async-await';
-import { WebRTC } from 'nativescript-webrtc-plugin';
+import { WebRTC } from 'nativescript-webrtc';
 import * as settings from 'tns-core-modules/application-settings';
 
 settings.clear();

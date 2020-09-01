@@ -1,5 +1,5 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
-  xmlns:ui="nativescript-webrtc-plugin">
+  xmlns:ui="nativescript-webrtc">
   <StackLayout>
     <ui:WebRTCView id="remoteVideoView" height="50%"/>
     <Button text="Tappp"/>
