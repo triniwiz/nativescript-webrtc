@@ -213,8 +213,8 @@ export class FirebaseProvider {
 
         snapshot.forEach((doc) => {
           iceCandidates.push(<WebRTCIceCandidate>doc.data());
-          resolve(iceCandidates);
         });
+        resolve(iceCandidates);
       })
       .catch((error) => { reject(error); });
     });

@@ -22,7 +22,7 @@ export class TNSRTCVideoTrack extends TNSRTCMediaStreamTrack {
     }
 
     public applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             const nativeMap = new java.util.HashMap();
             if (constraints.facingMode) {
                 nativeMap.put('facingMode', constraints.facingMode);

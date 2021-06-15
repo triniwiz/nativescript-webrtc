@@ -132,7 +132,7 @@ export class WebRTC extends Common {
     }
 
     private static requestCameraPermission() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
                 AVMediaTypeVideo,
                 granted => {
@@ -147,7 +147,7 @@ export class WebRTC extends Common {
     }
 
     private static requestAudioPermission() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
                 AVMediaTypeAudio,
                 granted => {
@@ -162,7 +162,7 @@ export class WebRTC extends Common {
     }
 
     public static requestPermissions(explanation?: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             try {
                 await WebRTC.requestCameraPermission();
                 await WebRTC.requestAudioPermission();

@@ -6,18 +6,17 @@ export abstract class TNSRTCRtpTransceiverBase {
     constructor(transceiver) {
     }
 
-    public direction: TNSRTCRtpTransceiverDirection;
+    public get direction(): TNSRTCRtpTransceiverDirection { return undefined; }
 
-    public currentDirection: TNSRTCRtpTransceiverDirection;
+    public get currentDirection(): TNSRTCRtpTransceiverDirection { return undefined; }
 
-    public mid: string;
+    public get mid(): string { return undefined; }
 
-    public receiver: TNSRTCRtpReceiverBase;
+    public get receiver(): TNSRTCRtpReceiverBase { return undefined; }
 
-    public sender: TNSRTCRtpSenderBase;
+    public get sender(): TNSRTCRtpSenderBase { return undefined; }
 
-
-    public stopped: boolean;
+    public get stopped(): boolean { return undefined; }
 
     public abstract stop(): void;
 }
