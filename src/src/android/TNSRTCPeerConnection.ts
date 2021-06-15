@@ -248,7 +248,7 @@ export class TNSRTCPeerConnection {
     }
 
     public setLocalDescription(sdp: TNSRTCSessionDescription): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             const ref = new WeakRef(this);
             this.android.setLocalDescription(sdp.instance, new co.fitcom.fancywebrtc.FancyRTCPeerConnection.SdpSetListener({
                 onSuccess(): void {
@@ -265,7 +265,7 @@ export class TNSRTCPeerConnection {
     }
 
     public setRemoteDescription(sdp: TNSRTCSessionDescription): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             const ref = new WeakRef(this);
             this.android.setRemoteDescription(sdp.instance, new co.fitcom.fancywebrtc.FancyRTCPeerConnection.SdpSetListener({
                 onSuccess(): void {

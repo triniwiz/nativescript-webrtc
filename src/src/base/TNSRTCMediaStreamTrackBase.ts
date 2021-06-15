@@ -1,15 +1,15 @@
 export abstract class TNSRTCMediaStreamTrackBase {
-    public id: string;
+    public get id(): string { return undefined; }
 
-    public enabled: boolean;
+    public get enabled(): boolean { return undefined; }
 
-    public kind: string;
+    public get kind(): string { return undefined; }
 
-    public mute: boolean;
+    public get mute(): boolean { return undefined; }
 
     public abstract dispose(): void;
 
-    public readyState: string;
+    public get readyState(): string { return undefined; }
 
     constructor(mediaStreamTrack: any) {
     }

@@ -6,15 +6,15 @@ export abstract class TNSRTCRtpSenderBase {
     constructor(sender) {
     }
 
-    public dtmf: TNSRTCDTMFSenderBase;
+    public get dtmf(): TNSRTCDTMFSenderBase { return undefined; }
 
-    public id: string;
+    public get id(): string { return undefined; } 
 
     public abstract dispose(): void;
 
-    public track: TNSRTCMediaStreamTrackBase;
+    public get track(): TNSRTCMediaStreamTrackBase { return undefined; }
 
-    public parameters: TNSRTCRtpParametersBase;
+    public get parameters(): TNSRTCRtpParametersBase { return undefined; }
 
     public abstract replaceTrack(track: TNSRTCMediaStreamTrackBase): void ;
 }

@@ -254,7 +254,7 @@ export class TNSRTCPeerConnection {
     }
 
     public setLocalDescription(sdp: TNSRTCSessionDescription): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.ios.localDescriptionWithSdpListener(sdp.instance, (error) => {
                 if (error) {
                     reject(error);
@@ -266,7 +266,7 @@ export class TNSRTCPeerConnection {
     }
 
     public setRemoteDescription(sdp: TNSRTCSessionDescription): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.ios.remoteDescriptionWithSdpListener(sdp.instance, (error) => {
                 if (error) {
                     reject(error);

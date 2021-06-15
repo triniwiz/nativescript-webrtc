@@ -3,7 +3,7 @@ export abstract class TNSRTCDTMFSenderBase {
     constructor(sender) {
     }
 
-    public toneBuffer: string;
+    public get toneBuffer(): string { return undefined; }
 
 
     public abstract dispose(): void;
