@@ -1,5 +1,5 @@
 import { Directive, NgModule } from '@angular/core';
-import { registerElement } from 'nativescript-angular/element-registry';
+import { registerElement } from '@nativescript/angular';
 import { WebRTCView } from '../';
 
 registerElement('WebRTCView', () => WebRTCView);

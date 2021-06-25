@@ -1,4 +1,4 @@
-import { Observable } from 'tns-core-modules/data/observable';
+import { Observable } from '@nativescript/core';
 
 export class Common extends Observable {
   defaultServers: Array<string> = [

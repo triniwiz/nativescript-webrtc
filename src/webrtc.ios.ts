@@ -11,8 +11,8 @@ import {
     WebRTCSdp,
     WebRTCSdpType
 } from './webrtc.common';
-import { layout, View } from 'tns-core-modules/ui/core/view';
-import { fromObject } from 'tns-core-modules/data/observable';
+import { layout } from '@nativescript/core/utils';
+import { fromObject, View } from '@nativescript/core';
 import './async-await';
 
 import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/ios';

@@ -12,12 +12,11 @@ import {
     WebRTCSdpType
 } from './webrtc.common';
 
-import { fromObject } from 'tns-core-modules/data/observable';
-import { View } from 'tns-core-modules/ui/core/view';
-import { ad } from 'tns-core-modules/utils/utils';
+import { fromObject,View } from '@nativescript/core';
 import * as permissions from 'nativescript-permissions';
 import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/android';
-import * as app from 'tns-core-modules/application';
+import { ad } from '@nativescript/core/utils';
+import { AndroidApplication, AndroidActivityResultEventData, android as androidApp } from '@nativescript/core/application'
 
 export * from './src/android';
 export {
@@ -374,7 +373,7 @@ export class WebRTC extends Common {
         );
     }
 
-    private static _callbackFn(args: app.AndroidActivityResultEventData) {
+    private static _callbackFn(args: AndroidActivityResultEventData) {
         co.fitcom.fancywebrtc.FancyRTCApplicationHelper.getInstance().handleResult(args.requestCode, args.resultCode, args.intent);
     }
 
@@ -385,8 +384,8 @@ export class WebRTC extends Common {
         if (!this.callback) {
             this.callback = this._callbackFn.bind(this);
         }
-        app.android.off(app.AndroidApplication.activityResultEvent, this.callback);
-        app.android.on(app.AndroidApplication.activityResultEvent, this.callback);
+        androidApp.off(AndroidApplication.activityResultEvent, this.callback);
+        androidApp.on(AndroidApplication.activityResultEvent, this.callback);
     }
 
     public dataChannelSend(

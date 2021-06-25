@@ -13,7 +13,7 @@ import {
     TNSRTCTrackEvent
 } from './';
 import { TNSRTCPeerConnectionState } from '../core/TNSRTCPeerConnectionState';
-import * as utils from 'tns-core-modules/utils/utils';
+import * as utils from '@nativescript/core/utils';
 
 declare var co;
 
