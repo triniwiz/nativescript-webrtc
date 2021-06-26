@@ -1,4 +1,4 @@
-import * as app from 'tns-core-modules/application';
+import * as app from '@nativescript/core/application';
 import { TNSRTCMediaStreamConstraints } from './TNSRTCMediaStreamConstraints';
 import { TNSRTCMediaStream } from './TNSRTCMediaStream';
 import { TNSMediaDevicesInfo } from '../core/TNSMediaDevicesInfo';

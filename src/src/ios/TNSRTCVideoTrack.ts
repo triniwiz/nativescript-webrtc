@@ -22,7 +22,7 @@ export class TNSRTCVideoTrack extends TNSRTCMediaStreamTrack {
     }
 
     public applyConstraints(constraints: TNSMediaTrackConstraints): Promise<any> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             const obj = {};
             if (constraints.facingMode) {
                 obj['facingMode'] = constraints.facingMode;

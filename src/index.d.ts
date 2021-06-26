@@ -1,7 +1,7 @@
 export { IceConnectionState, IceServer, IceGatheringState, Quality, SignalingState, WebRTCDataChannelMessageType, WebRTCDataChannelState, WebRTCIceCandidate, WebRTCOptions, WebRTCSdp, WebRTCSdpType, WebRTCState } from './webrtc.common';
 
+import { View } from '@nativescript/core';
 import { Common, Quality, WebRTCDataChannelMessageType, WebRTCIceCandidate, WebRTCOptions, WebRTCSdp } from './webrtc.common';
-import { View } from 'tns-core-modules/ui/core/view';
 
 export declare class WebRTC extends Common {
     private webrtc;

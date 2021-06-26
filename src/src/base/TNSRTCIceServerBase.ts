@@ -8,12 +8,12 @@ export abstract class TNSRTCIceServerBase {
 
     public abstract toWebRtc(): void;
 
-    public iceServer;
+    public get iceServer() { return undefined; }
 
-    public credentialType;
+    public get credentialType() { return undefined; }
 
-    public urls: Array<String>;
+    public get urls(): Array<String> { return undefined; }
 
-    public username: string;
+    public get username(): string { return undefined; }
 
 }

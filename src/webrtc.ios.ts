@@ -11,8 +11,8 @@ import {
     WebRTCSdp,
     WebRTCSdpType
 } from './webrtc.common';
-import { layout, View } from 'tns-core-modules/ui/core/view';
-import { fromObject } from 'tns-core-modules/data/observable';
+import { layout } from '@nativescript/core/utils';
+import { fromObject, View } from '@nativescript/core';
 import './async-await';
 
 import { TNSRTCMediaStream, TNSRTCMediaStreamTrack } from './src/ios';
@@ -132,7 +132,7 @@ export class WebRTC extends Common {
     }
 
     private static requestCameraPermission() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
                 AVMediaTypeVideo,
                 granted => {
@@ -147,7 +147,7 @@ export class WebRTC extends Common {
     }
 
     private static requestAudioPermission() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(
                 AVMediaTypeAudio,
                 granted => {
@@ -162,7 +162,7 @@ export class WebRTC extends Common {
     }
 
     public static requestPermissions(explanation?: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<void>(async (resolve, reject) => {
             try {
                 await WebRTC.requestCameraPermission();
                 await WebRTC.requestAudioPermission();

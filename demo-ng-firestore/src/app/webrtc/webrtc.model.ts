@@ -18,7 +18,7 @@ export interface WebRTCRoom {
 
 export interface WebRTCOffer {
   sdp: any;
-  type: string; // e.g. "offer"
+  type: string; // e.g. "offer" or "answer"
 }
 
 export interface WebRTCIceCandidate {
